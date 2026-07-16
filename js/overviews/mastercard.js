@@ -7,7 +7,7 @@
 // Valuation ▸ Balance Sheet). Convention: esc() leaves & LITERAL (never HTML-encode & in source).
 //
 // Live data (companies.js fills these; MA is a Fiscal.ai-covered ticker):
-//   · Market cap / peer bubbles → api.liveQuote (Massive), per ticker, no hardcoding.
+//   · Market cap / peer bubbles → api.liveQuote (Massive) overrides dated seeds, per ticker.
 //   · Analyst Ratings → #dd-val-slot ; Ownership & insiders → #dd-mgmt-slot.
 // Financials seeded from the Summit DCF (snapshot 2026-06-25); forward years labeled estimate.
 
@@ -35,11 +35,6 @@ function mbars(arr){ return '<div class="ov-mbars">'+arr.map(function(r){
     '<div class="ov-mbar-track"><div class="ov-mbar-fill" style="width:'+r[1]+'%;background:'+r[3]+';">'+esc(r[2])+'</div></div>'+
     '<div class="ov-mbar-v">'+r[1]+'%</div></div>';
 }).join('')+'</div>'; }
-function placeholder(title, note){
-  return '<div style="border:1px dashed var(--bdr);border-radius:12px;padding:16px 18px;margin:10px 0;background:linear-gradient(180deg,rgba(232,160,12,0.045),transparent)">'+
-    '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#B7791F;background:rgba(232,160,12,0.14);border-radius:10px;padding:2px 9px">To build</span><span style="font-size:13.5px;font-weight:800;color:var(--navy)">'+esc(title)+'</span></div>'+
-    '<div style="font-size:12px;color:var(--mu);line-height:1.55">'+note+'</div></div>';
-}
 
 // ═══════════════════════════════════════════════════════════════════════════
 //  STANDARDIZED OVERVIEW DATA (the 7 blocks — OVERVIEW_CONVENTIONS §4)
@@ -56,7 +51,7 @@ var MA_FACTS=[
   ['CEO','Michael Miebach · since Jan 2021'],
   ['Employees','~35,000 · 2025'],
   ['Dividend','Payer (+ buybacks)'],
-  ['Market cap','~$500B · Jul 2026'],
+  ['Market cap','~$470B · est'],
 ];
 function stdKeyFacts(){
   return '<div class="stdkf">'+MA_FACTS.slice(0,10).map(function(p){
@@ -83,7 +78,7 @@ function stdFourQuad(){
 var MA_REV_SEG=[['Payment Network',58,'$19.0B',MA_STEEL],['Value-Added Services & Solutions',42,'$13.8B',MA_ORANGE]];
 // Geography: Mastercard reports US vs the rest of the world; ~2/3 of net revenue is international.
 var MA_REV_GEO=[['International (ex-US)',67,'~$22.0B',MA_RED],['United States',33,'~$10.8B',MA_STEEL]];
-var MA_MM_STATS=[['Net revenue','$32,791M'],['Gross Dollar Volume','~$10.6T'],['Switched txns','~$160B/yr'],['Credentials','~3.5B'],['VAS % of net rev','~42%'],['Cross-border','high-yield']];
+var MA_MM_STATS=[['Net revenue','$32,791M'],['Gross Dollar Volume','~$10.6T'],['Switched txns','~175.5B/yr'],['Credentials','~3.5B'],['VAS % of net rev','~42%'],['Cross-border','high-yield']];
 var MA_SEG_DEF=[
   { seg:'Payment Network',
     desc:'The core switching business — the rails that authorize, clear and settle a card payment between the issuing bank and the acquiring bank. It earns three ways: domestic assessments (a few basis points of domestic purchase volume), cross-border fees (where the card country differs from the merchant country — the highest-yield line), and transaction processing (a near-fixed fee per switched transaction). Rebates & incentives paid to customers net against these.',
@@ -173,10 +168,10 @@ function stdProducts(){
 // Forward (default Forward). Peers add/removable by ticker; chip × deletes immediately.
 // ⚠ Multiples & growth are web-sourced approximations (mid-2026); market caps are live. ──
 var MA_PEERS=[
-  { tk:'MA', n:'Mastercard', evT:33, evF:28, peT:38, peF:31, gt:14, gf:13, mc:500, hl:true, why:'The #2 global open-loop network — richly valued on a thin-fee, no-credit-risk model, a larger (~42%) value-added-services mix than Visa, and a more international / cross-border tilt. Bears interchange litigation directly (no escrow shield).' },
+  { tk:'MA', n:'Mastercard', evT:33, evF:28, peT:38, peF:31, gt:14, gf:13, mc:470, hl:true, why:'The #2 global open-loop network — richly valued on a thin-fee, no-credit-risk model, a larger (~42%) value-added-services mix than Visa, and a more international / cross-border tilt. Bears interchange litigation directly (no escrow shield).' },
   { tk:'V',  n:'Visa',      evT:28, evF:24, peT:33, peF:27, gt:11, gf:11, mc:640, why:'The larger open-loop network — bigger by volume and acceptance, slightly cheaper on multiples, a smaller services mix (~27%), and a Class-B litigation-escrow shield Mastercard lacks.' },
   { tk:'AXP', n:'Amex',     evT:null, evF:null, peT:20, peF:17, gt:9, gf:9, mc:210, why:'Closed-loop — it issues and lends, so revenue includes net interest income and EV/EBITDA is not comparable (it carries credit risk). Shown on P/E only; a premium, affluent, spend-centric model.' },
-  { tk:'PYPL', n:'PayPal',  evT:12, evF:11, peT:16, peF:14, gt:8, gf:9, mc:70, why:'A digital-wallet / account-to-account player — a different rail that partly competes with cards; much cheaper on multiples, reflecting slower growth and a more contested moat.' },
+  { tk:'PYPL', n:'PayPal',  evT:12, evF:11, peT:16, peF:14, gt:8, gf:9, mc:50, why:'A digital-wallet / account-to-account player — a different rail that partly competes with cards; much cheaper on multiples, reflecting slower growth and a more contested moat.' },
 ];
 var MA_SC={ type:'ev', basis:'f', peers:null };
 function maScReset(){ MA_SC.peers=MA_PEERS.map(function(p){ var o={}; for(var k in p) o[k]=p[k]; o.on=true; return o; }); }
@@ -364,13 +359,27 @@ var MNA = [
     detail:'<b>Terms:</b> $2.65B, all cash — <b>Mastercard\'s largest acquisition to date</b>.<br><br><b>What it added:</b> a leading <b>threat-intelligence</b> platform — a major step up in cybersecurity.<br><br><b>How it shows up today:</b> anchors a broader security ambition extending beyond payment fraud into enterprise cyber.' },
 ];
 
-// ── Litigation → Valuation ▸ Risk & Litigation. ──
-var LIT_INTRO = 'Like the other card networks, Mastercard set default interchange as a bank association, which has drawn decades of antitrust litigation. The point worth understanding for Mastercard specifically is <b>how it bears that risk</b>.';
-var LIT = [
-  '<b>United States — MDL 1720.</b> Mastercard is a <b>co-defendant with Visa</b> in the long-running U.S. merchant interchange antitrust case. The <b>damages</b> class settled (a multi-billion settlement shared with Visa, approved 2019 and upheld 2023); the <b>rules / injunctive</b> class is still live (a 2024 proposed settlement was <b>rejected by the court</b>), and large merchants keep opting out to sue separately.',
-  '<b>United Kingdom — Merricks.</b> A landmark <b>opt-out consumer class action</b> (filed 2016) over EEA cross-border interchange the EU Commission ruled unlawful in 2007. Originally valued at ~<b>£14B</b>, it <b>settled for £200M</b> (Dec 2024; approved by the Competition Appeal Tribunal in Feb 2025) — a reminder that these mega-claims often resolve for a small fraction of the headline.',
-  '<b>EU & elsewhere:</b> ongoing interchange cases and behavioral commitments across jurisdictions; interchange caps (e.g. in the EU) also structurally lower yields.',
-  '<b>The key structural difference:</b> unlike <b>Visa</b> — which quarantines its U.S. "covered litigation" onto former member banks through a special <b>Class B share / litigation-escrow</b> mechanism — <b>Mastercard has no such shield</b>. With a single class of common stock, interchange and other litigation is borne <b>directly by Mastercard and its shareholders</b>, recognized as <b>litigation provisions / charges on the income statement</b> when probable. The amounts have so far been manageable, but the exposure is a more <b>direct P&L / shareholder risk</b> than at Visa.',
+// ── Litigation → Valuation ▸ Risk & Litigation. Structured by jurisdiction (flag cards)
+// + a MA-vs-Visa "who absorbs the hit" flow visual (replaces the old bullet boxes). ──
+var LIT_INTRO = 'Like the other card networks, Mastercard set default interchange as a bank association, which has drawn decades of antitrust litigation. The point worth understanding for Mastercard specifically is <b>how it bears that risk</b> — and why it lands differently than at Visa.';
+var LIT_LEVEL={ high:{c:'#C0392B',l:'Live · material'}, resolved:{c:MA_GREEN,l:'Settled'}, structural:{c:'#B7791F',l:'Structural'}, low:{c:MA_STEEL,l:'Low · watch'} };
+var LIT_CASES=[
+  { code:'us', juris:'United States', tag:'MDL 1720', level:'high',
+    headline:'Merchant interchange antitrust — Mastercard is a <b>co-defendant with Visa</b>.',
+    status:'The <b>damages</b> class settled (multi-billion, shared with Visa; approved 2019, upheld 2023). The <b>rules / injunctive</b> class is still live — a 2024 proposed settlement was <b>rejected by the court</b>, and large merchants keep opting out to sue separately.',
+    exp:'Shared multi-billion settlement with Visa; open tail from merchant opt-outs.' },
+  { code:'gb', juris:'United Kingdom', tag:'Merricks', level:'resolved',
+    headline:'Landmark <b>opt-out consumer class action</b> over EEA cross-border interchange (filed 2016).',
+    status:'Originally valued at ~<b>£14B</b>; <b>settled for £200M</b> (Dec 2024, approved by the Competition Appeal Tribunal Feb 2025).',
+    exp:'£200M — a small fraction of the headline; a template for how these mega-claims resolve.' },
+  { code:'eu', juris:'European Union', tag:'Interchange caps', level:'structural',
+    headline:'Interchange <b>caps</b> plus ongoing cases and behavioral commitments across member states.',
+    status:'EU caps are in force (<b>0.2% debit / 0.3% credit</b>) under the Interchange Fee Regulation; assorted national cases and undertakings continue.',
+    exp:'Structural — the caps permanently lower yields more than any single case does.' },
+  { code:'dev', juris:'Other developed markets', tag:'Regulated · quiet', level:'low',
+    headline:'Australia, Canada, Japan and peers <b>regulate interchange but litigate it far less</b>.',
+    status:'Australia (RBA) pioneered interchange caps in 2003; Canada runs negotiated fee undertakings; others review periodically — but the class-action machinery is a US / UK / EU story.',
+    exp:'Yield pressure from caps, minimal active litigation — the least pressing bucket today.' },
 ];
 
 // ── Peers → Top Line ▸ Industry Analysis (qualitative; consistent with the scatter). ──
@@ -488,13 +497,13 @@ var MA_MGMT = makeManagement({
     { k:'Board', v:'10 of 11 independent', d:'Independent Chair; CEO is not chairman.' },
     { k:'Foundation', v:'Mastercard Foundation', d:'Independent; a large long-term holder since the 2006 IPO.' },
   ],
-  foot:'Executives per the investor.mastercard.com Management Committee page (authoritative; the mastercard.com newsroom bios page is stale); board & committees per the 2026 DEF 14A. The June 2, 2026 reshuffle (effective Aug 3, 2026) is flagged inline. Ownership & insider trades are live in the Ownership subtab. Headshot files are placeholders — degrade gracefully if absent.',
+  foot:'Executives & headshots per the investor.mastercard.com Management Committee page; board & committees per the 2026 DEF 14A. The June 2, 2026 reshuffle (effective Aug 3, 2026) is flagged inline. Ownership & insider trades are live in the Ownership subtab.',
 });
 
 // ── Track Record — rate management (and the board) on value creation, green/amber/red,
 // each with a Mastercard record and a prior/external one. Reads are editorial (from tenure +
 // what they built), not a Mastercard statement. Sourced from the Management Committee page,
-// 2026 proxy and press. "ver más" opens the full read. ──
+// 2026 proxy and press. "Read more" opens the full read. ──
 var MA_TRACK_RATE={ green:{c:'#0F9D58',bg:'rgba(15,157,88,0.07)',l:'Value creator'}, amber:{c:'#E8A00C',bg:'rgba(232,160,12,0.08)',l:'Mixed / unproven'}, red:{c:'#C0392B',bg:'rgba(192,57,43,0.07)',l:'Value destroyer'} };
 var MA_TRACK=[
   {id:'miebach', n:'Michael Miebach', r:'Chief Executive Officer', t:'CEO since 2021 · at MA since 2010', rate:'green',
@@ -606,7 +615,7 @@ function maTrackBody(c){
     return '<div class="mtk-card ov-clickable" data-detail="matr:'+p.id+'" style="border-left:3px solid '+rt.c+';background:'+rt.bg+'">'+
       '<div class="mtk-top"><div><div class="mtk-n">'+esc(p.n)+'</div><div class="mtk-r">'+esc(p.r)+'</div></div><span class="mtk-badge" style="color:'+rt.c+';border-color:'+rt.c+'">'+rt.l+'</span></div>'+
       '<div class="mtk-t">'+esc(p.t)+'</div><div class="mtk-one">'+p.one+'</div>'+
-      '<div class="mtk-more" style="color:'+rt.c+'">ver más ›</div></div>'; };
+      '<div class="mtk-more" style="color:'+rt.c+'">Read more ›</div></div>'; };
   var bcard=function(b){ var rt=MA_TRACK_RATE[b.rate];
     return '<div class="mtk-bcard" style="border-left:3px solid '+rt.c+'"><div class="mtk-btop"><span class="mtk-bn">'+esc(b.n)+'</span><span class="mtk-bdot" style="background:'+rt.c+'"></span></div><div class="mtk-br">'+esc(b.r)+'</div><div class="mtk-bnote">'+b.note+'</div></div>'; };
   var h='<style>.mtk-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0 4px}@media(max-width:720px){.mtk-grid{grid-template-columns:1fr}}'+
@@ -937,26 +946,65 @@ function ddIndustryBody(c){
 }
 // A CSS gross-to-net waterfall — the single most important thing to model at a network.
 function maGrossNetWaterfall(){
-  // Illustrative FY25: gross ~$53B → rebates ~$20B (~38% of gross) → net ~$32.8B.
-  var gross=53, rebate=20.2, net=32.8, maxV=gross;
-  function col(label,v,color,sub,neg){ var pct=(v/maxV*100).toFixed(1);
-    return '<div style="margin:4px 0 12px"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span style="font-size:12px;font-weight:800;color:var(--navy)">'+label+'</span><span style="font-size:13px;font-weight:900;color:'+color+'">'+(neg?'−':'')+'$'+v.toFixed(1)+'B</span></div>'+
-    '<div style="height:24px;background:#F1F4F8;border-radius:6px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+(neg?'repeating-linear-gradient(45deg,#E8A00C,#E8A00C 7px,#f0b53a 7px,#f0b53a 14px)':color)+';border-radius:6px"></div></div>'+
-    '<div style="font-size:10.5px;color:var(--mu);margin-top:3px">'+sub+'</div></div>'; }
-  return '<div class="ov-chart-card" style="padding:16px 18px">'+
-    col('Gross revenue', gross, MA_STEEL, 'all network + services fees, before customer incentives')+
-    col('(−) Rebates & incentives', rebate, '#B7791F', '~38% of gross — consideration paid to issuers/acquirers/merchants (contra-revenue)', true)+
-    '<div style="border-top:2px solid var(--navy);padding-top:10px">'+col('= Net revenue', net, MA_RED, 'FY2025 · what Mastercard actually reports and grows')+'</div>'+
-    '<div style="font-size:10.5px;color:var(--mu);margin-top:2px">Illustrative FY25 magnitudes; rebate ratio (~38% of gross) is the key swing factor — watch it, not just net revenue.</div>'+
+  // Illustrative FY25: gross ~$53B → rebates ~$20.2B (~38% of gross) → net ~$32.8B.
+  // Rendered as a vertical waterfall: full Gross bar → floating rebate "drop" → Net bar.
+  var gross=53, net=32.8, netPct=(net/gross*100), rebPct=((gross-net)/gross*100);
+  var hatch='repeating-linear-gradient(45deg,#E8A00C,#E8A00C 7px,#f0b53a 7px,#f0b53a 14px)';
+  var track=function(inner){ return '<div style="position:relative;height:172px">'+inner+'</div>'; };
+  var lab=function(t,s){ return '<div style="text-align:center;margin-top:9px"><div style="font-size:11.5px;font-weight:800;color:var(--navy)">'+t+'</div><div style="font-size:9.5px;color:var(--mu)">'+s+'</div></div>'; };
+  var val=function(t,c){ return '<div style="position:absolute;top:-21px;left:0;right:0;text-align:center;font-size:13px;font-weight:900;color:'+c+'">'+t+'</div>'; };
+  return '<div class="ov-chart-card" style="padding:22px 18px 14px">'+
+    '<div style="display:flex;gap:16px;align-items:flex-end">'+
+      '<div style="flex:1">'+track('<div style="position:absolute;bottom:0;left:0;right:0;height:100%;background:'+MA_STEEL+';border-radius:6px 6px 0 0">'+val('$53B','var(--navy)')+'</div>')+lab('Gross revenue','all network + services fees')+'</div>'+
+      '<div style="flex:1">'+track(
+        '<div style="position:absolute;top:0;left:-16px;right:-16px;border-top:1px dashed var(--mu);opacity:.4"></div>'+
+        '<div style="position:absolute;bottom:'+netPct.toFixed(1)+'%;left:-16px;right:-16px;border-top:1px dashed var(--mu);opacity:.4"></div>'+
+        '<div style="position:absolute;bottom:'+netPct.toFixed(1)+'%;left:0;right:0;height:'+rebPct.toFixed(1)+'%;background:'+hatch+';border-radius:5px;display:flex;align-items:center;justify-content:center"><span style="font-size:12px;font-weight:900;color:#7A5200">−$20.2B</span></div>')+
+        lab('(−) Rebates & incentives','paid to issuers · acquirers · merchants')+'</div>'+
+      '<div style="flex:1">'+track('<div style="position:absolute;bottom:0;left:0;right:0;height:'+netPct.toFixed(1)+'%;background:'+MA_RED+';border-radius:6px 6px 0 0">'+val('$32.8B',MA_RED)+'</div>')+lab('= Net revenue','FY2025 · what MA reports & grows')+'</div>'+
+    '</div>'+
+    '<div style="margin-top:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--bdr);padding-top:13px">'+
+      '<div style="font-size:28px;font-weight:900;color:#B7791F;line-height:1">~38%</div>'+
+      '<div style="font-size:11.5px;color:var(--navy);line-height:1.5;flex:1;min-width:220px">of <b>gross</b> revenue is handed back to customers as rebates & incentives. The <b>rebate ratio</b> is the single most important swing factor — a heavy renewal year steps it up and can optically slow net-revenue growth even when volume is perfectly healthy. <b>Watch the ratio, not just net revenue.</b></div>'+
+    '</div>'+
+    '<div style="font-size:10px;color:var(--mu);margin-top:9px">Illustrative FY25 magnitudes (gross and rebates are not separately reported line items); bars to scale.</div>'+
   '</div>';
+}
+// Rebates "why they exist / how they behave" as a visual (two flavors + the #2-network
+// battleground) instead of a wall of bullets.
+function maRebatesVisual(){
+  var flavor=function(ic,name,book,effect,col){ return '<div class="reb-fl" style="border-top:3px solid '+col+'"><div class="reb-fl-h"><span class="reb-fl-ic">'+ic+'</span>'+name+'</div><div class="reb-fl-book">'+book+'</div><div class="reb-fl-eff">'+effect+'</div></div>'; };
+  return '<style>'+
+    '.reb-fl-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:2px 0 18px}@media(max-width:640px){.reb-fl-wrap{grid-template-columns:1fr}}'+
+    '.reb-fl{border:1px solid var(--bdr);border-radius:12px;padding:13px 15px;background:var(--w)}'+
+    '.reb-fl-h{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:900;color:var(--navy);margin-bottom:7px}.reb-fl-ic{font-size:18px}'+
+    '.reb-fl-book{font-size:11.5px;color:var(--navy);line-height:1.5;margin-bottom:7px}'+
+    '.reb-fl-eff{font-size:11px;color:var(--mu);line-height:1.5;border-top:1px dashed var(--bdr);padding-top:7px}'+
+    '.reb-battle{display:grid;grid-template-columns:1fr auto 1.15fr auto 1fr;align-items:center;gap:8px;margin:4px 0 2px}@media(max-width:640px){.reb-battle{grid-template-columns:1fr}}'+
+    '.reb-net{border:1.5px solid;border-radius:11px;padding:13px 10px;text-align:center}.reb-net-n{font-size:13px;font-weight:900}.reb-net-s{font-size:10px;color:var(--mu);margin-top:2px}'+
+    '.reb-arr{text-align:center;font-size:11px;font-weight:800;color:#B7791F;white-space:nowrap}@media(max-width:640px){.reb-arr{transform:rotate(90deg)}}'+
+    '.reb-prize{border:2px solid var(--navy);border-radius:12px;padding:12px 10px;text-align:center;background:#F8FAFC}.reb-prize-ic{font-size:24px;line-height:1}.reb-prize-n{font-size:13px;font-weight:900;color:var(--navy);margin-top:3px}.reb-prize-s{font-size:10.5px;color:var(--mu);margin-top:3px;line-height:1.4}</style>'+
+    '<p class="ov-diagram-cap" style="margin-bottom:13px"><b>Rebates & incentives</b> are payments to <b>issuers, acquirers and merchants</b> to win and keep volume — booked as a <b>reduction of gross revenue</b> (contra-revenue), not an operating expense. They come in two flavors:</p>'+
+    '<div class="reb-fl-wrap">'+
+      flavor('📊','Volume / performance-based','Accrued as the customer <b>delivers volume</b>.','Moves with activity — scales up and down with the book.',MA_STEEL)+
+      flavor('📝','Upfront / fixed','<b>Capitalized and amortized</b> over the contract life.','A big signing depresses net revenue for <b>years</b> — smoothing the hit.',MA_ORANGE)+
+    '</div>'+
+    '<div class="ov-subh" style="margin-bottom:9px">Why they exist — the #2-network battleground</div>'+
+    '<div class="reb-battle">'+
+      '<div class="reb-net" style="border-color:'+MA_RED+'"><div class="reb-net-n" style="color:'+MA_RED+'">Mastercard</div><div class="reb-net-s">bids incentives</div></div>'+
+      '<div class="reb-arr">incentives&nbsp;$&nbsp;→</div>'+
+      '<div class="reb-prize"><div class="reb-prize-ic">🏦</div><div class="reb-prize-n">The issuer</div><div class="reb-prize-s">routes its portfolio to <b>either</b> network</div></div>'+
+      '<div class="reb-arr">←&nbsp;$&nbsp;incentives</div>'+
+      '<div class="reb-net" style="border-color:var(--mu)"><div class="reb-net-n" style="color:var(--mu)">Visa</div><div class="reb-net-s">bids incentives</div></div>'+
+    '</div>'+
+    '<div class="ov-fynote" style="margin-top:13px">Because an issuer can send its portfolio to <b>either</b> rail, incentives are how Mastercard <b>wins and keeps</b> deals — the same dollars Visa is spending for the same portfolios. As the #2 network, this is the core competitive battleground.</div>';
 }
 // ── Bottom Line ▸ Unit Economics (rebates gross-to-net bridge + fee economics) ──
 function ddUnitEconBody(c){
   var h='<p class="ov-lede">A network has no cost of goods — its "unit economics" are a <b>take-rate story</b>: how many basis points it keeps on each dollar of volume, and how much of gross revenue it hands back as incentives to win the volume in the first place. Two things to model: the <b>gross-to-net bridge</b> and the <b>rebate ratio</b>.</p>';
   h+=sec('The gross-to-net bridge — the most important thing to model',
     '<p class="ov-lede" style="margin-bottom:14px">'+REBATES_INTRO+'</p>'+maGrossNetWaterfall());
-  h+=sec('Rebates & incentives — why they exist and how they behave',
-    '<div class="ov-callout">'+bullets(REBATES)+'</div>');
+  h+=sec('Rebates & incentives — why they exist and how they behave', maRebatesVisual());
   h+=sec('Why the economics are so good — the take-rate, unpacked',
     '<div class="ov-kpis">'+
       '<div class="ov-kpi"><div class="ov-kpi-l">Blended net yield</div><div class="ov-kpi-v">~31 bps</div><div class="ov-kpi-d muted">net revenue ÷ GDV</div></div>'+
@@ -1091,17 +1139,60 @@ var MA_STRAT_DRIVERS=[
       '<b>Agentic commerce — "Mastercard Agent Pay"</b> (Apr 2025): verified AI agents transact via <b>Agentic Tokens</b> (agent identity + merchant scope + spend policy, no raw card number). Partners: Microsoft, IBM, Salesforce, Checkout.com. Rolled to <b>all US cardholders by Nov 2025</b>, global Q1 2026.',
       '<b>Stablecoins / Multi-Token Network:</b> settlement enabled for <b>USDC, PYUSD, USDG, FIUSD, RLUSD</b>; spend at <b>150M+ merchants</b>; agreed to acquire <b>BVNK</b> (2026) to bridge on-chain ↔ fiat. Partners: Paxos, Circle, Fiserv, PayPal, OKX.']) },
 ];
+// Click-through detail for the three verb-triad hero cards (opens in the shared modal).
+var MA_VERBS={
+  grow:{ t:'📈 Grow — the core network', h:
+    '<p style="font-size:12.5px;color:var(--navy);line-height:1.55;margin-bottom:10px">Keep digitizing the world\'s payments and premiumize the existing book — the engine that still has a long runway.</p>'+bullets([
+      '<b>~$54T</b> of consumer spend, ~2.4T transactions, still <b>~70% cash</b> by count — the cash-to-digital runway.',
+      '<b>Premiumization:</b> 60+ new affluent programs in 2025; the <b>Capital One</b> renewal (US + Canada) is a marquee validation.',
+      '<b>Cross-border</b> (travel + e-commerce) is the high-yield slice — a key growth driver.',
+      'Acceptance + contactless + a <b>tokenized core</b>, now extended to agentic commerce.']) },
+  diversify:{ t:'🧬 Diversify — customers & geographies', h:
+    '<p style="font-size:12.5px;color:var(--navy);line-height:1.55;margin-bottom:10px">Change what Mastercard earns on and where — so growth is less tied to any single market or the card-swipe cycle.</p>'+bullets([
+      '<b>Services & Solutions:</b> ~40% of revenue, +20%+, and <b>&lt;7% share of a ~$490B TAM</b> — the diversifier, much of it network-agnostic.',
+      '<b>Commercial & New Flows:</b> a ~$100T addressable market only ~5% carded — the biggest greenfield (B2B, virtual cards, Mastercard Move).',
+      '<b>Geographies:</b> a strong international / cross-border tilt versus a more US-centric rival.',
+      'Because VAS sells even off Mastercard rails, it <b>decouples growth from card-share battles</b>.']) },
+  build:{ t:'🏗️ Build — for the future', h:
+    '<p style="font-size:12.5px;color:var(--navy);line-height:1.55;margin-bottom:10px">Own the next rails and the trust layer, so Mastercard still gets paid however money moves.</p>'+bullets([
+      '<b>Multi-rail hedge:</b> owns A2A / real-time rails (Vocalink, Nets, open banking) — earns on <b>whichever rail</b> a payment takes.',
+      '<b>Tokenization:</b> the goal is to tokenize <b>100% of e-commerce by 2030</b>; ~40% of transactions are already tokenized.',
+      '<b>Agentic commerce — Agent Pay:</b> verified AI agents transact via Agentic Tokens (Microsoft, IBM, Salesforce partners).',
+      '<b>Stablecoins / Multi-Token Network:</b> settlement for USDC, PYUSD, RLUSD…; agreed to acquire <b>BVNK</b> (2026).']) },
+};
 function ddStrategyBody(c){
-  var h='<style>.mstr-arch{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 14px}'+
-    '.mstr-verb{border:1px solid var(--bdr);border-top:3px solid '+MA_RED+';border-radius:10px;padding:9px 15px;text-align:center;background:var(--w)}'+
-    '.mstr-verb-v{font-size:15px;font-weight:900;color:var(--navy);text-transform:capitalize}.mstr-verb-l{font-size:9.5px;color:var(--mu);font-weight:700}'+
-    '.mstr-plus{font-size:16px;font-weight:900;color:var(--mu)}</style>';
-  h+='<p class="ov-lede">Mastercard states its strategy as a verb triad — <b>"grow, diversify, build"</b> — executed through <b>three growth vectors</b> (Consumer Payments · Commercial & New Flows · Services), all wired together by a <b>multi-rail</b> platform that is the deliberate hedge against disintermediation. <b>Tap any lever</b> for the detail.</p>';
-  h+='<div class="mstr-arch">'+
-    '<div class="mstr-verb"><div class="mstr-verb-v">Grow</div><div class="mstr-verb-l">the core</div></div><span class="mstr-plus">→</span>'+
-    '<div class="mstr-verb"><div class="mstr-verb-v">Diversify</div><div class="mstr-verb-l">customers & geos</div></div><span class="mstr-plus">→</span>'+
-    '<div class="mstr-verb"><div class="mstr-verb-v">Build</div><div class="mstr-verb-l">for the future</div></div>'+
+  var h='<style>'+
+    '.mstr-hero{display:flex;flex-wrap:wrap;gap:10px;align-items:stretch;margin:8px 0 18px}'+
+    '.mstr-verb{flex:1;min-width:150px;border:1px solid var(--bdr);border-top:4px solid '+MA_RED+';border-radius:13px;padding:15px 16px;text-align:center;background:linear-gradient(180deg,rgba(207,10,44,.055),var(--w))}'+
+    '.mstr-verb-ic{font-size:25px;line-height:1}.mstr-verb-v{font-size:23px;font-weight:900;color:var(--navy);margin-top:5px;letter-spacing:-.4px}'+
+    '.mstr-verb-l{font-size:11px;color:var(--mu);font-weight:700;margin-top:2px}'+
+    '.mstr-plus{align-self:center;font-size:22px;font-weight:900;color:'+MA_RED+'}@media(max-width:640px){.mstr-plus{display:none}}'+
+    '.mstr-verb.ov-clickable{cursor:pointer;transition:box-shadow .15s,transform .1s}.mstr-verb.ov-clickable:hover{box-shadow:0 5px 16px rgba(207,10,44,.13);transform:translateY(-1px)}'+
+    '.mstr-verb-more{font-size:10px;font-weight:800;color:'+MA_RED+';margin-top:7px;letter-spacing:.3px}'+
+    '.mad-flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:stretch;margin:4px 0 12px}@media(max-width:760px){.mad-flow{grid-template-columns:1fr}}'+
+    '.mad-arr{align-self:center;color:'+MA_RED+';font-size:20px;font-weight:900}@media(max-width:760px){.mad-arr{text-align:center}}'+
+    '.mad-step{border:1px solid var(--bdr);border-radius:12px;padding:13px 14px;background:var(--w)}'+
+    '.mad-h{font-size:12.5px;font-weight:900;color:var(--navy);margin-bottom:7px}.mad-p{font-size:11.5px;color:var(--mu);line-height:1.5}'+
+    '.mad-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}.mad-chip{font-size:10px;font-weight:700;border-radius:7px;padding:3px 8px}</style>';
+  h+='<p class="ov-lede">Mastercard frames its strategy as a verb triad, executed through <b>three growth vectors</b> (Consumer Payments · Commercial & New Flows · Services) and wired together by a <b>multi-rail</b> platform — the deliberate hedge against disintermediation. <b>Tap any card</b> — the three verbs below <i>or</i> the five levers under them — for the detail.</p>';
+  h+='<div class="mstr-hero">'+
+    '<div class="mstr-verb ov-clickable" data-detail="verb:grow"><div class="mstr-verb-ic">📈</div><div class="mstr-verb-v">Grow</div><div class="mstr-verb-l">the core network</div><div class="mstr-verb-more">Tap ›</div></div>'+
+    '<span class="mstr-plus">→</span>'+
+    '<div class="mstr-verb ov-clickable" data-detail="verb:diversify"><div class="mstr-verb-ic">🧬</div><div class="mstr-verb-v">Diversify</div><div class="mstr-verb-l">customers & geographies</div><div class="mstr-verb-more">Tap ›</div></div>'+
+    '<span class="mstr-plus">→</span>'+
+    '<div class="mstr-verb ov-clickable" data-detail="verb:build"><div class="mstr-verb-ic">🏗️</div><div class="mstr-verb-v">Build</div><div class="mstr-verb-l">for the future</div><div class="mstr-verb-more">Tap ›</div></div>'+
   '</div>';
+  h+=sec('Why the acquisition spree — defending share by offering more',
+    '<div class="mad-flow">'+
+      '<div class="mad-step" style="border-top:3px solid '+MA_STEEL+'"><div class="mad-h">① The ecosystem is crowding</div><div class="mad-p">A wave of new entrants is trying to sit between the bank and the merchant — routing around cards.</div>'+
+        '<div class="mad-chips">'+['Fintechs','Digital wallets','A2A / real-time','Stablecoins','Big-tech pay'].map(function(x){ return '<span class="mad-chip" style="background:#EEF2F7;color:var(--navy)">'+esc(x)+'</span>'; }).join('')+'</div></div>'+
+      '<div class="mad-arr">→</div>'+
+      '<div class="mad-step" style="border-top:3px solid '+MA_ORANGE+'"><div class="mad-h">② So the game changes</div><div class="mad-p">Mastercard already holds enormous network share. The battle is no longer <i>winning</i> share — it is <b>defending</b> it. The moat: earn <b>more on every transaction</b>, and even off its own rails.</div></div>'+
+      '<div class="mad-arr">→</div>'+
+      '<div class="mad-step" style="border-top:3px solid '+MA_RED+'"><div class="mad-h">③ The response: buy the "more"</div><div class="mad-p"><b>~$10B+ of acquisitions since 2015</b> bolt value-added services onto the rails:</div>'+
+        '<div class="mad-chips">'+['Security','Identity','Data & AI','Open banking','A2A rails'].map(function(x){ return '<span class="mad-chip" style="background:rgba(207,10,44,.08);color:'+MA_RED+'">'+esc(x)+'</span>'; }).join('')+'</div></div>'+
+    '</div>'+
+    '<div class="ov-callout" style="margin-top:4px"><b>The payoff:</b> VAS is now <b>~40% of revenue and growing 20%+</b>, much of it sells <b>even where Mastercard doesn\'t win the card</b> (fraud, identity, open banking), and every service sold into an issuer or merchant <b>raises switching costs</b> — so the network share gets <i>stickier</i>. The through-line of a decade of M&A: <b>services → a wider, better-defended moat</b>.</div>');
   h+=sec('The five levers — tap any card',
     '<div class="ov-drivers">'+MA_STRAT_DRIVERS.map(function(d){ return '<div class="ov-driver ov-clickable" data-detail="strat:'+esc(d.k)+'"><div class="ov-driver-t">'+d.ic+' '+esc(d.t)+'</div><div class="ov-driver-d">'+esc(d.teaser)+'</div><div class="ov-more">More ›</div></div>'; }).join('')+'</div>');
   h+=sec('The 2025–2027 targets (Investor Day, Nov 2024)',
@@ -1145,33 +1236,115 @@ function finCard(id, title, sub){
 // it bears interchange litigation DIRECTLY (no Visa-style escrow shield). The broader
 // bull/bear forces are evidence-framed in Top Line ▸ Industry Analysis (not a generic
 // winds list — same convention as UBER). ──
+// Inline SVG flags — country-flag emoji don't render on Windows, so draw them (CSP-safe).
+function flagSvg(code){
+  var open='<svg class="lit-flag" viewBox="0 0 60 40" width="42" height="28" preserveAspectRatio="none">';
+  if(code==='us'){
+    var st=''; for(var i=0;i<13;i++){ if(i%2===0) st+='<rect y="'+(i*40/13).toFixed(2)+'" width="60" height="'+(40/13).toFixed(2)+'" fill="#B22234"/>'; }
+    var stars=''; [6,14,22].forEach(function(x){ [4,11,18].forEach(function(y){ stars+='<circle cx="'+x+'" cy="'+y+'" r="1.3" fill="#fff"/>'; }); });
+    return open+'<rect width="60" height="40" fill="#fff"/>'+st+'<rect width="26" height="21.54" fill="#3C3B6E"/>'+stars+'</svg>';
+  }
+  if(code==='gb'){
+    return open+'<rect width="60" height="40" fill="#012169"/>'+
+      '<path d="M0,0 60,40 M60,0 0,40" stroke="#fff" stroke-width="9"/>'+
+      '<path d="M0,0 60,40 M60,0 0,40" stroke="#C8102E" stroke-width="4"/>'+
+      '<path d="M30,0 V40 M0,20 H60" stroke="#fff" stroke-width="12"/>'+
+      '<path d="M30,0 V40 M0,20 H60" stroke="#C8102E" stroke-width="6"/></svg>';
+  }
+  if(code==='eu'){
+    var s=''; for(var j=0;j<12;j++){ var a=j*Math.PI/6; s+='<circle cx="'+(30+13*Math.sin(a)).toFixed(1)+'" cy="'+(20-13*Math.cos(a)).toFixed(1)+'" r="1.8" fill="#FFCC00"/>'; }
+    return open+'<rect width="60" height="40" fill="#003399"/>'+s+'</svg>';
+  }
+  return open+'<rect width="60" height="40" fill="#EAF2FB"/><circle cx="30" cy="20" r="15" fill="#2E86C1"/>'+
+    '<g fill="#3FA35B"><ellipse cx="24" cy="15" rx="5" ry="3"/><ellipse cx="37" cy="24" rx="6" ry="3.5"/></g>'+
+    '<g stroke="#fff" stroke-width="1" fill="none" opacity=".65"><ellipse cx="30" cy="20" rx="15" ry="6"/><line x1="30" y1="5" x2="30" y2="35"/></g></svg>';
+}
+function litFlagCards(){
+  return '<div class="lit-grid">'+LIT_CASES.map(function(x){ var lv=LIT_LEVEL[x.level];
+    return '<div class="lit-card" style="border-top:3px solid '+lv.c+'">'+
+      '<div class="lit-head">'+flagSvg(x.code)+'<span class="lit-juris">'+esc(x.juris)+'</span>'+
+        '<span class="lit-tag" style="color:'+lv.c+';border-color:'+lv.c+'">'+esc(x.tag)+'</span></div>'+
+      '<div class="lit-headline">'+x.headline+'</div>'+
+      '<div class="lit-row"><span class="lit-k">Status</span><span class="lit-v">'+x.status+'</span></div>'+
+      '<div class="lit-row"><span class="lit-k">MA&nbsp;exposure</span><span class="lit-v">'+x.exp+'</span></div>'+
+      '<div class="lit-badge" style="color:'+lv.c+';background:'+_hexRgba(lv.c,0.10)+'">'+esc(lv.l)+'</div>'+
+    '</div>'; }).join('')+'</div>';
+}
+// Click-through detail for the two litigation-flow columns (opens in the shared modal).
+var LIT_FLOW={
+  ma:{ t:'Mastercard — how a litigation hit actually lands',
+    h:'<p style="font-size:12.5px;color:var(--navy);line-height:1.55;margin-bottom:10px">One class of stock, one set of shareholders — so there is nobody else to hand the bill to.</p>'+bullets([
+      '<b>How it hits the numbers:</b> when a loss becomes <b>probable and reasonably estimable</b>, Mastercard books a <b>litigation provision</b> — a charge in operating expenses (G&A) that flows straight through to <b>operating income, net income and equity</b> in the period it is recognized.',
+      '<b>It has happened repeatedly:</b> Mastercard has taken interchange-related provisions over the years (US MDL 1720, UK/EU matters) that dented reported earnings in the quarters booked — then cash goes out as settlements are paid.',
+      '<b>No pass-through:</b> unlike Visa there is no escrow or third party to absorb it. Shareholders bear ~100% of any settlement or judgment, net of any insurance.',
+      '<b>Net:</b> a cleaner, simpler structure with no share-class overhang — but interchange litigation is a <b>direct, if so-far-manageable, P&L and shareholder risk</b>.']) },
+  visa:{ t:'Visa — the Class-B litigation-escrow shield',
+    h:'<p style="font-size:12.5px;color:var(--navy);line-height:1.55;margin-bottom:10px">Built at Visa\'s 2008 IPO specifically to quarantine US interchange ("covered") litigation off the public shareholder.</p>'+bullets([
+      '<b>Who holds the risk:</b> <b>Class B shares</b> are held by Visa\'s <b>former member banks</b> — the same banks that were co-defendants. A dedicated <b>litigation escrow</b> (the "US retrospective responsibility plan") is pre-funded from Visa\'s cash flow.',
+      '<b>The mechanism:</b> when Visa settles covered litigation it deposits into the escrow; each deposit <b>reduces the Class B → Class A conversion ratio</b>. Economically the cost is borne by the <b>Class B (bank) holders</b> through dilution of their own stake — not by public Class A holders.',
+      '<b>Result:</b> Class A (public float) shareholders are <b>largely insulated</b> from US covered interchange litigation.',
+      '<b>Trade-off:</b> a more complex capital structure and a standing Class B overhang — the price Visa pays for the shield Mastercard doesn\'t have.']) },
+};
+function litShieldVisual(){
+  function node(ic,txt,accent){ return '<div class="lsv-node"'+(accent?' style="border-color:'+accent+'"':'')+'><span class="lsv-ic">'+ic+'</span><span>'+txt+'</span></div>'; }
+  var arr='<div class="lsv-arr">↓</div>';
+  var ma='<div class="lsv-col ov-clickable" data-detail="litflow:ma"><div class="lsv-h" style="color:#C0392B">Mastercard — <b>direct exposure</b></div>'+
+      node('⚖️','Interchange litigation')+arr+
+      node('🏢','<b>Mastercard Inc.</b> — single class of stock, <b>no escrow shield</b>','#C0392B')+arr+
+      node('👤','<b>Shareholders bear it directly</b>','#C0392B')+
+      '<div class="lsv-cap">Recognized as <b>litigation provisions</b> on Mastercard\'s own income statement when probable.</div><div class="lsv-more">How this works ›</div></div>';
+  var v='<div class="lsv-col ov-clickable" data-detail="litflow:visa"><div class="lsv-h" style="color:var(--mu)">Visa — <b>escrow-shielded</b></div>'+
+      node('⚖️','Interchange litigation')+arr+
+      node('🛡️','<b>Class-B shares / litigation escrow</b> intercepts US "covered litigation"','#5B6B7B')+arr+
+      node('🏦','Former <b>member banks</b> absorb it')+arr+
+      node('👤','Shareholders <b>insulated</b>')+
+      '<div class="lsv-cap">US "covered litigation" is <b>quarantined off</b> the public P&L via the Class-B mechanism.</div><div class="lsv-more">How this works ›</div></div>';
+  return '<div class="lsv-wrap">'+ma+v+'</div>'+
+    '<div class="ov-fynote" style="margin-top:10px">Same lawsuits, different plumbing: Visa <b>diverts</b> much of its US interchange exposure onto former member banks through a share/escrow structure created at its 2008 IPO; Mastercard\'s cleaner single-class structure means the risk lands <b>directly on the P&L and the shareholder</b>. Manageable so far — but a more direct risk to model.</div>';
+}
 function ddRiskBody(c){
-  var h='<p class="ov-lede">The bull/bear forces and the disintermediation threats live in <b>Top Line ▸ Industry Analysis</b>. This tab covers the one risk that is <b>structurally specific to Mastercard</b>: how it bears interchange litigation.</p>';
-  h+=sec('Litigation & Legal — borne directly', '<p class="ov-lede" style="margin-bottom:12px">'+LIT_INTRO+'</p><div class="ov-callout">'+bullets(LIT)+'</div>');
-  h+=sec('The structural difference vs Visa',
-    '<div class="mbb" style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="mbb-col mbb-bear" style="border:1px solid var(--bdr);border-top:3px solid #C0392B;border-radius:11px;padding:13px 15px"><div class="mbb-h" style="font-weight:800;color:var(--navy);margin-bottom:6px">Mastercard — direct exposure</div>'+bullets([
-      'Single class of common stock; <b>no litigation-escrow shield</b>.',
-      'Interchange & other litigation hits <b>Mastercard’s own P&L / shareholders</b> via provisions when probable.',
-      'Manageable so far, but a <b>more direct</b> shareholder risk.'])+'</div>'+
-    '<div class="mbb-col" style="border:1px solid var(--bdr);border-top:3px solid var(--mu);border-radius:11px;padding:13px 15px"><div class="mbb-h" style="font-weight:800;color:var(--navy);margin-bottom:6px">Visa — escrow-shielded</div>'+bullets([
-      'Quarantines US "covered litigation" onto former member banks via a <b>Class B share / litigation-escrow</b> mechanism.',
-      'Shareholders are <b>insulated</b> from much of the interchange exposure.'])+'</div></div>');
-  h+='<div class="ov-foot">Sources: Mastercard 10-K legal proceedings; UK Competition Appeal Tribunal (Merricks); reporting on MDL 1720 (Nov 2025 revised settlement, rejected by merchants).</div>';
+  var h='<style>'+
+    '.lit-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:720px){.lit-grid{grid-template-columns:1fr}}'+
+    '.lit-card{border:1px solid var(--bdr);border-radius:12px;padding:13px 15px;background:var(--w)}'+
+    '.lit-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}'+
+    '.lit-flag{flex:none;border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.10)}.lit-juris{font-size:13px;font-weight:800;color:var(--navy)}'+
+    '.lit-tag{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;border:1px solid;border-radius:8px;padding:1px 7px;margin-left:auto}'+
+    '.lit-headline{font-size:12px;color:var(--navy);line-height:1.5;margin-bottom:9px}'+
+    '.lit-row{display:flex;gap:9px;margin:5px 0;font-size:11px;line-height:1.5}'+
+    '.lit-k{flex:none;width:72px;font-weight:800;color:var(--mu);text-transform:uppercase;font-size:9px;letter-spacing:.3px;padding-top:2px}'+
+    '.lit-v{color:var(--navy)}'+
+    '.lit-badge{display:inline-block;margin-top:9px;font-size:10px;font-weight:800;border-radius:9px;padding:2px 10px}'+
+    '.lsv-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:6px 0 2px}@media(max-width:720px){.lsv-wrap{grid-template-columns:1fr}}'+
+    '.lsv-col{border:1px solid var(--bdr);border-radius:12px;padding:14px 14px 12px;background:var(--w)}'+
+    '.lsv-h{font-size:12.5px;font-weight:800;text-align:center;margin-bottom:10px}'+
+    '.lsv-node{display:flex;align-items:center;gap:9px;border:1px solid var(--bdr);border-radius:9px;padding:9px 11px;font-size:11.5px;color:var(--navy);line-height:1.35;background:#FBFCFD}'+
+    '.lsv-ic{font-size:16px;flex:none}.lsv-arr{text-align:center;color:var(--mu);font-size:14px;line-height:1;margin:3px 0}'+
+    '.lsv-cap{font-size:10.5px;color:var(--mu);margin-top:9px;line-height:1.5}'+
+    '.lsv-col.ov-clickable{cursor:pointer;transition:box-shadow .15s,border-color .15s}.lsv-col.ov-clickable:hover{border-color:'+MA_RED+';box-shadow:0 2px 10px rgba(207,10,44,.08)}'+
+    '.lsv-more{margin-top:10px;font-size:11px;font-weight:800;color:'+MA_RED+';text-align:right}</style>';
+  h+='<p class="ov-lede">The bull/bear forces and disintermediation threats live in <b>Top Line ▸ Industry Analysis</b>. This tab covers the one risk <b>structurally specific to Mastercard</b>: how it bears decades of interchange antitrust litigation — and why that lands differently than at Visa.</p>';
+  h+='<p class="ov-lede" style="margin-bottom:14px">'+LIT_INTRO+'</p>';
+  h+=sec('Interchange litigation — by jurisdiction', litFlagCards());
+  h+=sec('Who absorbs the hit — Mastercard vs Visa', litShieldVisual());
+  h+='<div class="ov-foot">Sources: Mastercard 10-K legal proceedings; UK Competition Appeal Tribunal (Merricks); reporting on MDL 1720 (2024 revised settlement, rejected by merchants); EU interchange regulation.</div>';
   return h;
 }
 // ── Valuation ▸ Multiples — how the listed peers trade (the qualitative map is in Industry). ──
 function ddMultiplesBody(c){
   var rows=[
-    { tk:'MA', n:'Mastercard', mc:'~$500B', ev:'~28×', pe:'~31×', g:'+13%', self:true, read:'The #2 network — premium for a larger (~40%) services mix and cross-border tilt; bears litigation directly.' },
+    { tk:'MA', n:'Mastercard', mc:'~$470B', ev:'~28×', pe:'~31×', g:'+13%', self:true, read:'The #2 network — premium for a larger (~40%) services mix and cross-border tilt; bears litigation directly.' },
     { tk:'V', n:'Visa', mc:'~$640B', ev:'~24×', pe:'~27×', g:'+11%', read:'The larger network — a touch cheaper, smaller services mix (~27%), Class-B litigation shield.' },
     { tk:'AXP', n:'Amex', mc:'~$210B', ev:'n/m', pe:'~17×', g:'+9%', read:'Closed-loop (it lends) — EV/EBITDA not comparable; a premium, affluent, spend-centric model. P/E only.' },
-    { tk:'PYPL', n:'PayPal', mc:'~$70B', ev:'~11×', pe:'~14×', g:'+9%', read:'A wallet / A2A player on a different rail; much cheaper on slower growth and a more contested moat.' },
+    { tk:'PYPL', n:'PayPal', mc:'~$50B', ev:'~11×', pe:'~14×', g:'+9%', read:'A wallet / A2A player on a different rail; much cheaper on slower growth and a more contested moat.' },
   ];
   var h='<p class="ov-lede">How the <b>listed</b> peers trade. Mastercard and Visa are the twin premium "toll roads"; Mastercard carries a slight premium to Visa for its larger services mix and cross-border tilt. Amex (closed-loop, lends) is comparable only on P/E; PayPal is a cheaper, different-rail name.</p>';
   h+='<div class="ov-chart-card" style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="color:var(--mu)"><th style="text-align:left;padding:7px 10px">Company</th><th style="text-align:right;padding:7px 10px">Mkt cap</th><th style="text-align:right;padding:7px 10px">EV/EBITDA <span style="font-weight:600">(fwd)</span></th><th style="text-align:right;padding:7px 10px">P/E <span style="font-weight:600">(fwd)</span></th><th style="text-align:right;padding:7px 10px">Rev growth</th><th style="text-align:left;padding:7px 10px">The read</th></tr></thead><tbody>'+
     rows.map(function(p){ var bg=p.self?'background:rgba(207,10,44,0.05);':''; return '<tr style="border-top:1px solid var(--bdr);'+bg+'"><td style="padding:8px 10px;font-weight:'+(p.self?'800':'700')+'">'+esc(p.n)+' <span class="muted" style="font-weight:600">'+esc(p.tk)+'</span></td><td style="text-align:right;padding:8px 10px">'+esc(p.mc)+'</td><td style="text-align:right;padding:8px 10px">'+esc(p.ev)+'</td><td style="text-align:right;padding:8px 10px">'+esc(p.pe)+'</td><td style="text-align:right;padding:8px 10px">'+esc(p.g)+'</td><td style="padding:8px 10px;color:var(--mu);font-size:11px;line-height:1.45">'+esc(p.read)+'</td></tr>'; }).join('')+
   '</tbody></table></div>';
-  h+='<div class="ov-callout" style="margin-top:12px"><b>Only listed peers with a public multiple belong here.</b> "n/m" = not meaningful (Amex carries credit risk, so EV/EBITDA is not comparable). Unlisted / state-linked rivals (UnionPay, government A2A rails) have no market multiple — they sit on the map in <b>Industry Analysis</b>. The interactive add/remove-peer scatter with <b>live</b> market caps is on the <b>Overview</b> tab.</div>';
+  h+=sec('Reading the table', '<div class="ov-callout">'+bullets([
+    '<b>Amex shows P/E only — its "n/m" on EV/EBITDA is deliberate, not a data gap.</b> Amex is a <b>lender</b>: interest income is a <i>core operating</i> line and its own borrowings fund a card-loan book. EV/EBITDA is built to strip out interest and net out debt — useful for an asset-light toll road, but for a lender it removes the actual business and treats its funding as if it were free. That is why banks and card-lenders are valued on <b>P/E</b> (or book value), and why only Amex\'s P/E sits alongside the networks here.',
+    '<b>UnionPay & state-linked A2A rails aren\'t shown</b> — they\'re unlisted, so there is no market price or multiple to quote. They\'re compared qualitatively on the map in <b>Top Line ▸ Industry Analysis</b>.',
+    '<b>Live market caps</b> and the add / remove-peer comparison live on the interactive scatter in the <b>Overview</b> tab (Massive feed).'])+'</div>');
   h+='<div class="ov-foot">Multiples ~Jul 2026, forward where available (web-sourced, directional); growth is latest reported YoY. Market caps live via Massive on the Overview scatter.</div>';
   return h;
 }
@@ -1372,7 +1545,7 @@ var MA_SENS_BASE={
   vasBase:13.4,   // FY25 value-added-services net revenue ($B), ~42%
   shares:905,     // diluted shares (M)
   netToOp:0.79,   // net income ÷ operating income (≈44.6/56.6)
-  pxFallback:566  // implied-anchor fallback if live price unavailable
+  pxFallback:519  // dated market anchor (~$470B mkt cap ÷ ~905M sh); overridden by the live price
 };
 var MA_SENS_DRIVERS=[
   { k:'gnet', label:'Payment-network growth', unit:'%', min:3, max:15, step:0.5, base:9,  hint:'GDV × cross-border × net yield, blended' },
@@ -1788,6 +1961,8 @@ function init(c){
     if (kind==='fee'){ var s=FEE_LINES.filter(function(x){return x.k===id;})[0]; return s && { t:s.n+' <span class="ov-modal-sub">'+esc(s.rev)+'</span>', h:feeDetailHtml(s) }; }
     if (kind==='mna'){ var m=MNA.filter(function(x){return x.n===id;})[0]; return m && { t:m.n+' <span class="ov-modal-sub">'+esc(m.y)+' · '+esc(m.deal)+'</span>', h:m.detail }; }
     if (kind==='hist'){ var t=TIMELINE[parseInt(id,10)]; return t && t.d ? { t:t.y, h:t.d } : null; }
+    if (kind==='litflow'){ var lf=LIT_FLOW[id]; return lf && { t:lf.t, h:lf.h }; }
+    if (kind==='verb'){ var vb=MA_VERBS[id]; return vb && { t:vb.t, h:vb.h }; }
     if (kind==='matr'){ var p=MA_TRACK.filter(function(x){return x.id===id;})[0]; if(!p) return null; var rt=MA_TRACK_RATE[p.rate];
       var body='<div style="display:inline-block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:'+rt.c+';border:1px solid '+rt.c+';border-radius:9px;padding:2px 8px;margin-bottom:10px">'+rt.l+'</div>'+
         '<div style="font-size:12.5px;color:var(--navy);line-height:1.5;margin-bottom:12px">'+p.one+'</div>'+
