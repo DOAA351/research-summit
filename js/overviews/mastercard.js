@@ -168,12 +168,19 @@ function stdProducts(){
 // Forward (default Forward). Peers add/removable by ticker; chip × deletes immediately.
 // ⚠ Multiples & growth are web-sourced approximations (mid-2026); market caps are live. ──
 var MA_PEERS=[
-  { tk:'MA', n:'Mastercard', evT:33, evF:28, peT:38, peF:31, gt:14, gf:13, mc:470, hl:true, why:'The #2 global open-loop network — richly valued on a thin-fee, no-credit-risk model, a larger (~42%) value-added-services mix than Visa, and a more international / cross-border tilt. Bears interchange litigation directly (no escrow shield).' },
-  { tk:'V',  n:'Visa',      evT:28, evF:24, peT:33, peF:27, gt:11, gf:11, mc:640, why:'The larger open-loop network — bigger by volume and acceptance, slightly cheaper on multiples, a smaller services mix (~27%), and a Class-B litigation-escrow shield Mastercard lacks.' },
-  { tk:'AXP', n:'Amex',     evT:null, evF:null, peT:20, peF:17, gt:9, gf:9, mc:210, why:'Closed-loop — it issues and lends, so revenue includes net interest income and EV/EBITDA is not comparable (it carries credit risk). Shown on P/E only; a premium, affluent, spend-centric model.' },
-  { tk:'PYPL', n:'PayPal',  evT:12, evF:11, peT:16, peF:14, gt:8, gf:9, mc:50, why:'A digital-wallet / account-to-account player — a different rail that partly competes with cards; much cheaper on multiples, reflecting slower growth and a more contested moat.' },
+  { tk:'MA', n:'Mastercard', evT:33, evF:28, peT:38, peF:31, gt:14, gf:13, mc:470, hl:true, why:'The #2 global open-loop network — a premium multiple on a thin-fee, no-credit-risk model, a larger (~42%) value-added-services mix than Visa, and a more international / cross-border tilt. Bears interchange litigation directly (no escrow shield).' },
+  { tk:'V',  n:'Visa',      evT:28, evF:24, peT:33, peF:27, gt:11, gf:11, mc:640, why:'The larger open-loop network — bigger by volume and acceptance, slightly cheaper on multiples, a smaller services mix (~30%), and a Class-B litigation escrow shield Mastercard lacks.' },
+  { tk:'AXP', n:'Amex',     evT:null, evF:null, peT:21, peF:18, gt:9, gf:9, mc:210, why:'Closed-loop — it issues and lends, so revenue includes net interest income and EV/EBITDA is not comparable (it carries credit risk). Shown on P/E only; a premium, affluent, spend-centric model that competes with Mastercard for high-end volume.' },
+  { tk:'PYPL', n:'PayPal',  evT:12, evF:11, peT:16, peF:14, gt:8, gf:9, mc:75, why:'A digital-wallet / account-to-account player on a different rail that partly competes with cards — much cheaper on multiples, reflecting slower growth and a more contested moat. A frenemy: most of its funding and its debit cards still ride Mastercard/Visa.' },
+  { tk:'FI', n:'Fiserv',    evT:15, evF:14, peT:16, peF:14, gt:8, gf:8, mc:90, why:'A payments & fintech processor (Clover, Carat) that connects merchants and issuers to the rails — a partner and customer of Mastercard, not a network. A mid-teens multiple, well below the networks.' },
+  { tk:'FIS', n:'FIS',      evT:13, evF:12, peT:14, peF:12, gt:6, gf:7, mc:45, why:'Fidelity National Information Services — core-banking & issuer processing that rides the networks\' rails rather than competing with them. A cheaper, slower-growth processor multiple.' },
+  { tk:'GPN', n:'Global Payments', evT:10, evF:9, peT:9, peF:8, gt:5, gf:6, mc:22, why:'A merchant acquirer / processor — the cheapest of the payments majors on a high-single-digit multiple, reflecting slow growth and integration overhang. Rides the rails, doesn\'t own them.' },
+  { tk:'XYZ', n:'Block',    evT:13, evF:11, peT:16, peF:14, gt:10, gf:11, mc:48, why:'Square (acquiring) + Cash App (wallet / P2P) — partly competes for merchant and P2P flow, but its cards and funding still ride Mastercard/Visa. A cheaper, more contested fintech multiple.' },
+  { tk:'ADYEN', n:'Adyen',  evT:32, evF:26, peT:38, peF:30, gt:22, gf:21, mc:55, why:'A single-platform global acquirer / PSP — the high-growth premium name in acceptance, compounding ~20%+ at a network-like multiple. A partner on acceptance, not a network.' },
+  { tk:'FOUR', n:'Shift4',  evT:14, evF:12, peT:16, peF:13, gt:22, gf:20, mc:10, why:'A fast-growing US acquirer (hospitality, stadiums, crypto) — ~20% growth at a mid-teens multiple. Rides the rails on the acceptance side.' },
+  { tk:'CPAY', n:'Corpay',  evT:13, evF:12, peT:14, peF:12, gt:9, gf:9, mc:24, why:'A commercial-payments & fleet-card specialist (ex-FLEETCOR) — competes in the B2B / new-flows space Mastercard is chasing, at a low-teens multiple.' },
 ];
-var MA_SC={ type:'ev', basis:'f', peers:null };
+var MA_SC={ type:'pe', basis:'f', peers:null };
 function maScReset(){ MA_SC.peers=MA_PEERS.map(function(p){ var o={}; for(var k in p) o[k]=p[k]; o.on=true; return o; }); }
 function maScMult(p){ if(MA_SC.type==='ev') return MA_SC.basis==='f'?p.evF:p.evT; return MA_SC.basis==='f'?p.peF:p.peT; }
 function stdPeerScatter(){
@@ -192,20 +199,20 @@ function stdPeerScatter(){
     '.mg-tip{position:fixed;z-index:60;max-width:250px;background:var(--navy);color:#fff;border-radius:9px;padding:9px 12px;font-size:11.5px;line-height:1.5;box-shadow:0 8px 22px rgba(16,20,26,.28);pointer-events:none;border-top:3px solid '+MA_RED+'}'+
     '.mg-tip .mgt-n{display:block;font-weight:800;font-size:12.5px;color:'+MA_RED+';margin-bottom:3px}</style>';
   h+='<div class="ov-diagram-cap" style="margin:0 0 6px">Listed peers mapped by <b>valuation multiple</b> (x) and <b>revenue growth</b> (y). <b>Bubble size = live market cap in USD</b>. <span style="opacity:.75">Hover or tap a bubble for the read.</span></div>';
-  h+='<div class="mg-tog-row"><span class="mg-tog">Multiple: <span class="mg-seg"><button type="button" class="mg-pill active" data-mgtype="ev">EV/EBITDA</button><button type="button" class="mg-pill" data-mgtype="pe">P/E</button></span></span>'+
+  h+='<div class="mg-tog-row"><span class="mg-tog">Multiple: <span class="mg-seg"><button type="button" class="mg-pill" data-mgtype="ev">EV/EBITDA</button><button type="button" class="mg-pill active" data-mgtype="pe">P/E</button></span></span>'+
      '<span class="mg-tog">Basis: <span class="mg-seg"><button type="button" class="mg-pill active" data-mgbasis="f">Forward</button><button type="button" class="mg-pill" data-mgbasis="t">Trailing</button></span></span></div>';
   h+='<div class="ov-diagram"><svg viewBox="0 0 640 300" id="maScSvg" role="img" aria-label="Peer valuation vs growth map">'+
     '<line x1="80" y1="252" x2="612" y2="252" stroke="#C7CED6" stroke-width="1.5"/>'+
     '<line x1="80" y1="252" x2="80" y2="44" stroke="#C7CED6" stroke-width="1.5"/>'+
     '<text x="88" y="270" font-family="Inter,sans-serif" font-size="10" fill="#8A93A0">← cheaper</text>'+
     '<text x="610" y="270" font-family="Inter,sans-serif" font-size="10" fill="#8A93A0" text-anchor="end">more expensive →</text>'+
-    '<text x="346" y="288" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#6b7684" text-anchor="middle" id="maScXlab">EV/EBITDA · forward</text>'+
+    '<text x="346" y="288" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#6b7684" text-anchor="middle" id="maScXlab">P/E · forward</text>'+
     '<text x="74" y="250" font-family="Inter,sans-serif" font-size="10" fill="#8A93A0" text-anchor="end">slow</text>'+
     '<text x="74" y="52" font-family="Inter,sans-serif" font-size="10" fill="#8A93A0" text-anchor="end">fast growth</text>'+
     '<g id="maScNodes"></g>'+
   '</svg></div>';
   h+='<div class="masc-chips" id="maScChips"></div>';
-  h+='<div class="ov-diagram-cap" style="margin-top:4px">Remove a peer with the <b>×</b> on its chip, or add one by ticker. Only <b>listed</b> peers with a public multiple plot here; a name drops out of the EV/EBITDA view when it has no meaningful one — <b>Amex</b> is closed-loop (it lends), so it shows on <b>P/E only</b>. Private / government rails (UPI, Pix, FedNow) and unlisted processors have no market multiple and sit on the qualitative competitive map in <b>Deep Dive ▸ Top Line ▸ Industry Analysis</b>, not this scatter. <span class="ave-subh-note">Multiples & growth are approximate, web-sourced (mid-2026); market caps are live. Directional, not exact.</span></div>';
+  h+='<div class="ov-diagram-cap" style="margin-top:4px">The map spans the <b>listed payments ecosystem</b> — the two networks (<b>Mastercard, Visa</b>), the closed-loop lender (<b>Amex</b>), a wallet (<b>PayPal</b>), the big processors (<b>Fiserv, FIS, Global Payments</b>), acquirers / PSPs (<b>Adyen, Shift4</b>), fintech (<b>Block</b>) and commercial payments (<b>Corpay</b>). <b>P/E is the default so every name plots;</b> switch to <b>EV/EBITDA</b> and the lenders drop out (Amex carries credit risk, so EV/EBITDA isn\'t meaningful). Remove a peer with the <b>×</b> or add one by ticker. Private / government rails (UPI, Pix, FedNow) and unlisted processors have no market multiple and sit on the qualitative map in <b>Deep Dive ▸ Top Line ▸ Industry Analysis</b>. <span class="ave-subh-note">Multiples & growth are approximate, web-sourced (mid-2026); market caps are live. Directional, not exact.</span></div>';
   h+='<div id="maScTip" class="mg-tip" hidden></div>';
   return h;
 }
@@ -218,7 +225,7 @@ function maScRender(root){
     if(!p.on) return; var m=maScMult(p); if(m==null||isNaN(m)) return;
     var growth=MA_SC.basis==='f'?p.gf:p.gt; if(growth==null) growth=p.gf!=null?p.gf:p.gt;
     var x=X0+Math.max(0,Math.min(1,m/maxMult))*(X1-X0);
-    var y=Y0-Math.max(0,Math.min(1,(growth||0)/20))*(Y0-Y1);
+    var y=Y0-Math.max(0,Math.min(1,(growth||0)/25))*(Y0-Y1);
     var r=Math.max(6,Math.min(24,5+Math.sqrt(Math.max(1,p.mc))*0.7));
     frag+='<g class="mg-node" data-name="'+esc(p.n)+'" data-why="'+esc(p.why||'')+'" transform="translate('+x.toFixed(1)+','+y.toFixed(1)+')">'+
       '<circle class="mg-dot" r="'+r.toFixed(1)+'" fill="'+(p.hl?MA_RED:'#3A7BD5')+'"'+(p.hl?' stroke="#fff" stroke-width="2"':' opacity="0.82"')+' style="cursor:pointer"></circle>'+
@@ -688,10 +695,43 @@ function stdOverviewBody(c){
   // ── Progressive disclosure: everything below defaults collapsed ──
   h+=collapsible('How it makes money', stdMoneyMap());
   h+=collapsible('What it makes — the products', stdProducts());
+  h+=collapsible('Value-Added Services — the moat\'s growth engine', stdVasSpotlight(), true);
   h+=collapsible('Competitors — valuation vs growth', stdPeerScatter());
   h+=collapsible('Timeline', stdTimeline());
   h+='<div class="ov-foot">'+esc(OV_SOURCES)+'</div>';
   return h;
+}
+// ── VAS spotlight — the moat's growth engine. Punchy, high-visibility (open by default). ──
+function stdVasSpotlight(){
+  var fam=function(ic,t,d){ return '<div class="vas-fam"><div class="vas-fam-ic">'+ic+'</div><div><div class="vas-fam-t">'+esc(t)+'</div><div class="vas-fam-d">'+d+'</div></div></div>'; };
+  var stat=function(v,l){ return '<div class="vas-h"><div class="vas-h-v">'+v+'</div><div class="vas-h-l">'+l+'</div></div>'; };
+  return '<style>'+
+    '.vas-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 6px}@media(max-width:640px){.vas-hero{grid-template-columns:1fr}}'+
+    '.vas-h{border-radius:13px;padding:15px 16px;color:#fff;background:linear-gradient(135deg,'+MA_RED+' 0%,#e0344e 100%)}'+
+    '.vas-h-v{font-size:26px;font-weight:900;letter-spacing:-.5px;line-height:1}'+
+    '.vas-h-l{font-size:11px;font-weight:600;opacity:.93;margin-top:6px;line-height:1.45}'+
+    '.vas-fams{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:12px 0 2px}@media(max-width:640px){.vas-fams{grid-template-columns:1fr}}'+
+    '.vas-fam{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--bdr);border-radius:11px;padding:11px 13px;background:var(--w)}'+
+    '.vas-fam-ic{font-size:20px;line-height:1;flex:none}.vas-fam-t{font-size:12.5px;font-weight:800;color:var(--navy)}'+
+    '.vas-fam-d{font-size:11px;color:var(--mu);line-height:1.45;margin-top:2px}</style>'+
+    '<div class="ov-diagram-cap" style="margin:0 0 10px"><b>Value-Added Services (VAS)</b> is the leg that keeps the moat <b>widening</b> — the fastest-growing, least-regulated, most <b>network-agnostic</b> revenue Mastercard has, and the one it points to for durable double-digit growth.</div>'+
+    '<div class="vas-hero">'+
+      stat('~40%','of net revenue today — up from ~30% a few years ago, and still climbing')+
+      stat('+20%+ <span style="font-size:15px">YoY</span>','growth — running well ahead of the payments network, pulling up the whole company')+
+      stat('~$490B','addressable market (Investor Day 2024) — Mastercard holds <b>&lt;7%</b> of the serviceable slice')+
+    '</div>'+
+    '<div class="ov-subh" style="margin:14px 0 6px">Four families — sold on top of the rails (and off them)</div>'+
+    '<div class="vas-fams">'+
+      fam('🛡️','Security & cyber','<b>Recorded Future</b> threat intel, RiskRecon & <b>Decision Intelligence</b> AI fraud scoring — the trust layer, priced per transaction.')+
+      fam('🎯','Consumer engagement','Loyalty & personalization (<b>Dynamic Yield</b>, SessionM) — help issuers & merchants acquire and retain cardholders.')+
+      fam('📊','Business & market insights','<b>Test & Learn</b>, <b>Credit Intelligence</b> & <b>Ekata</b> identity — data, analytics and decisioning.')+
+      fam('🔗','Open banking & processing','<b>Finicity</b> (US) & <b>Aiia</b> (Europe) plus gateway / processing — account-based reach beyond cards.')+
+    '</div>'+
+    '<div class="ov-callout" style="margin-top:12px"><b>Why it defends the moat:</b>'+bullets([
+      '<b>Network-agnostic → earns off-Mastercard volume.</b> Security, identity, insights and open banking are sold even where a rival wins the card — partly <b>decoupling growth from card-share battles</b>.',
+      '<b>Recurring & higher-quality.</b> Subscriptions and per-transaction scoring are stickier and less tied to the consumer-spend cycle than swipe fees — a diversifier against macro / travel softness.',
+      '<b>Raises switching costs → a stickier network.</b> Selling security, data, engagement and open banking into the same banks and merchants makes them harder to leave <i>and</i> pulls through more network volume. Services and the network reinforce each other.',
+      '<b>Less regulated.</b> VAS sits outside the interchange / routing crossfire — a structurally safer growth pool as regulation pressures the core swipe fee. ~<b>60%</b> of it is "network-linked," so it also scales with transactions.']) +'</div>';
 }
 function html(c){
   var h='<div class="ov ov-mastercard" data-brand="MA">';
@@ -940,7 +980,7 @@ function ddIndustryBody(c){
     '<div class="ov-chart-card" style="overflow-x:auto"><table class="ov-table ov-cmp"><thead><tr><th>Dimension</th><th>'+PEER_COLS.map(esc).join('</th><th>')+'</th></tr></thead><tbody>'+
     PEER_ROWS.map(function(r){ return '<tr><td class="ov-td-name">'+esc(r[0])+'</td>'+r.slice(1).map(function(cell){ return '<td>'+cell+'</td>'; }).join('')+'</tr>'; }).join('')+
     '</tbody></table></div><div class="ov-diagram-cap" style="margin-top:10px">'+PEER_NOTE+'</div>'+
-    '<div class="ov-diagram-cap" style="margin:6px 0 0;font-size:11px;color:var(--mu)"><b>Why a different peer set than the Overview scatter?</b> This map is qualitative and by <b>business model</b>, so it includes <b>closed-loop</b> (Amex, Discover) and <b>state-linked</b> (UnionPay) players with no clean public multiple. The Overview scatter is limited to <b>listed</b> names with a real multiple (MA, V, AXP on P/E only, PYPL) — same story, intentionally different names.</div>');
+    '<div class="ov-diagram-cap" style="margin:6px 0 0;font-size:11px;color:var(--mu)"><b>Why a different peer set than the Overview scatter?</b> This map is qualitative and by <b>business model</b> — the direct <b>card-network</b> rivals plus <b>state-linked</b> UnionPay. The Overview scatter is broader: it plots the whole <b>listed payments ecosystem</b> by valuation (networks, processors, acquirers/PSPs, wallet, fintech, commercial payments) to show that the two networks earn a <b>premium multiple</b> the rest of the stack doesn\'t — same story, a wider lens.</div>');
   h+='<div class="ov-foot">Sources: Nilson Report (2025 US volumes); Mastercard/Visa FY2025 filings; TechCrunch/Silicon Canals/PaymentsJournal (UPI, Pix); Congress.gov (GENIUS Act, CCCA); ECB (digital euro); Capital One DEFM14A; MDL 1720 reporting. Stablecoin "volume" figures are widely cited but inflated by non-commercial on-chain activity.</div>';
   return h;
 }
