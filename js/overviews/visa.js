@@ -575,7 +575,7 @@ function vTrackBody(c){
 }
 
 var OV_SOURCES = 'Sources — Visa Inc. FY2025 10-K & FY2026 quarterly results/earnings releases; Visa IR & investor materials (incl. the Feb 2025 Investor Day); FY2021–FY2025 financials approximated from 10-K actuals (Visa is not in the Summit DCF universe); EDGAR for filer status. Market cap and peer bubbles are live via Massive; peer multiples & growth are web-sourced approximations (mid-2026), labeled directional. Forward figures are estimates, not company guidance.';
-var DD_SOURCES = 'Sources — Visa Inc. FY2026 quarterly results & earnings releases, FY2025 10-K and prior filings; IR & company history; acquisition press releases & SEC filings for M&A terms; DOJ debit civil-suit filing (Sept 24, 2024); public reporting on MDL 1720 and the 2008 IPO / Class-B litigation escrow. Some M&A values are estimates where terms were undisclosed; "lc"/"cn" = local-currency/currency-neutral. SPLC (named customers & suppliers) pending.';
+var DD_SOURCES = 'Sources — Visa Inc. FY2026 quarterly results & earnings releases, FY2025 10-K and prior filings; IR & company history; acquisition press releases & SEC filings for M&A terms; DOJ debit civil-suit filing (Sept 24, 2024); public reporting on MDL 1720 and the 2008 IPO / Class-B litigation escrow. Some M&A values are estimates where terms were undisclosed; "lc"/"cn" = local-currency/currency-neutral. Named customers & suppliers from Bloomberg SPLC (V US Equity, as of Jul 16, 2026).';
 
 // ═══════════════════════════════════════════════════════════════════════════
 //  STANDARDIZED OVERVIEW — the 7 blocks (hook always visible, rest collapsed)
@@ -738,37 +738,37 @@ function ddCustomersBody(c){
       '<div class="ov-chain-step is-payoff"><div class="ov-chain-n">4</div><div class="ov-chain-t">Infinite</div><div class="ov-chain-d">ultra-high-net-worth</div></div>'+
     '</div>'+
     '<div class="ov-diagram-cap">Up the ladder, cardholders spend more, travel more and skew to <b>cross-border</b>. Visa\'s mix leans <b>more toward U.S. debit</b> and everyday spend than Mastercard\'s — a defensive, resilient base — while cross-border (its <b>highest-yield</b> line) and Value-Added Services are the growth tilts. <b>Net read:</b> the broadest, most-resilient consumer base in payments, with the mix shifting toward <b>cross-border, commercial and services</b> — versus a peer that already carries a richer services/cross-border skew.</div>';
-  h+=sec('Who actually pays Visa — named clients (from earnings calls)',
-    '<div class="ov-callout" style="margin:0 0 10px"><b>SPLC enrichment pending.</b> The standardized <b>Bloomberg SPLC</b> customer map (the Jun-2026 supply-chain dataset used on the Mastercard profile) is <b>not yet loaded for Visa</b>. The list below is reconstructed from Visa’s <b>FY2024–FY2026 earnings calls</b> — issuer renewals, fintech wins and Visa Direct / new-flows partners management named on the record. Treat it as an interim, call-sourced view to be replaced with the SPLC dataset.</div>'+
-    '<div class="ov-diagram-cap" style="margin:0 0 10px">Visa’s direct customers aren’t consumers — they’re the <b>issuing banks, processors, fintechs, Visa Direct partners and co-brand merchants</b> that connect to VisaNet. Names marked ★ are the exact <b>"flip / renewal / partnership wins"</b> management called out on recent calls.</div>'+vCustomerChips());
-  h+='<div class="ov-foot">Customer list: reconstructed from Visa Inc. FY2024–FY2026 earnings-call transcripts (management-named clients/partners), not a company customer roster. Grouping is editorial. <b>Bloomberg SPLC dataset pending</b> — to be added to match the Mastercard profile. End-cardholders sit behind the issuers.</div>';
+  h+=sec('Who actually pays Visa — the named customers',
+    '<div class="ov-diagram-cap" style="margin:0 0 10px">From <b>Bloomberg SPLC</b> (as of Jul 16, 2026). Visa\'s direct customers aren\'t consumers — they\'re the <b>issuing banks, processors, fintechs, telecoms and merchants</b> that connect to VisaNet. <b>52 named customers</b> across 92 facilities; <b>~50% are US-domiciled</b>, with Germany, India, Singapore, France and the UK also prominent. <span style="color:#C0392B">⚠ = Bloomberg <b>distressed</b> default-risk grade</span>.</div>'+vCustomerChips());
+  h+='<div class="ov-foot">Customer list: Bloomberg SPLC (supply-chain), V US Equity, as of Jul 16, 2026 — BBG estimates / company-disclosed relationships, not a Visa statement. Grouping is editorial. CDW is the single largest disclosed relationship (~0.06% of Visa revenue). End-cardholders sit behind the issuers & merchants.</div>';
   return h;
 }
-// Named clients/partners reconstructed from Visa FY2024–FY2026 earnings calls — grouped by
-// role in the ecosystem. ★ marks names management called out as a flip / renewal / partnership
-// win on the record. NOTE: interim, call-sourced — Bloomberg SPLC dataset still pending.
+// Named customers from Bloomberg SPLC (V US Equity, as of Jul 16, 2026) — grouped editorially
+// by role in the ecosystem. ⚠ marks a Bloomberg distressed default-risk grade.
 var V_CUST_GROUPS=[
-  { t:'Issuing banks (incl. renewal / flip wins ★)', ic:'🏦', note:'the portfolios that ride the rails',
-    names:['Wells Fargo ★','JPMorgan Chase','Lloyds Banking Group ★','NatWest ★','HSBC ★','Scotiabank','Royal Bank of Canada','Commonwealth Bank','ICBC'] },
-  { t:'Processors & payment enablers', ic:'⚙️', note:'the plumbing that connects merchants & issuers',
-    names:['Fiserv','FIS (Fidelity National)','Global Payments','Marqeta','Highnote ★','Pismo (Visa-owned)','CyberSource (Visa-owned)','Worldpay'] },
+  { t:'Banks & issuers', ic:'🏦', note:'the portfolios & programs that ride the rails',
+    names:['Canadian Imperial Bank (CIBC)','NewtekOne','Freedom Holding','Blackhawk Network','Green Dot'] },
+  { t:'Processors, gateways & payment enablers', ic:'⚙️', note:'the plumbing that connects merchants & issuers',
+    names:['Fiserv','Fidelity National Information (FIS)','EVERTEC','ACI Worldwide','Worldline','Nuvei','Conduent','Euronet Worldwide','TietoEVRY','GFT Technologies','Cantaloupe','Usio','CDW','RTB Digital'] },
   { t:'Fintechs, wallets & card platforms', ic:'📱', note:'the frenemies that mostly ride the rails',
-    names:['Revolut ★','Chime ★','Robinhood','Cash App (Block)','Affirm','Klarna ★','Nubank','PayPay (Japan) ★','Stripe'] },
-  { t:'Visa Direct & money-movement partners', ic:'💸', note:'new-flows / disbursements & remittances',
-    names:['Western Union ★','Remitly','PayPal','Payoneer','Thunes','X Money ★'] },
-  { t:'Co-brands, merchants & travel', ic:'🛍️', note:'branded programs & spend partners',
-    names:['TikTok ★','Expedia','Booking.com','major airline & retail co-brands'] },
+    names:['Block (Square)','Klarna','Chime','Marqeta','Paysend','HiPay','EverCommerce'] },
+  { t:'Telecoms & connectivity', ic:'📶', note:'prepaid, airtime & carrier-billing programs',
+    names:['e& (Etisalat)','Ooredoo','Safaricom','Kyivstar','Orange','Singtel','Mobile Telecom Co (K)','Mobile Telecom Co (S)'] },
+  { t:'Merchants, e-commerce & marketplaces', ic:'🛍️', note:'branded programs & spend partners',
+    names:['Expedia','GoDaddy','Wix','Zalando','LightInTheBox','Newegg ⚠','Eventbrite','Cia Brasileira de Distribuição (GPA)','Bata Indonesia','Tingo Group ⚠','WEX','Goldpac'] },
+  { t:'Travel & software platforms', ic:'✈️', note:'GDS, airlines & software spend',
+    names:['Sabre','Amadeus','Thomas Cook India','Southwest Airlines','OpenAI','Intuit'] },
 ];
 function vCustomerChips(){
   return '<div class="ov-chart-card" style="padding:14px 16px">'+
     '<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px">'+
-      '<div><div style="font-size:20px;font-weight:900;color:var(--navy)">call-sourced</div><div style="font-size:10.5px;color:var(--mu)">FY24–FY26 earnings transcripts</div></div>'+
-      '<div><div style="font-size:20px;font-weight:900;color:'+V_BLUE+'">SPLC</div><div style="font-size:10.5px;color:var(--mu)">Bloomberg dataset pending</div></div>'+
-      '<div><div style="font-size:20px;font-weight:900;color:var(--navy)">banks+</div><div style="font-size:10.5px;color:var(--mu)">issuers · processors · fintechs · co-brands</div></div>'+
-      '<div><div style="font-size:20px;font-weight:900;color:var(--navy)">★</div><div style="font-size:10.5px;color:var(--mu)">= an earnings-call flip / renewal / partnership win</div></div>'+
+      '<div><div style="font-size:20px;font-weight:900;color:var(--navy)">52</div><div style="font-size:10.5px;color:var(--mu)">named customers · 92 facilities</div></div>'+
+      '<div><div style="font-size:20px;font-weight:900;color:'+V_BLUE+'">~50%</div><div style="font-size:10.5px;color:var(--mu)">US-domiciled customers</div></div>'+
+      '<div><div style="font-size:20px;font-weight:900;color:var(--navy)">banks+</div><div style="font-size:10.5px;color:var(--mu)">issuers · processors · fintechs · telecoms · merchants</div></div>'+
+      '<div><div style="font-size:20px;font-weight:900;color:#C0392B">⚠ 2</div><div style="font-size:10.5px;color:var(--mu)">customers at a distressed grade</div></div>'+
     '</div>'+
     V_CUST_GROUPS.map(function(g){ return '<div style="margin:10px 0 4px"><div style="font-size:12px;font-weight:800;color:var(--navy);margin-bottom:5px">'+g.ic+' '+esc(g.t)+' <span style="font-weight:600;color:var(--mu);font-size:10.5px">— '+esc(g.note)+'</span></div>'+
-      '<div style="display:flex;flex-wrap:wrap;gap:5px">'+g.names.map(function(n){ var win=n.indexOf('★')!==-1; return '<span style="background:'+(win?'rgba(26,31,113,0.06)':'#F1F4F8')+';border:1px solid '+(win?'rgba(26,31,113,0.25)':'var(--bdr)')+';border-radius:7px;padding:3px 9px;font-size:11px;color:var(--navy)">'+esc(n)+'</span>'; }).join('')+'</div></div>'; }).join('')+
+      '<div style="display:flex;flex-wrap:wrap;gap:5px">'+g.names.map(function(n){ var ds=n.indexOf('⚠')!==-1; return '<span style="background:'+(ds?'rgba(192,57,43,0.06)':'#F1F4F8')+';border:1px solid '+(ds?'rgba(192,57,43,0.30)':'var(--bdr)')+';border-radius:7px;padding:3px 9px;font-size:11px;color:var(--navy)">'+esc(n)+'</span>'; }).join('')+'</div></div>'; }).join('')+
   '</div>';
 }
 // ── Top Line ▸ TAM — Visa's OWN addressable-market framing (Investor Day, Feb 2025):
@@ -956,42 +956,43 @@ function ddUnitEconBody(c){
 }
 // ── Bottom Line ▸ Suppliers. Two layers: (1) the FOUR-PARTY model — the conceptual
 // "supply chain" of the rails (issuers/acquirers/merchants/cardholders); and (2) the
-// REAL vendor supply chain. Visa's Bloomberg SPLC vendor dataset is PENDING — the second
-// section is shown at category level (asset-light cost structure) until SPLC is loaded. ──
+// REAL vendor supply chain from Bloomberg SPLC (V US Equity, as of Jul 16, 2026) — 51
+// vendors, almost entirely IT / software / cloud / security, the proof of asset-light. ──
 var V_SUP_GROUPS=[
-  { t:'IT services, cloud & core software', ic:'🖥️', note:'the biggest cost bucket for an asset-light network',
-    names:['Cloud & data-center compute','Core processing software','Data & analytics platforms','Network / connectivity'] },
-  { t:'AI & advanced compute', ic:'🤖', note:'feeds the AI-based fraud & risk models',
-    names:['GPU / accelerated compute','Machine-learning tooling'] },
-  { t:'Security, identity & biometrics', ic:'🛡️', note:'the tech behind the risk & security VAS leg',
-    names:['Tokenization & encryption','Identity / authentication','Fraud & threat intelligence'] },
-  { t:'Card & payments hardware / rails tech', ic:'💳', note:'cards, terminals, connectivity',
-    names:['Card manufacturing / personalization','Terminal & acceptance tech'] },
-  { t:'Professional services, marketing & facilities', ic:'🏢', note:'advisory, agencies and the office footprint',
-    names:['Consulting & advisory','Marketing / sponsorship','Real estate & facilities'] },
+  { t:'IT services, cloud & core software', ic:'🖥️', note:'the biggest cost bucket — Adobe is Visa’s single largest disclosed vendor (~0.18% of cost)',
+    names:['Adobe','ServiceNow','SAP','Workday','Alteryx','Confluent','Sinch','NICE','Qualys','Digi International','Grid Dynamics','Quisitive','TTEC Holdings','GHL Systems','Pipefy','Verimatrix'] },
+  { t:'AI, compute & semiconductors', ic:'🤖', note:'feeds the AI-based fraud & risk models',
+    names:['NVIDIA','AMD','Wuhan Tianyu ⛔'] },
+  { t:'Card, biometrics & payments hardware', ic:'💳', note:'cards, terminals, biometrics & connectivity',
+    names:['GMO Financial Gate','Goldpac','Newland Digital','Hengbao','Fingerprint Cards','IDEX Biometrics ⚠','Quantstamp'] },
+  { t:'Fintech rails & processors', ic:'⚙️', note:'network / money-movement infrastructure',
+    names:['Network International','Euronet Worldwide','Global Payments','Usio','Circle (USDC)','Polygon','SunCar Technology'] },
+  { t:'Advertising, marketing & sponsorship', ic:'📣', note:'agencies, media & brand sponsorships',
+    names:['M&C Saatchi','Ascential','Publicis Groupe','Ströer','Red Bull','Electronic Arts'] },
+  { t:'Real estate, travel & facilities', ic:'🏢', note:'the office footprint, travel & data partners',
+    names:['British Land','Swire Properties','Cousins Properties','Morgan Sindall','Top Of The Rock','Bright Horizons','Amadeus','Gol Linhas Aéreas ⚠','AirAsia (Capital A)','Karya Pacific Energy','PCCW','Beijing Yuanlong Yato'] },
 ];
 function vSupplierChips(){
   return '<div class="ov-chart-card" style="padding:14px 16px">'+
     '<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px">'+
-      '<div><div style="font-size:20px;font-weight:900;color:'+V_BLUE+'">SPLC</div><div style="font-size:10.5px;color:var(--mu)">Bloomberg vendor dataset pending</div></div>'+
-      '<div><div style="font-size:20px;font-weight:900;color:var(--navy)">~0%</div><div style="font-size:10.5px;color:var(--mu)">raw-material / COGS suppliers</div></div>'+
-      '<div><div style="font-size:20px;font-weight:900;color:var(--navy)">IT-heavy</div><div style="font-size:10.5px;color:var(--mu)">cloud · software · security · data</div></div>'+
-      '<div><div style="font-size:20px;font-weight:900;color:var(--navy)">category</div><div style="font-size:10.5px;color:var(--mu)">shown by bucket until SPLC loads</div></div>'+
+      '<div><div style="font-size:20px;font-weight:900;color:var(--navy)">51</div><div style="font-size:10.5px;color:var(--mu)">named suppliers · 89 facilities</div></div>'+
+      '<div><div style="font-size:20px;font-weight:900;color:'+V_BLUE+'">~0%</div><div style="font-size:10.5px;color:var(--mu)">raw-material / COGS suppliers</div></div>'+
+      '<div><div style="font-size:20px;font-weight:900;color:var(--navy)">US 41%</div><div style="font-size:10.5px;color:var(--mu)">domiciled · 46% of facilities</div></div>'+
+      '<div><div style="font-size:20px;font-weight:900;color:#C0392B">⚠ 2</div><div style="font-size:10.5px;color:var(--mu)">distressed · ⛔ 1 sanctioned</div></div>'+
     '</div>'+
     V_SUP_GROUPS.map(function(g){ return '<div style="margin:10px 0 4px"><div style="font-size:12px;font-weight:800;color:var(--navy);margin-bottom:5px">'+g.ic+' '+esc(g.t)+' <span style="font-weight:600;color:var(--mu);font-size:10.5px">— '+esc(g.note)+'</span></div>'+
-      '<div style="display:flex;flex-wrap:wrap;gap:5px">'+g.names.map(function(n){ return '<span style="background:#F1F4F8;border:1px solid var(--bdr);border-radius:7px;padding:3px 9px;font-size:11px;color:var(--navy)">'+esc(n)+'</span>'; }).join('')+'</div></div>'; }).join('')+
+      '<div style="display:flex;flex-wrap:wrap;gap:5px">'+g.names.map(function(n){ var flag=n.indexOf('⚠')!==-1||n.indexOf('⛔')!==-1; return '<span style="background:'+(flag?'rgba(192,57,43,0.06)':'#F1F4F8')+';border:1px solid '+(flag?'rgba(192,57,43,0.30)':'var(--bdr)')+';border-radius:7px;padding:3px 9px;font-size:11px;color:var(--navy)">'+esc(n)+'</span>'; }).join('')+'</div></div>'; }).join('')+
   '</div>';
 }
 function ddSuppliersBody(c){
-  var h='<p class="ov-lede">Visa is an <b>asset-light network</b>: it does not issue, lend or take credit risk. So "suppliers" means two different things — the <b>four-party model</b> (the conceptual supply chain of the rails), and the <b>real vendor list</b> (who Visa actually pays), which is <b>almost entirely IT, cloud, software and security</b>. That second list <i>is</i> the asset-light thesis.</p>';
+  var h='<p class="ov-lede">Visa is an <b>asset-light network</b>: it does not issue, lend or take credit risk. So "suppliers" means two different things — the <b>four-party model</b> (the conceptual supply chain of the rails), and the <b>real vendor list</b> (who Visa actually pays), which turns out to be <b>almost entirely IT, cloud, software and security</b>. That second list <i>is</i> the asset-light thesis.</p>';
   h+=sec('The four-party (open-loop) model',
       '<div class="ov-diagram-cap" style="margin:0 0 8px">The conceptual supply chain of the rails — tap any box for its role, then press <b>Play</b> to follow a single $100 purchase and see who earns at each step.</div>'+
       '<div class="ov-diagram" style="margin-top:6px">'+FOURPARTY_SVG+'</div>'+flowHtml());
   h+=sec('The real vendor supply chain — who Visa actually pays',
-      '<div class="ov-callout" style="margin:0 0 10px"><b>SPLC enrichment pending.</b> The standardized <b>Bloomberg SPLC</b> vendor dataset used on the Mastercard profile is <b>not yet loaded for Visa</b>. The buckets below show the <b>asset-light cost structure at category level</b> — to be replaced with the named-vendor SPLC list.</div>'+
-      '<div class="ov-diagram-cap" style="margin:0 0 10px">Notice what’s <b>not</b> here: no factories, no commodities, no cost-of-goods. Visa’s "supply chain" is <b>cloud, software, security and data-center tech</b> — a handful of low-risk vendors. That is why a ~67% operating margin is even possible.</div>'+vSupplierChips());
+      '<div class="ov-diagram-cap" style="margin:0 0 10px">From <b>Bloomberg SPLC</b> (V US Equity, as of Jul 16, 2026). Notice what’s <b>not</b> here: no factories, no commodities, no cost-of-goods. Visa’s "supply chain" is <b>cloud, software, security and data-center tech</b> — <b>51 low-risk vendors</b> (Adobe its single largest, ~0.18% of cost). That is why a ~67% operating margin is even possible. <span style="color:#C0392B">⚠ = distressed grade · ⛔ = has sanctions</span>.</div>'+vSupplierChips());
   h+=sec('How Visa makes money', '<div class="ov-callout">'+bullets(HOW_MONEY)+'</div>');
-  h+='<div class="ov-foot">Vendor buckets are editorial, category-level placeholders for an asset-light IT cost base. <b>Bloomberg SPLC vendor dataset pending</b> — to be added to match the Mastercard profile’s named-supplier map.</div>';
+  h+='<div class="ov-foot">Vendor list & relationship sizes: Bloomberg SPLC (supply-chain), V US Equity, as of Jul 16, 2026 — relationships are BBG estimates / company-disclosed, not a Visa statement. Grouping is editorial. Most top suppliers carry an investment-grade (IG) default-risk grade; Gol Linhas Aéreas & IDEX Biometrics are distressed, Wuhan Tianyu carries sanctions.</div>';
   return h;
 }
 // ── Bottom Line ▸ Margins — profitability & cash margins as % of revenue. Sourced fallback
