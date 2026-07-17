@@ -199,9 +199,15 @@ function stdPeerScatter(){
     '.masc-add{display:inline-flex;gap:5px;align-items:center}'+
     '.masc-add input{width:74px;font:inherit;font-size:11px;border:1px solid var(--bdr);border-radius:7px;padding:3px 7px;text-transform:uppercase}'+
     '.masc-add button{font:inherit;font-size:11px;font-weight:700;border:1px solid var(--bdr);border-radius:7px;padding:3px 9px;background:#F2F5F8;cursor:pointer}'+
-    '.mg-tip{position:fixed;z-index:60;max-width:250px;background:var(--navy);color:#fff;border-radius:9px;padding:9px 12px;font-size:11.5px;line-height:1.5;box-shadow:0 8px 22px rgba(16,20,26,.28);pointer-events:none;border-top:3px solid '+V_BLUE+'}'+
-    '.mg-tip .mgt-n{display:block;font-weight:800;font-size:12.5px;color:'+V_BLUE+';margin-bottom:3px}</style>';
-  h+='<div class="ov-diagram-cap" style="margin:0 0 6px">Listed peers mapped by <b>valuation multiple</b> (x) and <b>revenue growth</b> (y). <b>Bubble size = live market cap in USD</b>. <span style="opacity:.75">Hover or tap a bubble for the read.</span></div>';
+    '.mg-node .mg-dot{transition:stroke-width .12s}.mg-node:hover .mg-dot{stroke-width:4.5}.mg-node:hover{filter:drop-shadow(0 3px 7px rgba(16,20,26,.25))}'+
+    '.mg-tip{position:fixed;z-index:60;width:262px;background:#fff;color:var(--navy);border-radius:12px;padding:0;overflow:hidden;box-shadow:0 12px 30px rgba(16,20,26,.28);pointer-events:none;border:1px solid var(--bdr)}'+
+    '.mgt-hd{display:flex;align-items:center;gap:9px;padding:11px 13px 8px}'+
+    '.mgt-logo{width:32px;height:32px;border-radius:50%;border:2px solid;background:#fff;overflow:hidden;flex:none;display:flex;align-items:center;justify-content:center}.mgt-logo img{width:100%;height:100%;object-fit:cover;border-radius:50%}'+
+    '.mgt-n{font-weight:800;font-size:14px}'+
+    '.mgt-chips{display:flex;flex-wrap:wrap;gap:5px;padding:0 13px 8px}'+
+    '.mgt-chip{font-size:10px;color:var(--mu);background:var(--surface);border:1px solid var(--bdr);border-radius:7px;padding:2px 7px}.mgt-chip b{color:var(--navy);font-weight:800}'+
+    '.mgt-why{font-size:11px;line-height:1.5;color:var(--navy);padding:8px 13px 12px;border-top:1px solid var(--bdr);background:#F8FAFC}</style>';
+  h+='<div class="ov-diagram-cap" style="margin:0 0 6px">Listed peers mapped by <b>valuation multiple</b> (x) and <b>revenue growth</b> (y) — each is its <b>company logo</b>, sized by <b>live market cap</b>. <span style="opacity:.75">Hover or tap a logo for the read.</span></div>';
   h+='<div class="mg-tog-row"><span class="mg-tog">Multiple: <span class="mg-seg"><button type="button" class="mg-pill" data-mgtype="ev">EV/EBITDA</button><button type="button" class="mg-pill active" data-mgtype="pe">P/E</button></span></span>'+
      '<span class="mg-tog">Basis: <span class="mg-seg"><button type="button" class="mg-pill active" data-mgbasis="f">Forward</button><button type="button" class="mg-pill" data-mgbasis="t">Trailing</button></span></span></div>';
   h+='<div class="ov-diagram"><svg viewBox="0 0 640 300" id="vScSvg" role="img" aria-label="Peer valuation vs growth map">'+
@@ -221,18 +227,24 @@ function stdPeerScatter(){
 }
 function vScRender(root){
   var g=root.querySelector('#vScNodes'); if(!g||!V_SC.peers) return;
-  var maxMult=V_SC.type==='ev'?40:44, X0=80, X1=612, Y0=252, Y1=44;
+  var mLo=7, mHi=V_SC.type==='ev'?34:40, gLo=4, gHi=24, X0=84, X1=610, Y0=250, Y1=46;
   var lab=root.querySelector('#vScXlab'); if(lab) lab.textContent=(V_SC.type==='ev'?'EV/EBITDA':'P/E')+' · '+(V_SC.basis==='f'?'forward':'trailing');
   var frag='';
   V_SC.peers.forEach(function(p){
     if(!p.on) return; var m=vScMult(p); if(m==null||isNaN(m)) return;
     var growth=V_SC.basis==='f'?p.gf:p.gt; if(growth==null) growth=p.gf!=null?p.gf:p.gt;
-    var x=X0+Math.max(0,Math.min(1,m/maxMult))*(X1-X0);
-    var y=Y0-Math.max(0,Math.min(1,(growth||0)/25))*(Y0-Y1);
-    var r=Math.max(6,Math.min(24,5+Math.sqrt(Math.max(1,p.mc))*0.7));
-    frag+='<g class="mg-node" data-name="'+esc(p.n)+'" data-why="'+esc(p.why||'')+'" transform="translate('+x.toFixed(1)+','+y.toFixed(1)+')">'+
-      '<circle class="mg-dot" r="'+r.toFixed(1)+'" fill="'+(p.hl?V_BLUE:'#3A7BD5')+'"'+(p.hl?' stroke="#fff" stroke-width="2"':' opacity="0.82"')+' style="cursor:pointer"></circle>'+
-      '<text y="'+(r+11).toFixed(1)+'" font-family="Inter,sans-serif" font-size="'+(p.hl?12:11)+'" font-weight="'+(p.hl?800:700)+'" fill="'+(p.hl?V_BLUE:'#3A4552')+'" text-anchor="middle">'+esc(p.n)+'</text></g>';
+    var col=p.hl?V_BLUE:'#7A8699';
+    var x=X0+Math.max(0,Math.min(1,(m-mLo)/(mHi-mLo)))*(X1-X0);
+    var y=Y0-Math.max(0,Math.min(1,((growth||0)-gLo)/(gHi-gLo)))*(Y0-Y1);
+    var r=Math.max(15,Math.min(25, 13+Math.sqrt(Math.max(1,p.mc))*0.30)); var ri=r-2.5;
+    var mono=esc((p.tk||p.n).slice(0,4));
+    frag+='<g class="mg-node" data-tk="'+esc(p.tk)+'" transform="translate('+x.toFixed(1)+','+y.toFixed(1)+')" style="cursor:pointer">'+
+      '<clipPath id="vClip-'+esc(p.tk)+'"><circle r="'+ri.toFixed(1)+'"/></clipPath>'+
+      '<circle class="mg-dot" r="'+r.toFixed(1)+'" fill="#fff" stroke="'+col+'" stroke-width="'+(p.hl?3.5:2)+'"></circle>'+
+      '<text class="mg-mono" y="4" text-anchor="middle" font-family="Inter,sans-serif" font-size="'+(ri>18?12:10)+'" font-weight="800" fill="'+col+'">'+mono+'</text>'+
+      '<image href="https://assets.parqet.com/logos/symbol/'+esc(p.tk)+'" x="'+(-ri).toFixed(1)+'" y="'+(-ri).toFixed(1)+'" width="'+(2*ri).toFixed(1)+'" height="'+(2*ri).toFixed(1)+'" clip-path="url(#vClip-'+esc(p.tk)+')" preserveAspectRatio="xMidYMid slice" onerror="this.remove()"></image>'+
+      (p.hl?'<circle r="'+(r+3).toFixed(1)+'" fill="none" stroke="'+col+'" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.6"></circle>':'')+
+      '</g>';
   });
   g.innerHTML=frag;
 }
@@ -630,7 +642,7 @@ function stdOverviewBody(c){
   // ── Progressive disclosure: everything below defaults collapsed ──
   h+=collapsible('How it makes money', stdMoneyMap());
   h+=collapsible('What it makes — the products', stdProducts());
-  h+=collapsible('Value-Added Services — the moat\'s growth engine', stdVasSpotlight(), true);
+  h+=collapsible('Value-Added Services — the moat\'s growth engine', stdVasSpotlight());
   h+=collapsible('Competitors — valuation vs growth', stdPeerScatter());
   h+=collapsible('Timeline', stdTimeline());
   h+='<div class="ov-foot">'+esc(OV_SOURCES)+'</div>';
@@ -1871,8 +1883,16 @@ function init(c){
   // Dynamic peer scatter (Overview)
   vScReset(); vScRender(root); vScChips(root);
   var sctip=root.querySelector('#vScTip');
+  function vPeerByTk(tk){ var r=null; (V_SC.peers||[]).forEach(function(p){ if(p.tk===tk) r=p; }); return r; }
   function wireScNodes(){ if(!sctip) return; root.querySelectorAll('#vScNodes .mg-node').forEach(function(g){
-    function show(){ sctip.innerHTML='<span class="mgt-n">'+g.getAttribute('data-name')+'</span>'+g.getAttribute('data-why'); sctip.hidden=false; }
+    function show(){ var p=vPeerByTk(g.getAttribute('data-tk')); if(!p) return;
+      var col=p.hl?V_BLUE:'#7A8699';
+      var pe=(V_SC.basis==='f'?p.peF:p.peT), ev=(V_SC.basis==='f'?p.evF:p.evT), gr=(V_SC.basis==='f'?p.gf:p.gt);
+      var chip=function(l,v){ return v==null?'':'<span class="mgt-chip"><b>'+v+'</b> '+l+'</span>'; };
+      sctip.innerHTML='<div class="mgt-hd"><span class="mgt-logo" style="border-color:'+col+'"><img src="https://assets.parqet.com/logos/symbol/'+esc(p.tk)+'" alt="" onerror="this.remove()"></span><span class="mgt-n" style="color:'+col+'">'+esc(p.n)+'</span></div>'+
+        '<div class="mgt-chips">'+chip('P/E',pe?pe+'×':null)+chip('EV/EBITDA',ev?ev+'×':null)+chip('growth',gr?gr+'%':null)+chip('mkt cap',p.mc?'$'+(p.mc>=1000?(p.mc/1000).toFixed(2)+'T':Math.round(p.mc)+'B'):null)+'</div>'+
+        '<div class="mgt-why">'+(p.why||'')+'</div>';
+      sctip.hidden=false; }
     function move(e){ sctip.style.left=Math.min(e.clientX+16, window.innerWidth-270)+'px'; sctip.style.top=(e.clientY+16)+'px'; }
     g.addEventListener('mouseenter', show); g.addEventListener('mousemove', move);
     g.addEventListener('mouseleave', function(){ sctip.hidden=true; });
