@@ -176,9 +176,9 @@ var MA_PEERS=[
   { tk:'FIS', n:'FIS',      evT:13, evF:12, peT:14, peF:12, gt:6, gf:7, mc:45, why:'Fidelity National Information Services — core-banking & issuer processing that rides the networks\' rails rather than competing with them. A cheaper, slower-growth processor multiple.' },
   { tk:'GPN', n:'Global Payments', evT:10, evF:9, peT:9, peF:8, gt:5, gf:6, mc:22, why:'A merchant acquirer / processor — the cheapest of the payments majors on a high-single-digit multiple, reflecting slow growth and integration overhang. Rides the rails, doesn\'t own them.' },
   { tk:'XYZ', n:'Block',    evT:13, evF:11, peT:16, peF:14, gt:10, gf:11, mc:48, why:'Square (acquiring) + Cash App (wallet / P2P) — partly competes for merchant and P2P flow, but its cards and funding still ride Mastercard/Visa. A cheaper, more contested fintech multiple.' },
-  { tk:'ADYEN', n:'Adyen',  evT:32, evF:26, peT:38, peF:30, gt:22, gf:21, mc:55, why:'A single-platform global acquirer / PSP — the high-growth premium name in acceptance, compounding ~20%+ at a network-like multiple. A partner on acceptance, not a network.' },
+  { tk:'ADYEN', n:'Adyen',  evT:32, evF:26, peT:38, peF:30, gt:22, gf:21, mc:55, logo:'img/logos/adyen.svg', why:'A single-platform global acquirer / PSP — the high-growth premium name in acceptance, compounding ~20%+ at a network-like multiple. A partner on acceptance, not a network.' },
   { tk:'FOUR', n:'Shift4',  evT:14, evF:12, peT:16, peF:13, gt:22, gf:20, mc:10, why:'A fast-growing US acquirer (hospitality, stadiums, crypto) — ~20% growth at a mid-teens multiple. Rides the rails on the acceptance side.' },
-  { tk:'CPAY', n:'Corpay',  evT:13, evF:12, peT:14, peF:12, gt:9, gf:9, mc:24, why:'A commercial-payments & fleet-card specialist (ex-FLEETCOR) — competes in the B2B / new-flows space Mastercard is chasing, at a low-teens multiple.' },
+  { tk:'CPAY', n:'Corpay',  evT:13, evF:12, peT:14, peF:12, gt:9, gf:9, mc:24, logo:'img/logos/corpay.svg', why:'A commercial-payments & fleet-card specialist (ex-FLEETCOR) — competes in the B2B / new-flows space Mastercard is chasing, at a low-teens multiple.' },
 ];
 var MA_SC={ type:'pe', basis:'f', peers:null };
 function maScReset(){ MA_SC.peers=MA_PEERS.map(function(p){ var o={}; for(var k in p) o[k]=p[k]; o.on=true; return o; }); }
@@ -239,7 +239,7 @@ function maScRender(root){
       '<clipPath id="maClip-'+esc(p.tk)+'"><circle r="'+ri.toFixed(1)+'"/></clipPath>'+
       '<circle class="mg-dot" r="'+r.toFixed(1)+'" fill="#fff" stroke="'+col+'" stroke-width="'+(p.hl?3.5:2)+'"></circle>'+
       '<text class="mg-mono" y="4" text-anchor="middle" font-family="Inter,sans-serif" font-size="'+(ri>18?12:10)+'" font-weight="800" fill="'+col+'">'+mono+'</text>'+
-      '<image href="https://assets.parqet.com/logos/symbol/'+esc(p.tk)+'" x="'+(-ri).toFixed(1)+'" y="'+(-ri).toFixed(1)+'" width="'+(2*ri).toFixed(1)+'" height="'+(2*ri).toFixed(1)+'" clip-path="url(#maClip-'+esc(p.tk)+')" preserveAspectRatio="xMidYMid slice" onerror="this.remove()"></image>'+
+      '<image href="'+(p.logo?esc(p.logo):'https://assets.parqet.com/logos/symbol/'+esc(p.tk))+'" x="'+(-ri).toFixed(1)+'" y="'+(-ri).toFixed(1)+'" width="'+(2*ri).toFixed(1)+'" height="'+(2*ri).toFixed(1)+'" clip-path="url(#maClip-'+esc(p.tk)+')" preserveAspectRatio="xMidYMid slice" onerror="this.remove()"></image>'+
       (p.hl?'<circle r="'+(r+3).toFixed(1)+'" fill="none" stroke="'+col+'" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.6"></circle>':'')+
       '</g>';
   });
@@ -330,14 +330,31 @@ var REBATES = [
   '<b>Why it matters for the model:</b> the <b>rebate ratio (rebates & incentives ÷ gross revenue)</b> is a key swing factor. A rising ratio can signal intensifying competition; a heavy <b>renewal year</b> steps it up and can optically slow net-revenue growth even when gross volume is perfectly healthy. Watch the ratio, not just net revenue.',
 ];
 
-// ── VAS growth-engine → Top Line ▸ Segments (VAS depth). ──
-var VAS_DEEP = [
-  '<b>Scale & growth:</b> VAS net revenue was <b>$3.5B in Q1 2026 (+22% YoY)</b>, ~<b>42% of net revenue</b> — growing well faster than the payment network and increasingly the swing factor in the whole company\'s growth rate.',
-  '<b>Network-agnostic:</b> much of it is sold on <b>non-Mastercard</b> volume too (fraud scoring, identity, cyber, open banking). That partially <b>decouples growth from card-share battles</b> — Mastercard can earn even where it doesn\'t win the rail.',
-  '<b>Higher-quality revenue:</b> subscriptions, per-transaction scoring and managed services are more <b>recurring</b> and less tied to the consumer-spend cycle than network fees — a diversifier against macro/travel softness.',
-  '<b>Deepens the moat:</b> selling security, data and consulting into the same issuers and merchants raises switching costs <i>and</i> pulls through more network volume — services and the network reinforce each other.',
-  '<b>A widening ambition:</b> the strategy has moved from payment fraud toward <b>enterprise cybersecurity</b> (the $2.65B Recorded Future deal), identity, open banking and real-time payments — extending the addressable market well beyond card swipes.',
+// ── VAS depth. The full rich text is preserved verbatim in `full`; the surface shows a
+//    compact tappable card (icon + lead) and the wall opens in a pop-up (vasPopTiles →
+//    resolve 'vasm'/'vase'). Nothing removed, just hidden until asked for. ──
+var VAS_MOAT=[  // Overview ▸ "Why it defends the moat"
+  {k:'agnostic',ic:'🌐',c:MA_RED,t:'Network-agnostic → earns off-Mastercard volume',full:'<b>Network-agnostic → earns off-Mastercard volume.</b> Security, identity, insights and open banking are sold even where a rival wins the card — partly <b>decoupling growth from card-share battles</b>.'},
+  {k:'recurring',ic:'🔁',c:'#7A5AF8',t:'Recurring & higher-quality',full:'<b>Recurring & higher-quality.</b> Subscriptions and per-transaction scoring are stickier and less tied to the consumer-spend cycle than swipe fees — a diversifier against macro / travel softness.'},
+  {k:'switching',ic:'🔒',c:'#0F9D58',t:'Raises switching costs → a stickier network',full:'<b>Raises switching costs → a stickier network.</b> Selling security, data, engagement and open banking into the same banks and merchants makes them harder to leave <i>and</i> pulls through more network volume. Services and the network reinforce each other.'},
+  {k:'regulated',ic:'⚖️',c:'#B7791F',t:'Less regulated',full:'<b>Less regulated.</b> VAS sits outside the interchange / routing crossfire — a structurally safer growth pool as regulation pressures the core swipe fee. ~<b>60%</b> of it is "network-linked," so it also scales with transactions.'},
 ];
+var VAS_ENGINE=[  // Deep Dive ▸ Top Line ▸ Segments ("the growth engine, up close")
+  {k:'scale',ic:'📈',c:MA_ORANGE,t:'Scale & growth',full:'<b>Scale & growth:</b> VAS net revenue was <b>$3.5B in Q1 2026 (+22% YoY)</b>, ~<b>42% of net revenue</b> — growing well faster than the payment network and increasingly the swing factor in the whole company\'s growth rate.'},
+  {k:'agnostic',ic:'🌐',c:MA_RED,t:'Network-agnostic',full:'<b>Network-agnostic:</b> much of it is sold on <b>non-Mastercard</b> volume too (fraud scoring, identity, cyber, open banking). That partially <b>decouples growth from card-share battles</b> — Mastercard can earn even where it doesn\'t win the rail.'},
+  {k:'quality',ic:'🔁',c:'#7A5AF8',t:'Higher-quality revenue',full:'<b>Higher-quality revenue:</b> subscriptions, per-transaction scoring and managed services are more <b>recurring</b> and less tied to the consumer-spend cycle than network fees — a diversifier against macro/travel softness.'},
+  {k:'moat',ic:'🔒',c:'#0F9D58',t:'Deepens the moat',full:'<b>Deepens the moat:</b> selling security, data and consulting into the same issuers and merchants raises switching costs <i>and</i> pulls through more network volume — services and the network reinforce each other.'},
+  {k:'ambition',ic:'🚀',c:'#B7791F',t:'A widening ambition',full:'<b>A widening ambition:</b> the strategy has moved from payment fraud toward <b>enterprise cybersecurity</b> (the $2.65B Recorded Future deal), identity, open banking and real-time payments — extending the addressable market well beyond card swipes.'},
+];
+function vasPopTiles(list, prefix){
+  return '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:9px">'+list.map(function(x){
+    return '<div class="ov-clickable" data-detail="'+prefix+':'+x.k+'" style="display:flex;align-items:center;gap:10px;border:1px solid var(--bdr);border-left:3px solid '+x.c+';border-radius:11px;padding:11px 13px;background:var(--w)">'+
+      '<span style="font-size:17px;flex:none">'+x.ic+'</span>'+
+      '<span style="flex:1;font-size:12px;font-weight:800;color:var(--navy);line-height:1.3">'+x.t+'</span>'+
+      '<span style="flex:none;font-size:10px;font-weight:700;color:var(--mu)">Tap ›</span>'+
+    '</div>';
+  }).join('')+'</div>';
+}
 var USERMIX_INTRO = 'All the global networks serve broad consumer bases, but the <i>mix</i> tilts differently — and the tilt matters for yield and cyclicality. Mastercard\'s relative leanings (these are tilts at the margin, not absolutes):';
 
 // ── Timeline (corporate lineage) → Evolution ▸ Timeline. ──
@@ -739,11 +756,8 @@ function stdVasSpotlight(){
       fam('📊','Business & market insights','<b>Test & Learn</b>, <b>Credit Intelligence</b> & <b>Ekata</b> identity — data, analytics and decisioning.')+
       fam('🔗','Open banking & processing','<b>Finicity</b> (US) & <b>Aiia</b> (Europe) plus gateway / processing — account-based reach beyond cards.')+
     '</div>'+
-    '<div class="ov-callout" style="margin-top:12px"><b>Why it defends the moat:</b>'+bullets([
-      '<b>Network-agnostic → earns off-Mastercard volume.</b> Security, identity, insights and open banking are sold even where a rival wins the card — partly <b>decoupling growth from card-share battles</b>.',
-      '<b>Recurring & higher-quality.</b> Subscriptions and per-transaction scoring are stickier and less tied to the consumer-spend cycle than swipe fees — a diversifier against macro / travel softness.',
-      '<b>Raises switching costs → a stickier network.</b> Selling security, data, engagement and open banking into the same banks and merchants makes them harder to leave <i>and</i> pulls through more network volume. Services and the network reinforce each other.',
-      '<b>Less regulated.</b> VAS sits outside the interchange / routing crossfire — a structurally safer growth pool as regulation pressures the core swipe fee. ~<b>60%</b> of it is "network-linked," so it also scales with transactions.']) +'</div>';
+    '<div class="ov-subh" style="margin:16px 0 8px">Why it defends the moat <span style="font-weight:600;color:var(--mu)">— tap any card for the detail</span></div>'+
+    vasPopTiles(VAS_MOAT,'vasm');
 }
 function html(c){
   var h='<div class="ov ov-mastercard" data-brand="MA">';
@@ -835,8 +849,8 @@ function ddSegmentsBody(c){
       '<div class="ov-mbar"><div class="ov-mbar-l">Payment Network</div><div class="ov-mbar-track"><div class="ov-mbar-fill" style="width:58%;background:'+MA_STEEL+';">the core rails</div></div><div class="ov-mbar-v">~58%</div></div>'+
       '<div class="ov-mbar"><div class="ov-mbar-l">Value-Added Services</div><div class="ov-mbar-track"><div class="ov-mbar-fill" style="width:42%;background:'+MA_ORANGE+';">+22% YoY ▲</div></div><div class="ov-mbar-v">~42%</div></div>'+
     '</div>'+
-    '<div class="ov-diagram-cap" style="margin:-4px 0 14px">VAS is ~42% of net revenue and compounding <b>faster than the network</b> (+22% YoY) — each year it takes a bigger slice and pulls up the whole company\'s growth rate.</div>'+
-    '<div class="ov-callout">'+bullets(VAS_DEEP)+'</div>');
+    '<div class="ov-diagram-cap" style="margin:-4px 0 12px">VAS is ~42% of net revenue and compounding <b>faster than the network</b> (+22% YoY) — each year it takes a bigger slice and pulls up the whole company\'s growth rate. <b>Tap any card</b> for the detail.</div>'+
+    vasPopTiles(VAS_ENGINE,'vase'));
   return h;
 }
 // ── Top Line ▸ Customers (demand mix) ──
@@ -1936,20 +1950,27 @@ function init(c){
   maScReset(); maScRender(root); maScChips(root);
   var sctip=root.querySelector('#maScTip');
   function maPeerByTk(tk){ var r=null; (MA_SC.peers||[]).forEach(function(p){ if(p.tk===tk) r=p; }); return r; }
-  function wireScNodes(){ if(!sctip) return; root.querySelectorAll('#maScNodes .mg-node').forEach(function(g){
-    function show(){ var p=maPeerByTk(g.getAttribute('data-tk')); if(!p) return;
+  // Delegated pointer wiring on the stable #maScNodes container. Delegation (not per-node
+  // mouseenter/leave) is what lets us re-append the hovered node to the FRONT so its full
+  // circle clears any peer stacked on top — a per-node listener would fire mouseleave on
+  // the re-append and hide the tooltip. Guarded so scRefresh() can't stack duplicates.
+  function wireScNodes(){ if(!sctip) return; var cont=root.querySelector('#maScNodes'); if(!cont||cont._scWired) return; cont._scWired=true; var cur=null;
+    function nodeOf(e){ return (e.target&&e.target.closest)?e.target.closest('.mg-node'):null; }
+    function show(g){ var p=maPeerByTk(g.getAttribute('data-tk')); if(!p) return;
       var col=p.hl?MA_RED:'#7A8699';
       var pe=(MA_SC.basis==='f'?p.peF:p.peT), ev=(MA_SC.basis==='f'?p.evF:p.evT), gr=(MA_SC.basis==='f'?p.gf:p.gt);
       var chip=function(l,v){ return v==null?'':'<span class="mgt-chip"><b>'+v+'</b> '+l+'</span>'; };
-      sctip.innerHTML='<div class="mgt-hd"><span class="mgt-logo" style="border-color:'+col+'"><img src="https://assets.parqet.com/logos/symbol/'+esc(p.tk)+'" alt="" onerror="this.remove()"></span><span class="mgt-n" style="color:'+col+'">'+esc(p.n)+'</span></div>'+
+      sctip.innerHTML='<div class="mgt-hd"><span class="mgt-logo" style="border-color:'+col+'"><img src="'+(p.logo?esc(p.logo):'https://assets.parqet.com/logos/symbol/'+esc(p.tk))+'" alt="" onerror="this.remove()"></span><span class="mgt-n" style="color:'+col+'">'+esc(p.n)+'</span></div>'+
         '<div class="mgt-chips">'+chip('P/E',pe?pe+'×':null)+chip('EV/EBITDA',ev?ev+'×':null)+chip('growth',gr?gr+'%':null)+chip('mkt cap',p.mc?'$'+(p.mc>=1000?(p.mc/1000).toFixed(2)+'T':Math.round(p.mc)+'B'):null)+'</div>'+
         '<div class="mgt-why">'+(p.why||'')+'</div>';
       sctip.hidden=false; }
     function move(e){ sctip.style.left=Math.min(e.clientX+16, window.innerWidth-270)+'px'; sctip.style.top=(e.clientY+16)+'px'; }
-    g.addEventListener('mouseenter', show); g.addEventListener('mousemove', move);
-    g.addEventListener('mouseleave', function(){ sctip.hidden=true; });
-    g.addEventListener('click', function(e){ show(); move(e); });
-  }); }
+    function raise(g){ if(g.parentNode) g.parentNode.appendChild(g); }
+    cont.addEventListener('pointerover', function(e){ var g=nodeOf(e); if(!g) return; if(g!==cur){ cur=g; raise(g); } show(g); move(e); });
+    cont.addEventListener('pointermove', function(e){ if(nodeOf(e)) move(e); });
+    cont.addEventListener('pointerout', function(e){ var g=nodeOf(e); if(!g) return; var to=e.relatedTarget; if(to&&(g===to||g.contains(to)||(to.closest&&to.closest('.mg-node')===g))) return; cur=null; sctip.hidden=true; });
+    cont.addEventListener('click', function(e){ var g=nodeOf(e); if(!g) return; raise(g); cur=g; show(g); move(e); });
+  }
   function scRefresh(){ maScRender(root); wireScNodes(); }
   wireScNodes();
   root.querySelectorAll('.mg-pill').forEach(function(btn){ btn.onclick=function(){
@@ -2018,6 +2039,8 @@ function init(c){
   function resolve(key){
     var parts=key.split(':'), kind=parts[0], id=parts.slice(1).join(':');
     if (kind==='role'){ var r=ROLE_DETAIL[id]; return r && { t:r.t, h:r.h }; }
+    if (kind==='vasm'){ var vm=VAS_MOAT.filter(function(x){return x.k===id;})[0]; return vm && { t:vm.ic+' '+vm.t, h:'<div style="font-size:12.5px;line-height:1.65;color:var(--navy)">'+vm.full+'</div>' }; }
+    if (kind==='vase'){ var ve=VAS_ENGINE.filter(function(x){return x.k===id;})[0]; return ve && { t:ve.ic+' '+ve.t, h:'<div style="font-size:12.5px;line-height:1.65;color:var(--navy)">'+ve.full+'</div>' }; }
     if (kind==='fee'){ var s=FEE_LINES.filter(function(x){return x.k===id;})[0]; return s && { t:s.n+' <span class="ov-modal-sub">'+esc(s.rev)+'</span>', h:feeDetailHtml(s) }; }
     if (kind==='mna'){ var m=MNA.filter(function(x){return x.n===id;})[0]; return m && { t:m.n+' <span class="ov-modal-sub">'+esc(m.y)+' · '+esc(m.deal)+'</span>', h:m.detail }; }
     if (kind==='hist'){ var t=TIMELINE[parseInt(id,10)]; return t && t.d ? { t:t.y, h:t.d } : null; }

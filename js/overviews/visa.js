@@ -179,9 +179,9 @@ var V_PEERS=[
   { tk:'FIS', n:'FIS',      evT:13, evF:12, peT:14, peF:12, gt:6, gf:7, mc:45, why:'Fidelity National Information Services — core-banking & issuer processing that rides Visa\'s rails rather than competing with them. A cheaper, slower-growth processor multiple.' },
   { tk:'GPN', n:'Global Payments', evT:10, evF:9, peT:9, peF:8, gt:5, gf:6, mc:22, why:'A merchant acquirer / processor — the cheapest of the payments majors on a high-single-digit multiple, reflecting slow growth and integration overhang. Rides the rails, doesn\'t own them.' },
   { tk:'XYZ', n:'Block',    evT:13, evF:11, peT:16, peF:14, gt:10, gf:11, mc:48, why:'Square (acquiring) + Cash App (wallet / P2P) — partly competes for merchant and P2P flow, but its cards and funding still ride Visa/MA. A cheaper, more contested fintech multiple.' },
-  { tk:'ADYEN', n:'Adyen',  evT:32, evF:26, peT:38, peF:30, gt:22, gf:21, mc:55, why:'A single-platform global acquirer / PSP — the high-growth premium name in acceptance, compounding ~20%+ at a network-like multiple. A partner on acceptance, not a network.' },
+  { tk:'ADYEN', n:'Adyen',  evT:32, evF:26, peT:38, peF:30, gt:22, gf:21, mc:55, logo:'img/logos/adyen.svg', why:'A single-platform global acquirer / PSP — the high-growth premium name in acceptance, compounding ~20%+ at a network-like multiple. A partner on acceptance, not a network.' },
   { tk:'FOUR', n:'Shift4',  evT:14, evF:12, peT:16, peF:13, gt:22, gf:20, mc:10, why:'A fast-growing US acquirer (hospitality, stadiums, crypto) — ~20% growth at a mid-teens multiple. Rides the rails on the acceptance side.' },
-  { tk:'CPAY', n:'Corpay',  evT:13, evF:12, peT:14, peF:12, gt:9, gf:9, mc:24, why:'A commercial-payments & fleet-card specialist (ex-FLEETCOR) — competes in the B2B / new-flows space Visa is chasing, at a low-teens multiple.' },
+  { tk:'CPAY', n:'Corpay',  evT:13, evF:12, peT:14, peF:12, gt:9, gf:9, mc:24, logo:'img/logos/corpay.svg', why:'A commercial-payments & fleet-card specialist (ex-FLEETCOR) — competes in the B2B / new-flows space Visa is chasing, at a low-teens multiple.' },
 ];
 var V_SC={ type:'pe', basis:'f', peers:null };
 function vScReset(){ V_SC.peers=V_PEERS.map(function(p){ var o={}; for(var k in p) o[k]=p[k]; o.on=true; return o; }); }
@@ -242,7 +242,7 @@ function vScRender(root){
       '<clipPath id="vClip-'+esc(p.tk)+'"><circle r="'+ri.toFixed(1)+'"/></clipPath>'+
       '<circle class="mg-dot" r="'+r.toFixed(1)+'" fill="#fff" stroke="'+col+'" stroke-width="'+(p.hl?3.5:2)+'"></circle>'+
       '<text class="mg-mono" y="4" text-anchor="middle" font-family="Inter,sans-serif" font-size="'+(ri>18?12:10)+'" font-weight="800" fill="'+col+'">'+mono+'</text>'+
-      '<image href="https://assets.parqet.com/logos/symbol/'+esc(p.tk)+'" x="'+(-ri).toFixed(1)+'" y="'+(-ri).toFixed(1)+'" width="'+(2*ri).toFixed(1)+'" height="'+(2*ri).toFixed(1)+'" clip-path="url(#vClip-'+esc(p.tk)+')" preserveAspectRatio="xMidYMid slice" onerror="this.remove()"></image>'+
+      '<image href="'+(p.logo?esc(p.logo):'https://assets.parqet.com/logos/symbol/'+esc(p.tk))+'" x="'+(-ri).toFixed(1)+'" y="'+(-ri).toFixed(1)+'" width="'+(2*ri).toFixed(1)+'" height="'+(2*ri).toFixed(1)+'" clip-path="url(#vClip-'+esc(p.tk)+')" preserveAspectRatio="xMidYMid slice" onerror="this.remove()"></image>'+
       (p.hl?'<circle r="'+(r+3).toFixed(1)+'" fill="none" stroke="'+col+'" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.6"></circle>':'')+
       '</g>';
   });
@@ -333,14 +333,31 @@ var REBATES = [
   '<b>Why it matters for the model:</b> the <b>incentive ratio (client incentives ÷ gross revenue)</b> is the #1 swing factor — Visa guides it every quarter. A 1-point move swings net revenue by hundreds of millions; a rising ratio can signal intensifying competition, and a heavy <b>renewal year</b> (e.g. ~20%+ of volume re-signed) steps it up and can optically slow net-revenue growth even when volume is perfectly healthy. Watch the ratio, not just net revenue.',
 ];
 
-// ── VAS growth-engine → Top Line ▸ Segments (VAS depth). ──
-var VAS_DEEP = [
-  '<b>Scale & growth:</b> VAS net revenue was <b>~$3.3B in Q2 2026 (+27% cc)</b>, ~<b>30% of net revenue</b> — growing well faster than the payments network and increasingly the swing factor in the whole company\'s growth rate.',
-  '<b>Network-agnostic:</b> much of it is sold on <b>non-Visa</b> volume too (the Cybersource gateway, tokens, fraud scoring, open banking). That partially <b>decouples growth from card-share battles</b> — Visa can earn even where it doesn\'t win the rail. This is the heart of "Visa as a Service".',
-  '<b>Higher-quality revenue:</b> subscriptions, per-transaction scoring and managed services are more <b>recurring</b> and less tied to the consumer-spend cycle than network fees — a diversifier against macro/travel softness.',
-  '<b>Deepens the moat:</b> selling issuing, risk, acceptance and consulting into the same issuers and merchants raises switching costs <i>and</i> pulls through more network volume — services and the network reinforce each other.',
-  '<b>A widening ambition:</b> management sizes the annual VAS opportunity at ~<b>$520B</b> vs the ~<b>$8.8B</b> captured at the FY24 baseline (~2% penetrated) — reported as four portfolios (issuing, acceptance, risk & security, advisory/open banking), extending the addressable market well beyond card swipes.',
+// ── VAS depth. Rich text preserved verbatim in `full`; the surface is a compact tappable
+//    card (icon + lead) and the wall opens in a pop-up (vasPopTiles → resolve 'vasm'/'vase').
+//    Nothing removed, just hidden until asked for. ──
+var VAS_MOAT=[  // Overview ▸ "Why it defends the moat"
+  {k:'agnostic',ic:'🌐',c:V_BLUE,t:'Network-agnostic → earns off-Visa volume',full:'<b>Network-agnostic → earns off-Visa volume.</b> Gateways, tokens, fraud scoring and open banking are sold even where a rival wins the card — partly <b>decoupling growth from card-share battles</b> ("Visa as a Service").'},
+  {k:'recurring',ic:'🔁',c:'#7A5AF8',t:'Recurring & higher-quality',full:'<b>Recurring & higher-quality.</b> Subscriptions and per-transaction scoring are stickier and less tied to the consumer-spend cycle than swipe fees — a diversifier against macro / travel softness.'},
+  {k:'switching',ic:'🔒',c:'#0F9D58',t:'Raises switching costs → a stickier network',full:'<b>Raises switching costs → a stickier network.</b> Selling issuing, risk, acceptance and consulting into the same banks and merchants makes them harder to leave <i>and</i> pulls through more network volume. Services and the network reinforce each other.'},
+  {k:'regulated',ic:'⚖️',c:'#B7791F',t:'Less regulated',full:'<b>Less regulated.</b> VAS sits outside the interchange / routing crossfire — a structurally safer growth pool as regulation pressures the core swipe fee.'},
 ];
+var VAS_ENGINE=[  // Deep Dive ▸ Top Line ▸ Segments ("the growth engine, up close")
+  {k:'scale',ic:'📈',c:V_GOLD,t:'Scale & growth',full:'<b>Scale & growth:</b> VAS net revenue was <b>~$3.3B in Q2 2026 (+27% cc)</b>, ~<b>30% of net revenue</b> — growing well faster than the payments network and increasingly the swing factor in the whole company\'s growth rate.'},
+  {k:'agnostic',ic:'🌐',c:V_BLUE,t:'Network-agnostic',full:'<b>Network-agnostic:</b> much of it is sold on <b>non-Visa</b> volume too (the Cybersource gateway, tokens, fraud scoring, open banking). That partially <b>decouples growth from card-share battles</b> — Visa can earn even where it doesn\'t win the rail. This is the heart of "Visa as a Service".'},
+  {k:'quality',ic:'🔁',c:'#7A5AF8',t:'Higher-quality revenue',full:'<b>Higher-quality revenue:</b> subscriptions, per-transaction scoring and managed services are more <b>recurring</b> and less tied to the consumer-spend cycle than network fees — a diversifier against macro/travel softness.'},
+  {k:'moat',ic:'🔒',c:'#0F9D58',t:'Deepens the moat',full:'<b>Deepens the moat:</b> selling issuing, risk, acceptance and consulting into the same issuers and merchants raises switching costs <i>and</i> pulls through more network volume — services and the network reinforce each other.'},
+  {k:'ambition',ic:'🚀',c:'#B7791F',t:'A widening ambition',full:'<b>A widening ambition:</b> management sizes the annual VAS opportunity at ~<b>$520B</b> vs the ~<b>$8.8B</b> captured at the FY24 baseline (~2% penetrated) — reported as four portfolios (issuing, acceptance, risk & security, advisory/open banking), extending the addressable market well beyond card swipes.'},
+];
+function vasPopTiles(list, prefix){
+  return '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:9px">'+list.map(function(x){
+    return '<div class="ov-clickable" data-detail="'+prefix+':'+x.k+'" style="display:flex;align-items:center;gap:10px;border:1px solid var(--bdr);border-left:3px solid '+x.c+';border-radius:11px;padding:11px 13px;background:var(--w)">'+
+      '<span style="font-size:17px;flex:none">'+x.ic+'</span>'+
+      '<span style="flex:1;font-size:12px;font-weight:800;color:var(--navy);line-height:1.3">'+x.t+'</span>'+
+      '<span style="flex:none;font-size:10px;font-weight:700;color:var(--mu)">Tap ›</span>'+
+    '</div>';
+  }).join('')+'</div>';
+}
 var USERMIX_INTRO = 'All the global networks serve broad consumer bases, but the <i>mix</i> tilts differently — and the tilt matters for yield and cyclicality. Visa\'s relative leanings (these are tilts at the margin, not absolutes):';
 
 // ── Timeline (corporate lineage) → Evolution ▸ Timeline. ──
@@ -454,31 +471,31 @@ var V_MGMT = makeManagement({
   brand:V_BLUE,
   lede:"Visa runs a deep bench under CEO <b>Ryan McInerney</b> (CEO since Feb 2023, at Visa since 2013), after a clean succession from Al Kelly. The team blends long-tenured Visa operators (Taneja, Jenkyn, Forestell) with senior external hires in finance (Suh, ex-EA / Microsoft). The 2025 Investor-Day reorg into three businesses — Consumer Payments, Commercial & Money Movement, and Value-Added Services — is reflected in the leadership below. This static roster is an editorial read of Visa\'s IR / leadership page; verify against the latest DEF 14A. Live ownership & insider activity populate the Ownership subtab (Fiscal.ai).",
   execs:[
-    { id:'mcinerney', lead:true, name:'Ryan McInerney', title:'Chief Executive Officer',       since:'CEO since Feb 2023 · at Visa since 2013',
+    { id:'mcinerney', lead:true, img:'img/leadership/v-mcinerney.jpg', name:'Ryan McInerney', title:'Chief Executive Officer',       since:'CEO since Feb 2023 · at Visa since 2013',
       line:'Long-time President; ran the business before taking the top job.',
       bio:'CEO and director since February 2023; joined Visa in 2013 as President, running global client relationships and the core business for a decade before the top job. Drove the "network of networks" and Visa-as-a-Service strategy. Earlier: CEO of Chase\'s consumer bank at JPMorgan, and a McKinsey partner.' },
-    { id:'suh', name:'Chris Suh', title:'Chief Financial Officer', since:'CFO since 2023',
+    { id:'suh', img:'img/leadership/v-suh.jpg', name:'Chris Suh', title:'Chief Financial Officer', since:'CFO since 2023',
       line:'External finance hire; ex-Electronic Arts CFO and ~20 years at Microsoft.',
       bio:'Chief Financial Officer since 2023 — owns finance, investor relations, strategy, treasury and capital allocation. Prior: CFO of Electronic Arts; earlier ~20 years at Microsoft in senior finance roles across its cloud/enterprise businesses.' },
-    { id:'taneja', name:'Rajat Taneja', title:'President, Technology', since:'at Visa since 2013',
+    { id:'taneja', img:'img/leadership/v-taneja.jpg', name:'Rajat Taneja', title:'President, Technology', since:'at Visa since 2013',
       line:'Long-tenured; architect of VisaNet\'s modernization.',
       bio:'President, Technology — runs VisaNet, engineering, cybersecurity and the platform modernization (the next-gen VisaNet build). Joined Visa in 2013; previously EVP Technology (CTO) at Electronic Arts and a long career at Microsoft.' },
-    { id:'jenkyn', name:'Oliver Jenkyn', title:'Group President, Global Markets', since:'at Visa since 2010',
+    { id:'jenkyn', img:'img/leadership/v-jenkyn.jpg', name:'Oliver Jenkyn', title:'Group President, Global Markets', since:'at Visa since 2010',
       line:'Runs the regional go-to-market across all markets.',
       bio:'Group President, Global Markets — oversees Visa\'s regional businesses and client relationships worldwide. A long-tenured Visa leader (formerly EVP, North America); earlier a partner at McKinsey.' },
-    { id:'forestell', name:'Jack Forestell', title:'Chief Product & Strategy Officer', since:'at Visa since 2014',
+    { id:'forestell', img:'img/leadership/v-forestell.jpg', name:'Jack Forestell', title:'Chief Product & Strategy Officer', since:'at Visa since 2014',
       line:'Owns product + strategy — tokens, Flexible Credential, agentic.',
       bio:'Chief Product & Strategy Officer — the global product organization and corporate strategy (tokenization, Tap to Everything, the Flexible Credential, Visa Direct and agentic commerce). Joined Visa in 2014; earlier led global sales & marketing at Capital One.' },
-    { id:'newkirk', name:'Chris Newkirk', title:'President, Commercial & Money Movement Solutions',
+    { id:'newkirk', img:'img/leadership/v-newkirk.jpg', name:'Chris Newkirk', title:'President, Commercial & Money Movement Solutions',
       line:'Runs the New Flows growth engine (CMS / Visa Direct).',
       bio:'President, Commercial & Money Movement Solutions — Visa\'s "New Flows" engine (commercial cards, Visa Direct, B2B, disbursements). A senior Visa operator across strategy, risk and the CMS build-out.' },
-    { id:'cahill', name:'Antony Cahill', title:'Global Head of Value-Added Services',
+    { id:'cahill', img:'img/leadership/v-cahill.jpg', name:'Antony Cahill', title:'Global Head of Value-Added Services',
       line:'Runs the ~30%-of-revenue services growth engine.',
       bio:'Global Head of Value-Added Services — issuing, acceptance, risk & security, advisory and open banking (~30% of net revenue, growing ~25%+ in constant dollars). Earlier a senior payments executive in Australia (NAB, ANZ) and at Worldpay/GPS.' },
-    { id:'tullier', name:'Kelly Mahon Tullier', title:'Vice Chair, Chief People & Corporate Affairs Officer', since:'at Visa since 2014',
+    { id:'tullier', img:'img/leadership/v-tullier.jpg', name:'Kelly Mahon Tullier', title:'Vice Chair, Chief People & Corporate Affairs Officer', since:'at Visa since 2014',
       line:'Long-tenured; people, communications and corporate affairs. Former GC.',
       bio:'Vice Chair and Chief People & Corporate Affairs Officer — HR, communications, sustainability and corporate affairs. Formerly Visa\'s General Counsel; joined Visa in 2014. Earlier senior legal roles at Pitney Bowes and TNS.' },
-    { id:'rottenberg', name:'Julie Rottenberg', title:'General Counsel', since:'GC since 2023',
+    { id:'rottenberg', img:'img/leadership/v-rottenberg.jpg', name:'Julie Rottenberg', title:'General Counsel', since:'GC since 2023',
       line:'Elevated internally to run the legal / litigation docket.',
       bio:'General Counsel since 2023 — the global legal organization, including the interchange-litigation and DOJ-debit docket. A long-time Visa lawyer (previously Deputy GC) elevated to General Counsel when Kelly Tullier moved to Chief People & Corporate Affairs Officer.' },
   ],
@@ -498,7 +515,7 @@ var V_MGMT = makeManagement({
     { k:'Board', v:'Independent Chair', d:'Only the CEO is non-independent; Chair separate from CEO.' },
     { k:'Litigation escrow', v:'RRP · Class B', d:'A bank-funded escrow shields Class A from US covered litigation — unique vs Mastercard.' },
   ],
-  foot:'Executives & titles per Visa IR / leadership page and the latest proxy (mid-2026 roster; verify against the current DEF 14A). No headshots (portal CSP allows same-origin images only). Ratings are an editorial read of tenure + what each person built, not a Visa statement. Ownership & insider trades are live in the Ownership subtab.',
+  foot:'Executives & titles per Visa IR / leadership page and the latest proxy (mid-2026 roster; verify against the current DEF 14A). Headshots are same-origin images from Visa IR / press; any that don\'t load fall back to initials. Ratings are an editorial read of tenure + what each person built, not a Visa statement. Ownership & insider trades are live in the Ownership subtab.',
 });
 
 // ── Track Record — rate management (and the board) on value creation, green/amber/red,
@@ -674,11 +691,8 @@ function stdVasSpotlight(){
       fam('🛒','Acceptance','<b>CyberSource</b> & <b>Authorize.net</b> gateways and merchant tools — earns even on non-Visa volume.')+
       fam('📊','Advisory & open banking','<b>Visa Consulting & Analytics</b> and <b>Tink</b> — data, consulting and account-to-account reach.')+
     '</div>'+
-    '<div class="ov-callout" style="margin-top:12px"><b>Why it defends the moat:</b>'+bullets([
-      '<b>Network-agnostic → earns off-Visa volume.</b> Gateways, tokens, fraud scoring and open banking are sold even where a rival wins the card — partly <b>decoupling growth from card-share battles</b> ("Visa as a Service").',
-      '<b>Recurring & higher-quality.</b> Subscriptions and per-transaction scoring are stickier and less tied to the consumer-spend cycle than swipe fees — a diversifier against macro / travel softness.',
-      '<b>Raises switching costs → a stickier network.</b> Selling issuing, risk, acceptance and consulting into the same banks and merchants makes them harder to leave <i>and</i> pulls through more network volume. Services and the network reinforce each other.',
-      '<b>Less regulated.</b> VAS sits outside the interchange / routing crossfire — a structurally safer growth pool as regulation pressures the core swipe fee.']) +'</div>';
+    '<div class="ov-subh" style="margin:16px 0 8px">Why it defends the moat <span style="font-weight:600;color:var(--mu)">— tap any card for the detail</span></div>'+
+    vasPopTiles(VAS_MOAT,'vasm');
 }
 function html(c){
   var h='<div class="ov ov-mastercard" data-brand="MA">';
@@ -770,8 +784,8 @@ function ddSegmentsBody(c){
       '<div class="ov-mbar"><div class="ov-mbar-l">Core payments network</div><div class="ov-mbar-track"><div class="ov-mbar-fill" style="width:70%;background:'+V_STEEL+';">the core rails</div></div><div class="ov-mbar-v">~70%</div></div>'+
       '<div class="ov-mbar"><div class="ov-mbar-l">Value-Added Services</div><div class="ov-mbar-track"><div class="ov-mbar-fill" style="width:30%;background:'+V_GOLD+';">+27% cc ▲</div></div><div class="ov-mbar-v">~30%</div></div>'+
     '</div>'+
-    '<div class="ov-diagram-cap" style="margin:-4px 0 14px">VAS is ~30% of net revenue and compounding <b>faster than the network</b> (+27% cc) — each year it takes a bigger slice and pulls up the whole company\'s growth rate.</div>'+
-    '<div class="ov-callout">'+bullets(VAS_DEEP)+'</div>');
+    '<div class="ov-diagram-cap" style="margin:-4px 0 12px">VAS is ~30% of net revenue and compounding <b>faster than the network</b> (+27% cc) — each year it takes a bigger slice and pulls up the whole company\'s growth rate. <b>Tap any card</b> for the detail.</div>'+
+    vasPopTiles(VAS_ENGINE,'vase'));
   return h;
 }
 // ── Top Line ▸ Customers (demand mix) ──
@@ -1666,6 +1680,47 @@ var V_SBC_ROWS=[
   { fy:'FY24', sbc:0.60, rev:35.93, sh:1970 },
   { fy:'FY25', sbc:0.65, rev:39.90, sh:1930 },
 ];
+// ── Visa's three share classes (A public / B former US banks / C former intl banks):
+//    what each is, WHY they exist (bank co-op → 2008 IPO), the escrow-driven B→A
+//    conversion mechanism, and how the structure unwinds. A visual explainer. ──
+function vShareClasses(){
+  var card=function(tag,color,badge,who,vote,econ){
+    return '<div style="border:1px solid var(--bdr);border-top:3px solid '+color+';border-radius:12px;padding:13px 14px;background:var(--w)">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px">'+
+        '<span style="font-size:15px;font-weight:900;color:'+color+'">'+tag+'</span>'+
+        '<span style="font-size:9px;font-weight:800;color:#fff;background:'+color+';border-radius:999px;padding:2px 8px">'+badge+'</span>'+
+      '</div>'+
+      '<div style="font-size:11.5px;font-weight:700;color:var(--navy);margin-bottom:8px">'+who+'</div>'+
+      '<div style="font-size:10.5px;color:var(--mu);line-height:1.5"><b style="color:var(--navy)">Votes:</b> '+vote+'</div>'+
+      '<div style="font-size:10.5px;color:var(--mu);line-height:1.5;margin-top:4px"><b style="color:var(--navy)">Economics:</b> '+econ+'</div>'+
+    '</div>';
+  };
+  var step=function(t){ return '<div style="flex:1;min-width:130px;background:#F7F9FB;border:1px solid var(--bdr);border-radius:9px;padding:9px 11px;font-size:10.5px;color:var(--navy);line-height:1.4">'+t+'</div>'; };
+  var arr='<span style="align-self:center;color:var(--mu);font-weight:800;font-size:14px">→</span>';
+  var pill=function(t,strong){ return '<span style="font-size:10.5px;font-weight:700;background:'+(strong?'#FBF3E4':'#fff')+';border:1px solid '+(strong?'#E8C77A':'var(--bdr)')+';border-radius:8px;padding:6px 10px'+(strong?';color:#B7791F':'')+'">'+t+'</span>'; };
+  return ''+
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">'+
+      card('Class A',V_BLUE,'Public','Public float — the tradeable stock','1 vote / share','Full economic + voting rights; holds the public economics.')+
+      card('Class B','#B7791F','US banks','Former US member banks','Essentially none','Convert into A — but the B→A ratio falls with each US litigation escrow deposit; locked until US covered litigation resolves.')+
+      card('Class C',V_STEEL,'Intl banks','Former international member banks','Essentially none','Convert into A over time as transfer restrictions lapse.')+
+    '</div>'+
+    '<div class="ov-subh" style="margin:0 0 7px">Why they exist — a bank co-op that went public</div>'+
+    '<div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px">'+
+      step('<b>1970 — NBI</b><br>Member banks form a bank-owned cooperative (National BankAmericard Inc.).')+arr+
+      step('<b>2007 — Visa Inc.</b><br>The co-op is restructured into a single corporation ahead of listing.')+arr+
+      step('<b>2008 — IPO ($17.9B)</b><br>Public buys <b>Class A</b>; former banks keep <b>B (US)</b> / <b>C (intl)</b>; <b>$3B</b> seeds the litigation escrow.')+
+    '</div>'+
+    '<div class="ov-callout" style="border-left:3px solid #B7791F">'+
+      '<div class="ov-subh" style="margin:0 0 8px">The clever bit — a bank-funded buffer (the conversion ratio)</div>'+
+      '<div style="display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:9px">'+
+        pill('US interchange settlement')+arr+
+        pill('Deposit into the escrow (RRP)')+arr+
+        pill('Class B → A conversion ratio ↓',true)+
+      '</div>'+
+      '<div style="font-size:11px;color:var(--navy);line-height:1.55">Each deposit automatically lowers the <b>Class B → Class A conversion rate</b>, so the <b>former US banks (Class B) absorb the cost through dilution of their own stake</b> — not public Class-A holders. Economically it works like a <b>bank-funded buyback</b> (fewer as-converted shares), which is why ~17-year-old interchange litigation <b>barely dents Class-A EPS</b>. Caveat: only <i>US Covered</i> Litigation is shielded — non-US claims can still reach Class A.</div>'+
+    '</div>'+
+    '<div class="ov-fynote" style="margin-top:10px"><b>How it evolves:</b> Class B can only <b>fully convert and freely trade once US covered litigation is finally resolved</b> — so a standing <b>B overhang</b> remains while the cases run. Class C restrictions have <b>largely lapsed</b>, moving those shares toward the Class-A float. Net direction: toward a <b>simpler, single-float structure</b> over time — gated by the litigation calendar.</div>';
+}
 function vSbcBody(c){
   var h='<p class="ov-lede">Two things to check on a compounder: is the <b>governance</b> clean, and is <b>stock comp</b> quietly diluting you? Visa scores well — an <b>independent chair</b> and <b>SBC around ~1.5% of revenue</b> that is <b>swamped by buybacks</b> (net share count falls every year). The one structural nuance is Visa\'s <b>three share classes</b> and the litigation escrow.</p>';
   h+=sec('Governance — the structure',
@@ -1675,9 +1730,12 @@ function vSbcBody(c){
       '<b>Board is operator-heavy</b> (incl. sitting/former public-company CEOs) — see Track Record. Verify against the latest DEF 14A.',
       'Serial dividend increases + a standing multi-billion buyback authorization.']) +'</div>'+
     '<div class="ov-callout"><div class="ov-subh" style="margin:0 0 6px">⚑ Things to know</div>'+bullets([
-      '<b>Three share classes</b> (A / B / C) — a legacy of the 2007–08 restructuring; more complex than a single-class structure, but Class A holds the public economics.',
+      '<b>Three share classes</b> (A / B / C) — a legacy of the bank co-op / 2007–08 restructuring. Class A holds the public economics; the full breakdown is below.',
       '<b>Litigation-escrow shield (RRP):</b> the Class-B mechanism makes former member banks — not public Class-A holders — absorb US covered interchange settlements (a structural <b>advantage</b>; see Risk & Litigation).',
       'Executive pay is heavily equity/performance-linked — aligned, but watch the grant size vs the modest SBC expense.']) +'</div></div>');
+  h+=sec('Three share classes — why they exist, and how they unwind',
+    '<div class="ov-diagram-cap" style="margin:0 0 12px">Visa doesn\'t have a single class of stock. Here\'s what <b>A / B / C</b> are, <b>why</b> they exist, and the escrow mechanism that quietly turns bank litigation into a shield for public holders.</div>'+
+    vShareClasses());
   h+=sec('Stock-based comp — modest, and more than bought back',
     '<div class="ov-chart-card"><div class="ov-chart-t">SBC ($B, bars) vs shares outstanding (M, line) <span>· fiscal years</span></div><div class="ov-chart-wrap ovt-ue-wrap"><canvas id="vChartSbc"></canvas></div></div>'+
     '<div class="ov-fynote" style="margin-top:8px">SBC has grown with the company but sits around <b>~1.5% of net revenue</b> — and the <b>~$16.9B/yr buyback</b> overwhelms it, so <b>diluted shares fall every year</b> (~2,080M → ~1,930M). Net dilution is <b>negative</b>: you own more of the company each year. SBC $ figures are directional (from the proxy / cash-flow statements).</div>');
@@ -1884,20 +1942,27 @@ function init(c){
   vScReset(); vScRender(root); vScChips(root);
   var sctip=root.querySelector('#vScTip');
   function vPeerByTk(tk){ var r=null; (V_SC.peers||[]).forEach(function(p){ if(p.tk===tk) r=p; }); return r; }
-  function wireScNodes(){ if(!sctip) return; root.querySelectorAll('#vScNodes .mg-node').forEach(function(g){
-    function show(){ var p=vPeerByTk(g.getAttribute('data-tk')); if(!p) return;
+  // Delegated pointer wiring on the stable #vScNodes container. Delegation (not per-node
+  // mouseenter/leave) is what lets us re-append the hovered node to the FRONT so its full
+  // circle clears any peer stacked on top — a per-node listener would fire mouseleave on
+  // the re-append and hide the tooltip. Guarded so scRefresh() can't stack duplicates.
+  function wireScNodes(){ if(!sctip) return; var cont=root.querySelector('#vScNodes'); if(!cont||cont._scWired) return; cont._scWired=true; var cur=null;
+    function nodeOf(e){ return (e.target&&e.target.closest)?e.target.closest('.mg-node'):null; }
+    function show(g){ var p=vPeerByTk(g.getAttribute('data-tk')); if(!p) return;
       var col=p.hl?V_BLUE:'#7A8699';
       var pe=(V_SC.basis==='f'?p.peF:p.peT), ev=(V_SC.basis==='f'?p.evF:p.evT), gr=(V_SC.basis==='f'?p.gf:p.gt);
       var chip=function(l,v){ return v==null?'':'<span class="mgt-chip"><b>'+v+'</b> '+l+'</span>'; };
-      sctip.innerHTML='<div class="mgt-hd"><span class="mgt-logo" style="border-color:'+col+'"><img src="https://assets.parqet.com/logos/symbol/'+esc(p.tk)+'" alt="" onerror="this.remove()"></span><span class="mgt-n" style="color:'+col+'">'+esc(p.n)+'</span></div>'+
+      sctip.innerHTML='<div class="mgt-hd"><span class="mgt-logo" style="border-color:'+col+'"><img src="'+(p.logo?esc(p.logo):'https://assets.parqet.com/logos/symbol/'+esc(p.tk))+'" alt="" onerror="this.remove()"></span><span class="mgt-n" style="color:'+col+'">'+esc(p.n)+'</span></div>'+
         '<div class="mgt-chips">'+chip('P/E',pe?pe+'×':null)+chip('EV/EBITDA',ev?ev+'×':null)+chip('growth',gr?gr+'%':null)+chip('mkt cap',p.mc?'$'+(p.mc>=1000?(p.mc/1000).toFixed(2)+'T':Math.round(p.mc)+'B'):null)+'</div>'+
         '<div class="mgt-why">'+(p.why||'')+'</div>';
       sctip.hidden=false; }
     function move(e){ sctip.style.left=Math.min(e.clientX+16, window.innerWidth-270)+'px'; sctip.style.top=(e.clientY+16)+'px'; }
-    g.addEventListener('mouseenter', show); g.addEventListener('mousemove', move);
-    g.addEventListener('mouseleave', function(){ sctip.hidden=true; });
-    g.addEventListener('click', function(e){ show(); move(e); });
-  }); }
+    function raise(g){ if(g.parentNode) g.parentNode.appendChild(g); }
+    cont.addEventListener('pointerover', function(e){ var g=nodeOf(e); if(!g) return; if(g!==cur){ cur=g; raise(g); } show(g); move(e); });
+    cont.addEventListener('pointermove', function(e){ if(nodeOf(e)) move(e); });
+    cont.addEventListener('pointerout', function(e){ var g=nodeOf(e); if(!g) return; var to=e.relatedTarget; if(to&&(g===to||g.contains(to)||(to.closest&&to.closest('.mg-node')===g))) return; cur=null; sctip.hidden=true; });
+    cont.addEventListener('click', function(e){ var g=nodeOf(e); if(!g) return; raise(g); cur=g; show(g); move(e); });
+  }
   function scRefresh(){ vScRender(root); wireScNodes(); }
   wireScNodes();
   root.querySelectorAll('.mg-pill').forEach(function(btn){ btn.onclick=function(){
@@ -1966,6 +2031,8 @@ function init(c){
   function resolve(key){
     var parts=key.split(':'), kind=parts[0], id=parts.slice(1).join(':');
     if (kind==='role'){ var r=ROLE_DETAIL[id]; return r && { t:r.t, h:r.h }; }
+    if (kind==='vasm'){ var vm=VAS_MOAT.filter(function(x){return x.k===id;})[0]; return vm && { t:vm.ic+' '+vm.t, h:'<div style="font-size:12.5px;line-height:1.65;color:var(--navy)">'+vm.full+'</div>' }; }
+    if (kind==='vase'){ var ve=VAS_ENGINE.filter(function(x){return x.k===id;})[0]; return ve && { t:ve.ic+' '+ve.t, h:'<div style="font-size:12.5px;line-height:1.65;color:var(--navy)">'+ve.full+'</div>' }; }
     if (kind==='fee'){ var s=FEE_LINES.filter(function(x){return x.k===id;})[0]; return s && { t:s.n+' <span class="ov-modal-sub">'+esc(s.rev)+'</span>', h:feeDetailHtml(s) }; }
     if (kind==='mna'){ var m=MNA.filter(function(x){return x.n===id;})[0]; return m && { t:m.n+' <span class="ov-modal-sub">'+esc(m.y)+' · '+esc(m.deal)+'</span>', h:m.detail }; }
     if (kind==='hist'){ var t=TIMELINE[parseInt(id,10)]; return t && t.d ? { t:t.y, h:t.d } : null; }
