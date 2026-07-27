@@ -538,12 +538,828 @@ function ddMarginsBody(c){
   h+='<div class="ov-foot">Sources: Remitly FY2023–FY2025 earnings releases (Adj. EBITDA, net income, FCF); Dec 2025 Investor Day (2028 margin target). Margin percentages are directional.</div>';
   return h;
 }
+// ════════════════════════════════════════════════════════════════════════════
+//  Evolution ▸ CALL PREP — the decision layer (docs/CALL_PREP_CONVENTIONS.md v2.4)
+//  Ported from googl.js / ibkr.js (canonical) via the Visa build. Four phases —
+//  Setup · Watch List · Post-Results · Post-Call — as per-quarter blocks behind a
+//  quarter selector. The theme record (RELY_THEMES) is FOLDED into the Watch List
+//  (v2.3 fusion) — there is NO standalone Earnings Calls tab. Consensus (Bloomberg
+//  BST) + Summit + the 4 custom KPIs render 'to fill'/'to define' until the export
+//  lands. Remitly is a digital-remittance / consumer-fintech model (not a card network).
+// ════════════════════════════════════════════════════════════════════════════
+// Call Prep palette (Remitly identity): blue primary + gold custom-KPI accent.
+var BRAND=RELY_BLUE, BRAND2=RELY_GREEN, BLUE='#2557D6', RED='#EA4335', YELLOW=RELY_GOLD, PURPLE='#7A5AF8', AMBER='#B7791F', GRAY='#64748B';
+var CALL_PREP = { ticker:'RELY', quarters:[
+  // ── UPCOMING: Q2 2026 (quarter ending Jun 2026; reports ~early Aug 2026) ──
+  { q:'Q2 2026', status:'upcoming', date:'reports ~early August 2026',
+    setup:{ source:'Bloomberg BST consensus — to import from the export', asOf:null,
+      headline:[
+        {k:'Revenue', cons:null, us:null, note:{t:'Guided $483–485M (+17–18%)',h:'Management guided Q2 revenue to <b>$483–485M, +17–18%</b> — a step down from Q1\'s +25% as the Q1 tailwinds reverse (US tax refunds, remittance-tax offline→online surge, Middle-East surge, Ramadan/Easter pulled into Q1) and comps toughen. Full-year is $1.96–1.975B (+20–21%), with H2 re-accelerating to ~20%. Street/Summit fill from the Bloomberg export.'}},
+        {k:'Operating income', cons:null, us:null, note:{t:'Remitly guides to Adjusted EBITDA',h:'Remitly does not guide to GAAP operating income; its profit guide is Adjusted EBITDA (Q2 $86–88M, ~18% margin). GAAP net income is now positive each quarter.'}},
+        {k:'EPS', cons:null, us:null},
+        {k:'Adjusted EBITDA', cons:null, us:null, note:{t:'Guided $86–88M (~18% margin)',h:'Q2 Adj EBITDA guided to <b>$86–88M</b>, ~18% margin, ~+250bps YoY. Q2 SBC steps up (hiring shifted out of Q1 + tougher forfeiture comps). FY Adj EBITDA $370–385M (~19% margin).'}},
+      ],
+      custom:[ {k:null},{k:null},{k:null},{k:null} ], // 4 custom KPIs — to define with Dani (candidates: send volume · quarterly active customers · send/active customer · RLTE)
+      marketDebate:{
+        fear:'That Q1\'s +25% was a one-time confluence (remittance-tax offline→online, elevated tax refunds, a Middle-East surge, holiday timing) — and the Q2 step-down to +17–18% is the real core rate, making the guided H2 re-acceleration to ~20% a stretch.',
+        real:'Consensus reads Q1 as genuinely inflated but sees a durable core (QAU +20% accelerating, RLTE +28% > revenue, record retention) plus scaling growth accelerators funding the H2 re-accel — a Q2 trough by mechanics, not a demand crack.',
+        mech:[ {k:'Remittance-tax offline→online',v:'Q1 surge, "no science"',dir:'down'}, {k:'US tax refunds + ME surge',v:'reverse into Q2',dir:'down'}, {k:'Ramadan/Easter',v:'pulled into Q1',dir:'down'}, {k:'Growth accelerators + core',v:'H2 re-accel to ~20%',dir:'up'} ],
+        synth:'The one thing to resolve: strip out the transitory Q1 stack — what is the <b>clean, durable core growth rate</b>, and does the guided H2 re-acceleration to ~20% actually show up, or does the core settle in the high-teens?'
+      },
+      debate:null },
+    watchList:[
+      { rank:1, metric:'Durable core growth vs the transitory Q1 stack', since:'Q1 2026', tags:['core-send','growth','one-timers'],
+        pista:'Stripping out remittance-tax / tax-refunds / Middle-East / holiday timing — does H2 re-accelerate to the guided ~20%, or does the clean core settle in the high-teens?',
+        breaks:'The clean core rate settles below ~15% and the guided H2 re-acceleration does not materialize.',
+        seededBy:{ q:'Q1 2026', n:'Darrin Peller asked management to back out the one-timers (remittance tax, Middle-East, tax refunds) and name the sustainable rate; the answer leaned on growth accelerators + core, but Q2 still guides down to +17–18%.' },
+        src:'Q1 2026: revenue +25% aided by remittance-tax offline→online, elevated US tax refunds, a UAE surge (+150%), and Ramadan/Easter pulled forward; Q2 guided +17–18%, H2 ~20%.',
+        why:'The whole bull case is durable ~20%+ compounding toward the $3B/2028 target; if Q1 was a one-time spike, the trajectory resets.',
+        thread:[ {q:'Q4 2025',n:'Revenue +26%; FY25 +29%; strong December holiday.'},{q:'Q1 2026',n:'Revenue +25% on a transitory stack; Q2 guided +17–18%, H2 re-accel to ~20%.'} ] },
+      { rank:2, metric:'AI margin leverage — durable or one-time?', since:'Q1 2026', tags:['ai','margins','opex'],
+        pista:'Does opex leverage hold once the Q1 hiring pause ends (Q2 SBC + hiring step back up), or was the margin beat partly a one-time freeze?',
+        breaks:'Margin expansion reverses as reinvestment/hiring ramps, showing the leverage was a pause, not structural AI.',
+        seededBy:{ q:'Q1 2026', n:'Sebastian\'s thesis: "significantly more revenue with roughly the same headcount in 3–4 years"; Q1 EBITDA beat was aided by a short-term hiring pause after in-quarter headcount cuts — Vikas flagged Q2 SBC/hiring stepping back up.' },
+        src:'Q1 2026: 250+ headcount cuts YTD, corporate workforce −10%; T&D +14% vs revenue +25%; G&A +2% (lowest ever); Adj EBITDA $102M (record margin).',
+        why:'The margin story is the new CEO\'s core bet — if it is durable AI leverage it self-funds growth; if it is a hiring freeze it unwinds.',
+        thread:[ {q:'Q4 2025',n:'Adj EBITDA margin +500bps FY25; first full-year GAAP profit; AI fraud model +$10M RLTE.'},{q:'Q1 2026',n:'Record margin, but aided by a hiring pause; Q2 SBC guided higher.'} ] },
+      { rank:3, metric:'Growth accelerators trajectory', since:'Q1 2026', tags:['high-value-senders','business','card'],
+        pista:'Do high-value senders / business / card keep the >2x new-product growth toward the ~5%-in-2026, >10%-by-2028 path?',
+        breaks:'Accelerators stall below plan or the >2x new-product growth decelerates.',
+        seededBy:{ q:'Q1 2026', n:'Cris Kennedy / Zach asked how the accelerators are tracking vs plan; management said high-value senders (+73%) and business (+30% QoQ) are over-achieving, but the base is still ~5% of revenue.' },
+        src:'Q1 2026: high-value senders volume +73%; Remitly Business +30% QoQ (20k+ users); new-product revenue >2x; accelerators ~5% of 2026 revenue, >10% by 2028.',
+        why:'Accelerators are how Remitly diversifies beyond core remittance and defends the growth rate as core matures.',
+        thread:[ {q:'Q4 2025',n:'New products ~1% of revenue in 2025; Flex 120k, Business 15k; >2x guided for 2026.'},{q:'Q1 2026',n:'High-value +73%, Business +30% QoQ, new-product rev >2x; receiver product first transactions.'} ] },
+      { rank:4, metric:'Remitly Card / send-now-pay-later economics', since:'Q1 2026', tags:['card','snpl','unit-economics'],
+        pista:'The card-based SNPL launch — adoption traction and unit economics (interchange + float + platform fees vs credit losses)?',
+        breaks:'Card adoption or credit-loss performance disappoints as the product scales beyond invite-only.',
+        seededBy:{ q:'Q1 2026', n:'Aditya Buddhavarapu asked why the card became the main SNPL channel; Sebastian: strong test signals, "a killer idea," US-first, bank-partner credit; unit economics "expected to be strong."' },
+        src:'Q1 2026: SNPL moving to a card-based format (global debit card + wallet + short-term credit line via bank partner + rewards, monthly fee); invite-only to proven repayers; US-first.',
+        why:'The card is the vehicle for the borrow/spend/save flywheel and higher per-customer economics — but credit adds a new risk vector.',
+        thread:[ {q:'Q4 2025',n:'Flex 120k users, rev ~2x QoQ; Remitly Credit (recourse line) to launch spring 2026; wallet 60k.'},{q:'Q1 2026',n:'SNPL → card-based; strong signals; US-first; majority of SNPL growth to come from card format.'} ] },
+      { rank:5, metric:'Remittance-tax / offline→online durability', since:'Q1 2026', tags:['remittance-tax','offline-online','regulatory'],
+        pista:'Does the offline→online shift (aided by the 1% US cash-remittance tax) persist through the year, as management "takes on faith"?',
+        breaks:'The offline→online tailwind fades faster than assumed, pressuring new-customer acquisition.',
+        seededBy:{ q:'Q1 2026', n:'Ramsey El-Assal pressed on how durable the 1% remittance-tax tailwind is; Sebastian: "no science behind the 1%... we take it as an article of faith" it continues the rest of the year.' },
+        src:'Q1 2026: record new-customer acquisition from offline→online shift tied to the 1% US cash-remittance tax; Skip-the-Line campaign, WhatsApp + ChatGPT distribution.',
+        why:'A large cash-remittance base still to convert is a multi-year tailwind — but the pace is unquantified and management admits it is faith, not data.',
+        thread:[ {q:'Q4 2025',n:'Campaigns featuring 1% remittance-tax awareness; WhatsApp Send offline→online conversion.'},{q:'Q1 2026',n:'Remittance-tax drove record new customers; durability "an article of faith."'} ] },
+    ],
+    results:null, call:null },
+
+  // ── REPORTED: Q1 2026 (quarter ended Mar 2026; reported May 6 2026) ──
+  { q:'Q1 2026', status:'reported', date:'May 6, 2026',
+    setup:{ source:'Bloomberg BST consensus (archived) — precise figures to backfill',
+      pricedIn:'Sebastian Gunningham\'s first full quarter as CEO: continued 25%+ revenue growth, record profitability, RLTE outpacing revenue. The open question was whether the new CEO would change strategy or pace — and how much of the strength was durable vs macro/regulatory tailwinds.',
+      oneLiner:'The bar was "profitable growth continues, no strategy break under the new CEO" — Remitly beat both revenue and EBITDA guidance highs, but the beat leaned on a transitory stack and Q2 guides down.' },
+    watchList:[
+      { rank:1, metric:'CEO transition — accelerate or disrupt?', since:'Q4 2025', tags:['ceo','execution'],
+        pista:'Does Sebastian accelerate execution (product velocity, AI) without breaking the strategy or culture?', breaks:'Strategy pivot or execution disruption in the transition.',
+        seededBy:{ q:'Q4 2025', n:'Q4 announced Matt Oppenheimer → Chairman, Sebastian Gunningham incoming CEO; the question into Q1 was whether the hand-off accelerates or disrupts.' },
+        src:'Q4 2025: CEO transition announced; Sebastian (ex-Amazon marketplace/payments, Oracle, Santander) incoming.', why:'A founder-to-operator hand-off at a compounder is the single biggest execution variable.' },
+      { rank:2, metric:'New products / growth accelerators ramp', since:'Q4 2025', tags:['new-products','accelerators'],
+        pista:'Do new products actually >2x in 2026 toward the 5–10%-by-2028 path?', breaks:'New-product growth undershoots the >2x guide.',
+        seededBy:{ q:'Q4 2025', n:'Q4 set new products ~1% of 2025 revenue, guided >2x in 2026; the question was whether the ramp is real.' },
+        src:'Q4 2025: Flex 120k users, Business 15k, wallet 60k; new products ~1% of revenue; >2x guided for 2026.', why:'Diversification beyond core remittance.' },
+      { rank:3, metric:'Margin / EBITDA expansion durability', since:'Q4 2025', tags:['margins','ebitda'],
+        pista:'Can the +500bps FY25 margin expansion continue, or does reinvestment cap it?', breaks:'Margin expansion stalls or reverses.',
+        seededBy:{ q:'Q4 2025', n:'Q4 delivered +500bps FY25 Adj EBITDA margin and first GAAP profit; the question was durability into 2026 as they reinvest.' },
+        src:'Q4 2025: Adj EBITDA $272M FY25 (~17% margin, +500bps); net income $68M (first full-year GAAP profit).', why:'The profitable-growth thesis.' },
+      { rank:4, metric:'High-amount-sender mix shift', since:'Q4 2025', tags:['high-value-senders','mix'],
+        pista:'Does the high-amount-sender mix keep compounding (40%+ growth) and lifting send/customer?', breaks:'The mix shift stalls or brings worse loss rates.',
+        seededBy:{ q:'Q4 2025', n:'Q4 high-amount senders +40%, very-high +105%, ~50% of send volume; the question was whether the mix keeps shifting up.' },
+        src:'Q4 2025: high-amount senders +40% YoY; very-high +105%; ~50% of send volume.', why:'Drives send/customer and volume ahead of QAU.' },
+      { rank:5, metric:'Core growth durability / macro', since:'Q4 2025', tags:['core-send','macro'],
+        pista:'Does core revenue growth hold near the high-20s into 2026 amid macro/geopolitics?', breaks:'Core growth decelerates below ~20% on macro or corridor weakness.',
+        seededBy:{ q:'Q4 2025', n:'Q4 delivered +26% (FY25 +29%) "amid one of the more challenging macro environments"; the question was durability into 2026.' },
+        src:'Q4 2025: revenue +26%; QAU +19%; send volume +35%.', why:'The base the whole model compounds from.' },
+    ],
+    results:{
+      headline:'A record quarter that beat both guidance highs — revenue $453M (+25%), Adjusted EBITDA $102M (first time >$100M), record net income $49M (+300%) — but the beat leaned on a transitory stack (remittance tax, tax refunds, a Middle-East surge, holiday timing), and Q2 guides down to +17–18%.',
+      thesisCheck:[
+        {line:'CEO transition accelerates, not disrupts', tripped:false, note:'Sebastian kept the strategy ("the answer is no"), added a 4x4 operating framework + AI push; smooth — held.'},
+        {line:'New products / accelerators ramp (>2x)', tripped:false, note:'High-value senders +73%, Business +30% QoQ, new-product revenue >2x; on track — held.'},
+        {line:'Margin / EBITDA expansion durable', tripped:false, note:'Record Adj EBITDA margin + net income — but partly aided by a hiring pause (watch durability).'},
+        {line:'High-amount-sender mix keeps shifting', tripped:false, note:'High-value senders (now $5k+ defn) +73%, +220bps mix — held.'},
+        {line:'Core growth holds high-20s', tripped:true, note:'⚑ Q1 +25% was aided by one-timers and Q2 guides to +17–18% — the clean core rate is below the FY25 pace (watch).'},
+      ],
+      scorecard:[
+        {metric:'Q2 revenue guide (decel)', cons:null, actual:'$483–485M (+17–18%)', result:'nocons', surprise:70, watchRank:null, note:{t:'The real news in the print',h:'Step down from +25% as Q1 tailwinds reverse (tax refunds, remittance-tax surge, Middle-East, Ramadan/Easter) and comps toughen; FY +20–21% with H2 re-accel to ~20%.'}},
+        {metric:'Revenue', cons:null, actual:'$453M (+25%)', result:'beat', surprise:60, watchRank:5, note:{t:'$16M above midpoint',h:'Aided by remittance-tax offline→online, elevated US tax refunds, a UAE surge (+150%), and favorable corridors — management flagged these as partly transitory.'}},
+        {metric:'Adjusted EBITDA', cons:null, actual:'$102M (first >$100M)', result:'beat', surprise:60, watchRank:3, note:{t:'$19M above midpoint',h:'Higher revenue, lower transaction losses (AI fraud model), and a short-term hiring pause after in-quarter headcount cuts.'}},
+        {metric:'GAAP net income', cons:null, actual:'$49M (+300%)', result:'beat', surprise:55, watchRank:null, note:{t:'Record',h:'Vs $11M in Q1 2025; record GAAP profitability; SBC down 23% YoY (aided by forfeitures).'}},
+        {metric:'Quarterly active customers', cons:null, actual:'9.6M (+20%)', result:'beat', surprise:45, watchRank:null, note:{t:'Growth accelerated QoQ',h:'Record new-customer acquisition on the offline→online shift; improved retention.'}},
+        {metric:'Send volume', cons:null, actual:'$22.1B (+37%)', result:'beat', surprise:45, watchRank:4, note:{t:'Send/customer record $2,300 (+14%)',h:'Driven by transactions/customer and record average transaction size (high-value senders + business).'}},
+        {metric:'High-value senders volume', cons:null, actual:'+73%', result:'beat', surprise:40, watchRank:4},
+        {metric:'RLTE (revenue less transaction exp.)', cons:null, actual:'$308M (+28%), 68% of rev', result:'beat', surprise:35, watchRank:null, note:{t:'The right metric (not take rate)',h:'RLTE +28% outpaced revenue +25%, +156bps; management downplays take rate (2.05%, mix-driven).'}},
+        {metric:'Free cash flow', cons:null, actual:'$70M+', result:'beat', surprise:30, watchRank:null, note:{t:'First-ever share-count decline',h:'Outstanding shares down QoQ for the first time ever; buyback $44M (2.8M shares), ~4x prior pace.'}},
+      ],
+      intoCall:[
+        'Stripping the one-timers, what is the durable core growth rate — and does H2 really re-accelerate to ~20%?',
+        'Is the record margin durable AI leverage or a one-time hiring pause (Q2 SBC/hiring steps up)?',
+        'How are the growth accelerators (high-value, business, card) tracking vs plan?',
+      ],
+      priceReaction:'to fill from a trusted source' },
+    call:{
+      take:'A record quarter (revenue $453M/+25%, Adj EBITDA $102M, net income $49M/+300%) whose <b>composition is the story</b>: the beat leaned on a transitory stack (remittance-tax offline→online, elevated US tax refunds, a Middle-East surge, holiday timing) and Q2 already guides down to +17–18%. Underneath, the new CEO kept the strategy, added an AI-and-capacity thesis, and the durable engine (RLTE +28% > revenue, first-ever share-count decline) held.',
+      highlights:[
+        { tag:'watch', band:'lead', head:'The +25% beat leans on a <b>transitory stack</b> — Q2 decelerates to +17–18%.',
+          open:'What is the clean, durable core rate stripping out remittance-tax / tax-refunds / Middle-East / holiday timing — and does H2 really re-accelerate to the guided ~20%?',
+          detail:'<p>Vikas named the Q1 upside drivers: the <b>1% US cash-remittance tax</b> driving offline→online (record new-customer acquisition), <b>elevated US tax refunds</b>, a <b>Middle-East geopolitical surge</b> (UAE send volume +150%), and <b>Ramadan/Easter pulled into Q1</b>. Q2 guides to $483–485M (+17–18%) as these reverse and comps toughen; FY +20–21% with H2 re-accelerating to ~20%.</p><p>Sebastian on the remittance-tax tailwind: "no science behind the 1%… we take it as an article of faith" it continues. The tell: whether the H2 re-accel shows up, or the clean core settles in the high-teens.</p>' },
+        { tag:'thesis', band:'lead', head:'New CEO\'s <b>AI thesis</b> — a capacity and margin bet ("more revenue, same headcount in 3–4 years").',
+          open:'Is the record margin durable AI leverage or a one-time hiring pause? Q1 EBITDA was aided by a hiring freeze after in-quarter cuts; Vikas flagged Q2 SBC and hiring stepping back up.',
+          detail:'<p>Sebastian kept the strategy ("the answer is no" to changing it) but reframed around a <b>4x4 matrix</b> (core / high-value / business / receivers × send / borrow / spend / save) and an aggressive AI agenda. Evidence: <b>250+ headcount cuts YTD</b>, corporate workforce <b>−10%</b> in Q1, T&D <b>+14% vs revenue +25%</b>, G&A +2% (lowest ever), 97% of transactions with no agent contact, "knowledge development engineers."</p><p>The plan: generate "significantly more revenue with roughly the same number of people in 3–4 years," reinvesting a large portion of the AI-driven capacity back into growth. The open question is how much of Q1\'s record margin is structural AI leverage vs a temporary hiring pause.</p>' },
+        { tag:'thesis', band:'context', head:'Growth accelerators over-achieving — high-value senders <b>+73%</b>, Business <b>+30% QoQ</b>.',
+          detail:'<p>New-product revenue >2x YoY; high-value senders (redefined as $5k+ transactions) +73% with +220bps mix; Remitly Business 20k+ users, RLTE per business customer ~2x core; receiver product first transactions (30M+ receiver TAM). Still ~5% of revenue (>10% by 2028) — early but working.</p>' },
+        { tag:'thesis', band:'context', head:'Record profitability + <b>first-ever share-count decline</b>.',
+          detail:'<p>Adj EBITDA $102M (first >$100M), net income $49M (+300%), FCF $70M+. Buyback $44M (2.8M shares), ~4x prior pace; outstanding shares down QoQ for the first time in company history. SBC 6.1% of revenue (−382bps).</p>' },
+        { tag:'thesis', band:'context', head:'RLTE the real metric: <b>+28% &gt; revenue</b>, 68% of revenue (+156bps).',
+          detail:'<p>Management explicitly downplays take rate (2.05%, mix-driven) in favor of RLTE dollar growth and RLTE/active customer. RLTE +28% outpaced revenue; transaction losses a record-low 9.3bps of send volume on the AI fraud model.</p>' },
+        { tag:'curious', band:'context', head:'Send-now-pay-later goes <b>card-based</b> — the Remitly Card ambition.',
+          open:'Unit economics + adoption as it scales beyond invite-only — interchange/float/platform fees vs credit losses.',
+          detail:'<p>SNPL moving to a card format: global debit card + wallet + short-term credit line (bank partner) + rewards, for a low monthly fee; invite-only to proven repayers; US-first. Sebastian: "a killer idea," unit economics "expected to be strong." Ambition: "the most versatile and best debit card in the world" for 300M migrants + 80M SMBs.</p>' },
+        { tag:'watch', band:'logged', head:'Stablecoins framed as a <b>targeted tool</b>, not a universal solution.',
+          detail:'<p>USDC wallet for receivers; corridor-specific FX/speed/settlement advantage. Sebastian: "not a universal solution, but a targeted one" where there is a clear cost or speed advantage.</p>' },
+        { tag:'curious', band:'logged', head:'Distribution via <b>WhatsApp + ChatGPT</b>; M&A muscle-building.',
+          detail:'<p>WhatsApp integration + a ChatGPT experiment (no financial interchange, early). Sebastian starting to analyze acquisitions differently to accelerate the new categories, though "nothing obvious on the horizon" for core.</p>' },
+      ],
+      dots:'The two lead items pull in opposite directions on the same number: the <b>transitory stack inflated Q1 revenue</b> while the <b>hiring pause inflated Q1 margin</b> — so both the top-line beat and the profitability beat carry a "how durable?" asterisk. Underneath, the structural signals (RLTE +28% > revenue, first-ever share-count decline, accelerators over-achieving) say the compounding engine is intact — the next two prints test whether the new CEO\'s AI-capacity bet turns the one-timers into a durable step-up.',
+      threeMinutes:[
+        '<b>Record quarter, but the +25% beat is inflated by a transitory stack — Q2 already guides to +17–18%.</b> Remittance-tax offline→online, elevated US tax refunds, a Middle-East surge (UAE +150%), and Ramadan/Easter pulled into Q1; management admits "no science" behind the remittance-tax tailwind. The real question is the durable core rate and whether H2 truly re-accelerates to the guided ~20%.',
+        '<b>The new CEO\'s AI thesis is the real story — a capacity and margin bet.</b> 250+ headcount cuts, corporate workforce −10%, tech spend +14% vs revenue +25%, 97% of transactions with no agent contact — funding a plan for "significantly more revenue with roughly the same headcount in 3–4 years," reinvested into growth. Watch whether the record margin is durable AI leverage or a one-time hiring pause (Q2 SBC/hiring steps up).',
+        '<b>The compounding engine is intact and accelerators are working but still small.</b> RLTE +28% outpaced revenue, first-ever share-count decline, FCF $70M+; high-value senders +73%, business +30% QoQ, new-product revenue >2x — but only ~5% of revenue (>10% by 2028).',
+      ],
+      notBringing:[
+        {item:'Take rate (2.05%)', why:'Management explicitly calls it a poor, mix-driven metric; RLTE dollar growth is the right lens.'},
+        {item:'Stablecoins as a thesis driver', why:'Framed as a targeted corridor tool, not a universal solution; not material to the model yet.'},
+        {item:'ChatGPT / WhatsApp monetization', why:'Early experiments, no financial interchange with ChatGPT — not a model input.'},
+      ],
+      newQuestions:[
+        {n:'Stripping the one-timers, what is the durable core rate — and does H2 re-accelerate to ~20%?', landed:{q:'Q2 2026', rank:1}, tripped:true},
+        {n:'Is the record margin durable AI leverage or a one-time hiring pause?', landed:{q:'Q2 2026', rank:2}},
+        {n:'Do the growth accelerators keep the >2x pace toward 10%-by-2028?', landed:{q:'Q2 2026', rank:3}},
+        {n:'What are the Remitly Card / SNPL unit economics as it scales?', landed:{q:'Q2 2026', rank:4}},
+        {n:'Does the remittance-tax offline→online tailwind persist all year?', landed:{q:'Q2 2026', rank:5}},
+      ] } },
+
+  // ── REPORTED: Q4 2025 (quarter ended Dec 2025; reported Feb 18 2026) ──
+  { q:'Q4 2025', status:'reported', date:'February 18, 2026',
+    setup:{ source:'Bloomberg BST consensus (archived) — precise figures to backfill',
+      pricedIn:'A strong close to 2025: mid-20s revenue growth, record margins, first full-year GAAP profit. The Investor-Day medium-term targets ($3B revenue / $600M EBITDA by 2028) were the frame; a holiday-quarter beat was expected.',
+      oneLiner:'The bar was "finish 2025 strong and confirm the Investor-Day trajectory" — Remitly beat (+26%, record 20% EBITDA margin) AND dropped a surprise: a CEO transition to Sebastian Gunningham.' },
+    watchList:[
+      { rank:1, metric:'Margin / EBITDA expansion durability', since:'Q3 2025', tags:['margins','ebitda'],
+        pista:'Does the margin expansion continue into a record Q4 as leverage compounds?', breaks:'Margin expansion stalls.',
+        src:'Q3 2025: Adj EBITDA margin expanding on operating leverage.', why:'The profitable-growth thesis.' },
+      { rank:2, metric:'New products / Investor-Day trajectory', since:'Q3 2025', tags:['new-products','investor-day'],
+        pista:'Do new products confirm the path to 5–10% of revenue by 2028?', breaks:'New-product traction disappoints vs the Investor-Day frame.',
+        src:'Q3 2025: Flex, Business, wallet/card scaling; Investor Day targets set.', why:'Diversification and the 2028 target.' },
+      { rank:3, metric:'Core growth durability / macro', since:'Q3 2025', tags:['core-send','macro'],
+        pista:'Does core revenue hold high-20s into year-end amid macro/geopolitics?', breaks:'Core decelerates below ~25%.',
+        src:'Q3 2025: revenue growth in the mid-to-high 20s.', why:'The base of the model.' },
+      { rank:4, metric:'High-amount-sender mix', since:'Q3 2025', tags:['high-value-senders','mix'],
+        pista:'Does the high-amount-sender mix keep lifting send/customer?', breaks:'Mix shift stalls.',
+        src:'Q3 2025: high-amount senders growing faster than low-amount.', why:'Drives volume ahead of QAU.' },
+      { rank:5, metric:'Dilution / capital discipline', since:'Q3 2025', tags:['dilution','capital'],
+        pista:'Does share-count growth keep moderating as FCF scales?', breaks:'Dilution outpaces FCF growth.',
+        src:'Q3 2025: FCF scaling; buyback program launched H2 2025.', why:'The North Star is FCF/share.' },
+    ],
+    results:{
+      headline:'A strong close to 2025 with a surprise: revenue $442M (+26%), record 20% Adj EBITDA margin, first full-year GAAP profit ($68M) — and the announced CEO transition from founder Matt Oppenheimer (→ Chairman) to Sebastian Gunningham.',
+      thesisCheck:[
+        {line:'Margin / EBITDA expansion durable', tripped:false, note:'Record 20% Q4 Adj EBITDA margin; FY +500bps; first full-year GAAP profit — held strongly.'},
+        {line:'New products confirm the Investor-Day path', tripped:false, note:'Flex 120k, Business 15k, wallet 60k; >2x guided for 2026 — held.'},
+        {line:'Core growth holds high-20s', tripped:false, note:'Revenue +26% (FY25 +29%) amid a tough macro — held.'},
+        {line:'High-amount-sender mix keeps lifting', tripped:false, note:'High-amount +40%, very-high +105%, ~50% of send volume — held/accelerated.'},
+      ],
+      scorecard:[
+        {metric:'CEO transition (Oppenheimer → Gunningham)', cons:null, actual:'founder → Chairman; Sebastian CEO', result:'nodisc', surprise:75, watchRank:null, note:{t:'The surprise in the print',h:'Founder Matt Oppenheimer moves to Chairman (largest shareholder, no plans to sell); Sebastian Gunningham (ex-Amazon marketplace/payments, Oracle, Santander) becomes CEO to "accelerate product velocity." A deliberate, board-run succession.'}},
+        {metric:'Adjusted EBITDA', cons:null, actual:'$89M · 20% margin (record)', result:'beat', surprise:55, watchRank:1, note:{t:'Highest quarterly margin ever',h:'Lower transaction losses (AI fraud model), disciplined marketing, opex leverage across all categories.'}},
+        {metric:'FY2025 net income', cons:null, actual:'$68M (first full-year GAAP profit)', result:'beat', surprise:55, watchRank:null, note:{t:'From −$37M a year ago',h:'Q4 net income $41M (vs −$6M in Q4 2024); FCF $283M (tripled).'}},
+        {metric:'Revenue', cons:null, actual:'$442M (+26%); FY $1.635B (+29%)', result:'beat', surprise:45, watchRank:3, note:{t:'Above guidance',h:'FY revenue >$60M above the initial 2025 midpoint; strong December holiday.'}},
+        {metric:'Very-high-amount senders volume', cons:null, actual:'+105%', result:'beat', surprise:45, watchRank:4, note:{t:'High-amount +40%',h:'The two tiers now ~50% of send volume, mix +350bps YoY.'}},
+        {metric:'RLTE (% of revenue)', cons:null, actual:'$305M (+30%), 69% (record)', result:'beat', surprise:35, watchRank:1, note:{t:'Record high',h:'RLTE +30% > revenue; provision for losses a record-low 7.3bps of send volume.'}},
+        {metric:'Send volume', cons:null, actual:'$21B (+35%)', result:'inline', surprise:25, watchRank:null},
+        {metric:'Quarterly active customers', cons:null, actual:'9.3M (+19%)', result:'inline', surprise:20, watchRank:3},
+        {metric:'New products (% of revenue)', cons:null, actual:'~1% (2025); >2x guided 2026', result:'nocons', surprise:30, watchRank:2, note:{t:'The 2028 path',h:'5–10% of revenue by 2028; Flex first product outside core to pass 100k users.'}},
+      ],
+      intoCall:[
+        'Will the CEO transition accelerate execution or introduce disruption?',
+        'Can the record margin expansion continue into 2026 as they reinvest?',
+        'Do new products really >2x in 2026 toward the Investor-Day path?',
+      ],
+      priceReaction:'to fill from a trusted source' },
+    call:{
+      take:'A strong finish to 2025 (revenue +26%, record 20% Q4 Adj EBITDA margin, first full-year GAAP profit) paired with a <b>planned CEO succession</b>: founder Matt Oppenheimer to Chairman, Sebastian Gunningham (ex-Amazon/Oracle/Santander) as CEO to accelerate product velocity — strategy explicitly unchanged, execution pace the point.',
+      highlights:[
+        { tag:'thesis', band:'lead', head:'<b>CEO transition</b>: founder → Chairman, Sebastian Gunningham in to accelerate velocity.',
+          open:'Does the hand-off accelerate execution or introduce disruption? Strategy is unchanged, but a founder-to-operator transition at a compounder is the key variable.',
+          detail:'<p>Matt Oppenheimer moves to Chairman (remains largest individual shareholder, "no plans to sell"), running a "deliberate, exhaustive" board process. Sebastian brings Amazon marketplace/payments scale, Oracle, and Santander Consumer Finance chair experience — framed as a "product-first operator" to "relentlessly drive product velocity and operational cadence" while Matt provides founder continuity. The bet: same vision, faster delivery.</p>' },
+        { tag:'thesis', band:'context', head:'Record <b>20% Q4 Adj EBITDA margin</b>; first full-year GAAP profit ($68M).',
+          detail:'<p>FY25 Adj EBITDA $272M (~17% margin, +500bps); net income $68M (from −$37M a year prior); FCF $283M (tripled). Driven by an AI fraud model (record-low losses), disciplined marketing, and opex leverage across every category.</p>' },
+        { tag:'thesis', band:'context', head:'Investor-Day frame confirmed: <b>$3B revenue / $600M EBITDA by 2028</b>.',
+          detail:'<p>New products ~1% of 2025 revenue, guided >2x in 2026, 5–10% of revenue by 2028. Flex (SNPL) first product outside core to pass 100k users (~120k); Remitly Business 15k; wallet 60k; Remitly One membership ties them together. Remitly Credit (recourse line) to launch spring 2026.</p>' },
+        { tag:'thesis', band:'context', head:'High-amount-sender mix accelerating — very-high <b>+105%</b>, high <b>+40%</b>.',
+          detail:'<p>The two tiers now ~50% of send volume (+350bps mix YoY), lifting send/customer to $2,200 (+13%). New definitions: low <$1k, high $1k–$10k, very-high >$10k.</p>' },
+        { tag:'thesis', band:'context', head:'Capital discipline: FCF tripled to <b>$283M</b>; buyback launched H2 2025.',
+          detail:'<p>The North Star is FCF/share; outstanding shares grew only 5% in 2025; the share-repurchase program launched in H2 2025 (setting up Q1 2026\'s first-ever share-count decline).</p>' },
+        { tag:'watch', band:'logged', head:'Geographic expansion: UAE, Japan (Q1), Saudi + Brazil (2026, pending).',
+          detail:'<p>UAE new customers +160% QoQ; Japan outbound early Q1; Saudi Arabia and potentially Brazil planned for 2026 subject to regulatory approval.</p>' },
+        { tag:'curious', band:'logged', head:'AI already contributing — fraud model added <b>~$10M RLTE</b> vs forecast.',
+          detail:'<p>The recently upgraded AI fraud model drove record-low transaction losses; agent-automated workflows compressing developer time. The seed of the AI-capacity thesis Sebastian expands in Q1 2026.</p>' },
+      ],
+      dots:'The CEO transition and the record margins are the same story from two angles: 2025 proved the model works (profitable growth, first GAAP profit, FCF tripled), which is exactly why Matt judged it the right moment to hand a working machine to an operator built for velocity — the AI leverage flagged here ($10M RLTE from the fraud model) becomes Sebastian\'s central thesis one quarter later.',
+      threeMinutes:[
+        '<b>Strong close to 2025 and a planned CEO succession.</b> Revenue +26% (FY +29%), record 20% Q4 Adj EBITDA margin, first full-year GAAP profit ($68M), FCF tripled to $283M — and founder Matt Oppenheimer moves to Chairman with Sebastian Gunningham (ex-Amazon/Oracle/Santander) in as CEO to accelerate product velocity. Strategy explicitly unchanged; pace is the point.',
+        '<b>The profitable-growth machine is proven</b> — +500bps FY margin expansion, RLTE +30% > revenue, provision for losses a record-low 7.3bps on the AI fraud model. That durability is what made this the right moment for the hand-off.',
+        '<b>The Investor-Day path is intact</b>: $3B revenue / $600M EBITDA by 2028, with new products (~1% of revenue, >2x guided for 2026) and high-amount senders (~50% of volume) the diversification vectors. Watch the transition execution and whether margins hold as they reinvest.',
+      ],
+      notBringing:[
+        {item:'Take rate (2.13%)', why:'Mix-driven; management steers to RLTE dollar growth as the right metric.'},
+        {item:'Quarter-to-quarter send-volume noise', why:'+35% healthy; the signal is RLTE and mix, not the headline volume print.'},
+        {item:'Geographic launch specifics', why:'UAE/Japan/Saudi/Brazil are optionality, not near-term model drivers.'},
+      ],
+      newQuestions:[
+        {n:'Will the CEO transition accelerate execution or introduce disruption?', landed:{q:'Q1 2026', rank:1}},
+        {n:'Do new products actually >2x in 2026 toward the 2028 path?', landed:{q:'Q1 2026', rank:2}},
+        {n:'Can the record margin expansion continue as they reinvest?', landed:{q:'Q1 2026', rank:3}},
+        {n:'Does the high-amount-sender mix keep compounding?', landed:{q:'Q1 2026', rank:4}},
+        {n:'Does core revenue growth hold high-20s into 2026?', landed:{q:'Q1 2026', rank:5}},
+      ] } },
+]};
+
+function cpUpcoming(){ return CALL_PREP.quarters.filter(function(q){ return q.status==='upcoming'; })[0]||null; }
+function cpFill(x, muted){ return (x!=null && String(x).trim()!=='') ? x : '<span class="cp-empty">'+(muted||'— to fill')+'</span>'; }
+var CP_POP={};
+function cpReg(id, t, h){ CP_POP[id]={t:t, h:h}; return id; }
+function cpQ(id, t, h){ return '<span class="cp-info ov-clickable" data-detail="cp:'+cpReg(id,t,h)+'" title="'+esc(String(t).replace(/<[^>]+>/g,''))+'">?</span>'; }
+function cpStyle(){
+  return '<style>.cp-note{font-size:11px;color:var(--mu);line-height:1.5;background:#F7F9FB;border:1px solid var(--bdr);border-radius:9px;padding:9px 12px;margin:0 0 12px}'+
+    '.cp-phtabs{display:inline-flex;gap:3px;background:rgba(31,77,216,0.06);border:1px solid var(--bdr);border-radius:9px;padding:4px;margin:0 0 20px}'+
+    '.cp-phtab{background:none;border:none;color:var(--mu);font-family:\'Inter\',sans-serif;font-size:12px;letter-spacing:.5px;text-transform:uppercase;font-weight:600;padding:7px 16px;border-radius:6px;cursor:pointer;transition:all .15s}'+
+    '.cp-phtab:hover{color:var(--navy)}.cp-phtab.active{background:'+BRAND+';color:#fff}'+
+    '.cp-phpane[hidden]{display:none}'+
+    '.cp-qpills{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}'+
+    '.cp-qpill{border:1px solid var(--bdr);background:var(--w);font:inherit;font-size:11px;font-weight:800;color:var(--mu);padding:5px 13px;border-radius:999px;cursor:pointer;transition:.12s}'+
+    '.cp-qpill:hover{color:var(--navy)}.cp-qpill.active{background:'+BRAND+';color:#fff;border-color:'+BRAND+'}'+
+    '.cp-qpill .cp-qtag{font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;margin-left:6px;opacity:.75}'+
+    '.cp-qblock[hidden]{display:none}'+
+    '.cp-frozen{display:inline-block;font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:#fff;background:'+GRAY+';border-radius:20px;padding:2px 8px;margin-left:7px;vertical-align:middle}'+
+    '.cp-wl-tagbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 12px;padding:9px 12px;background:#F7F9FB;border:1px solid var(--bdr);border-radius:10px}'+
+    '.cp-wl-tag{border:1px solid rgba(122,90,248,0.35);background:var(--w);font:inherit;font-size:10.5px;font-weight:800;color:'+PURPLE+';padding:3px 10px;border-radius:999px;cursor:pointer;transition:.12s}'+
+    '.cp-wl-tag:hover{background:rgba(122,90,248,0.08)}.cp-wl-tag.active{background:'+PURPLE+';color:#fff;border-color:'+PURPLE+'}'+
+    '.cp-wl-clear{border-color:var(--bdr);color:var(--mu)}'+
+    '.cp-wl-add-btn{margin-left:auto;border:1px dashed '+BRAND+';background:var(--w);font:inherit;font-size:10.5px;font-weight:800;color:'+BRAND+';padding:3px 10px;border-radius:999px;cursor:pointer}'+
+    '.cp-wl-addform{display:flex;flex-direction:column;gap:7px;border:1px dashed '+BRAND+';border-radius:10px;padding:12px;margin:0 0 12px;background:rgba(31,77,216,0.03)}'+
+    '.cp-wl-addform[hidden]{display:none}'+
+    '.cp-wl-in{font:inherit;font-size:12px;border:1px solid var(--bdr);border-radius:8px;padding:7px 10px;background:var(--w);color:var(--navy)}'+
+    '.cp-wl-add-go{font:inherit;font-size:11px;font-weight:800;border:none;border-radius:8px;padding:6px 13px;background:'+BRAND+';color:#fff;cursor:pointer}'+
+    '.cp-wl-all[hidden]{display:none}.cp-w[data-wlhide]{display:none}'+
+    '.cp-empty{color:var(--mu);font-style:italic;opacity:.7}'+
+    '.cp-grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:4px 0}@media(max-width:640px){.cp-grid4{grid-template-columns:1fr 1fr}}'+
+    '.cp-cell{border:1px solid var(--bdr);border-top:3px solid '+BLUE+';border-radius:10px;padding:11px 13px;background:var(--w)}'+
+    '.cp-cell-k{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--mu)}.cp-cell-v{font-size:15px;font-weight:800;color:var(--navy);margin-top:3px;line-height:1.2}'+
+    '.cp-ev-pill{border:none;background:transparent;font:inherit;font-size:10.5px;font-weight:700;color:var(--mu);padding:3px 10px;border-radius:999px;cursor:pointer}'+
+    '.cp-ev-pill.active{background:'+BRAND+';color:#fff}'+
+    '.cp-cell-custom{border-top-color:'+YELLOW+'}'+
+    '.cp-row-cap{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--mu);margin:2px 0 4px}'+
+    '.cp-val{display:flex;align-items:baseline;gap:7px}'+
+    '.cp-val-lab{font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;border-radius:20px;padding:1px 7px;flex:none}'+
+    '.cp-val-cons .cp-val-lab{background:rgba(37,87,214,0.10);color:'+BLUE+'}'+
+    '.cp-val-us .cp-val-lab{background:rgba(22,163,74,0.12);color:'+BRAND2+'}'+
+    '.cp-evwrap[data-ev="cons"] .cp-val-us{display:none}'+
+    '.cp-evwrap[data-ev="us"] .cp-val-cons{display:none}'+
+    '.cp-evwrap:not([data-ev="both"]) .cp-val-lab{display:none}'+
+    '.cp-evwrap[data-ev="both"] .cp-cell-v{font-size:13px}'+
+    '.cp-evwrap[data-ev="both"] .cp-val{margin-top:3px}'+
+    '.cp-banner{border:1px solid var(--bdr);border-left:4px solid '+BRAND+';border-radius:11px;padding:13px 15px;background:linear-gradient(180deg,rgba(31,77,216,0.05),transparent);font-size:12.5px;line-height:1.6;color:var(--navy);margin:12px 0}'+
+    '.cp-watch{display:flex;flex-direction:column;gap:11px}'+
+    '.cp-w{border:1px solid var(--bdr);border-radius:12px;padding:13px 15px;background:var(--w);position:relative}'+
+    '.cp-w-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}'+
+    '.cp-w-rank{width:26px;height:26px;border-radius:50%;background:'+BRAND+';color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}'+
+    '.cp-w-metric{font-size:13.5px;font-weight:800;color:var(--navy)}'+
+    '.cp-w-q{display:flex;gap:8px;align-items:flex-start;background:#10141A;color:#fff;border-radius:9px;padding:9px 12px;font-size:11.5px;line-height:1.5;margin-top:8px}.cp-w-q .mic{flex:none}'+
+    '.cp-kind{font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;border-radius:20px;padding:2px 8px;white-space:nowrap;border:1px solid}'+
+    '.cp-phase{display:inline-block;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#fff;border-radius:20px;padding:3px 10px;margin-bottom:8px}'+
+    '.cp-info{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:'+AMBER+';color:#fff;font-size:10px;font-weight:800;cursor:pointer;margin-left:5px;vertical-align:middle;flex:none}'+
+    '.cp-info:hover{filter:brightness(1.1)}'+
+    '.cp-debate{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:4px 0}@media(max-width:600px){.cp-debate{grid-template-columns:1fr}}'+
+    '.cp-dc{border:1px solid var(--bdr);border-radius:12px;padding:13px 15px;background:var(--w)}'+
+    '.cp-dc.fear{border-top:4px solid '+RED+';background:linear-gradient(180deg,rgba(234,67,53,0.04),transparent)}'+
+    '.cp-dc.real{border-top:4px solid '+BRAND2+';background:linear-gradient(180deg,rgba(22,163,74,0.05),transparent)}'+
+    '.cp-dc-h{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}'+
+    '.cp-dc.fear .cp-dc-h{color:'+RED+'}.cp-dc.real .cp-dc-h{color:'+BRAND2+'}'+
+    '.cp-dc-b{font-size:12.5px;font-weight:700;color:var(--navy);line-height:1.4}'+
+    '.cp-mech{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0}'+
+    '.cp-mech-chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:800;border:1px solid var(--bdr);border-radius:9px;padding:7px 12px;background:var(--w);color:var(--navy)}'+
+    '.cp-mech-ar{font-size:15px;color:var(--mu)}'+
+    '.cp-synth{border-left:4px solid var(--navy);background:#10141A;color:#fff;border-radius:11px;padding:13px 16px;font-size:13px;font-weight:700;line-height:1.5;margin:6px 0}.cp-synth b{color:#E8A00C}'+
+    '.cp-why-btn{display:inline-block;font-size:10px;font-weight:800;color:'+BLUE+';cursor:pointer;margin-top:8px}'+
+    '.cp-w-chips{display:flex;gap:7px;flex-wrap:wrap;margin:6px 0 0}'+
+    '.cp-w-chip{font-size:10px;font-weight:700;border-radius:7px;padding:4px 9px;line-height:1.3}'+
+    '.cp-w-chip.cons{background:rgba(37,87,214,0.08);border:1px solid rgba(37,87,214,0.28);color:var(--navy)}'+
+    '.cp-w-chip.red{background:rgba(234,67,53,0.06);border:1px solid rgba(234,67,53,0.28);color:var(--navy)}'+
+    '.cp-w-chip b{font-weight:800}'+
+    '.cp-take{border-left:4px solid '+BRAND+';background:#10141A;color:#fff;border-radius:11px;padding:13px 16px;font-size:13px;font-weight:700;line-height:1.5;margin:2px 0 14px}.cp-take b{color:#E8A00C}'+
+    '.cp-hl{display:flex;flex-direction:column;gap:8px}'+
+    '.cp-hl-row{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;border:1px solid var(--bdr);border-left:4px solid var(--hc);border-radius:10px;padding:10px 13px;background:var(--w);cursor:pointer;transition:.12s}'+
+    '.cp-hl-row:hover{box-shadow:0 3px 10px rgba(0,0,0,.08)}'+
+    '.cp-hl-tag{font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:#fff;background:var(--hc);border-radius:20px;padding:3px 9px;white-space:nowrap}'+
+    '.cp-hl-head{font-size:12.5px;font-weight:700;color:var(--navy);line-height:1.4}'+
+    '.cp-hl-more{font-size:15px;color:var(--hc);font-weight:800}'+
+    '@media(max-width:560px){.cp-hl-row{grid-template-columns:auto 1fr}.cp-hl-more{display:none}}'+
+    '.cp-dots{border:1px dashed '+BRAND+';border-radius:11px;padding:12px 15px;margin-top:14px;background:rgba(31,77,216,0.03);font-size:12px;line-height:1.6;color:var(--navy)}.cp-dots b{color:'+BRAND+'}'+
+    '.cp-tc{display:flex;flex-direction:column;gap:6px}'+
+    '.cp-tc-row{display:flex;gap:9px;align-items:flex-start;font-size:11.5px;color:var(--navy);line-height:1.45;border:1px solid var(--bdr);border-radius:9px;padding:8px 11px}'+
+    '.cp-tbl{width:100%;border-collapse:collapse;font-size:11.5px}'+
+    '.cp-tbl th{text-align:left;color:var(--mu);font-weight:700;padding:7px 10px;border-bottom:1px solid var(--bdr);font-size:10.5px;text-transform:uppercase;letter-spacing:.03em}'+
+    '.cp-tbl td{padding:9px 10px;border-bottom:1px solid var(--bdr);color:var(--navy);line-height:1.45;vertical-align:top}'+
+    '.cp-pill{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:#fff;border-radius:20px;padding:2px 9px;white-space:nowrap}'+
+    '.cp-sc{display:flex;flex-direction:column;gap:6px}'+
+    '.cp-sc-row{display:grid;grid-template-columns:78px 1.1fr 1fr 1.2fr 92px auto;gap:10px;align-items:center;border:1px solid var(--bdr);border-left:4px solid var(--sc);border-radius:9px;padding:8px 12px}'+
+    '.cp-sc-m{font-size:12px;font-weight:800;color:var(--navy)}.cp-sc-c{font-size:11px;color:var(--mu)}.cp-sc-a{font-size:11.5px;font-weight:700;color:var(--navy)}'+
+    '.cp-sc-v{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:#fff;border-radius:20px;padding:2px 10px;background:var(--sc);white-space:nowrap}'+
+    '.cp-sc-rk{font-size:9px;font-weight:800;color:'+BRAND+';background:rgba(31,77,216,0.10);border:1px solid rgba(31,77,216,0.3);border-radius:20px;padding:2px 8px;white-space:nowrap;text-align:center}'+
+    '.cp-sc-rk.blank{background:transparent;border:none}'+
+    '.cp-sc-surp{font-size:9.5px;font-weight:800;text-align:center;letter-spacing:.02em;border-radius:20px;padding:2px 8px;white-space:nowrap}'+
+    '.cp-sc-surp.hi{color:'+RED+';background:rgba(234,67,53,0.09);border:1px solid rgba(234,67,53,0.3)}'+
+    '.cp-sc-surp.md{color:'+AMBER+';background:rgba(183,121,31,0.09);border:1px solid rgba(183,121,31,0.3)}'+
+    '.cp-sc-surp.lo{color:var(--mu);background:transparent;border:1px solid var(--bdr)}'+
+    '.cp-legend{display:flex;flex-wrap:wrap;gap:14px;align-items:center;background:#F7F9FB;border:1px solid var(--bdr);border-radius:10px;padding:10px 13px;margin:0 0 10px}'+
+    '.cp-legend-i{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--navy);line-height:1.4}'+
+    '.cp-legend-i b{font-weight:800}'+
+    '@media(max-width:600px){.cp-sc-row{grid-template-columns:1fr auto}.cp-sc-c,.cp-sc-a,.cp-sc-bw,.cp-sc-rk{display:none}}'+
+    '.cp-band{margin:16px 0 8px;display:flex;align-items:center;gap:9px}'+
+    '.cp-band-i{font-size:13px;font-weight:800;color:var(--bc);line-height:1}'+
+    '.cp-band-t{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--bc)}'+
+    '.cp-band-s{font-size:10.5px;color:var(--mu);font-weight:600;font-style:italic}'+
+    '.cp-band-l{flex:1;height:1px;background:var(--bdr)}'+
+    '@media(max-width:560px){.cp-band-s{display:none}}'+
+    '.cp-hl-open{font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:'+AMBER+';border:1px solid '+AMBER+';border-radius:20px;padding:2px 7px;white-space:nowrap;margin-left:7px;vertical-align:middle}'+
+    '.cp-3m{border:1px solid var(--bdr);border-top:4px solid '+BRAND+';border-radius:12px;padding:15px 17px;margin:16px 0 0;background:linear-gradient(180deg,rgba(31,77,216,0.05),transparent)}'+
+    '.cp-3m-h{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:10px}'+
+    '.cp-3m-t{font-size:12.5px;font-weight:800;color:var(--navy)}'+
+    '.cp-3m-sub{font-size:10.5px;color:var(--mu);font-weight:600;font-style:italic}'+
+    '.cp-3m-copy{margin-left:auto;border:1px solid '+BRAND+';background:var(--w);font:inherit;font-size:10px;font-weight:800;color:'+BRAND+';padding:3px 11px;border-radius:999px;cursor:pointer;transition:.12s}'+
+    '.cp-3m-copy:hover{background:'+BRAND+';color:#fff}'+
+    '.cp-3m-l{display:flex;flex-direction:column;gap:8px;counter-reset:m3}'+
+    '.cp-3m-i{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;font-size:12.5px;line-height:1.55;color:var(--navy)}'+
+    '.cp-3m-i::before{counter-increment:m3;content:counter(m3);width:20px;height:20px;border-radius:50%;background:'+BRAND+';color:#fff;font-size:10.5px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px}'+
+    '.cp-nb{margin-top:13px;border-top:1px dashed var(--bdr);padding-top:11px}'+
+    '.cp-nb-h{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--mu);margin-bottom:6px}'+
+    '.cp-nb-r{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start;font-size:11px;line-height:1.5;color:var(--mu);padding:2px 0}'+
+    '.cp-nb-r b{color:var(--navy);font-weight:800}'+
+    '.cp-nb-x{color:'+GRAY+';font-weight:800;flex:none}'+
+    '.cp-seed{display:inline-flex;align-items:center;gap:4px;font-size:9.5px;font-weight:800;color:'+PURPLE+';background:rgba(122,90,248,0.08);border:1px solid rgba(122,90,248,0.3);border-radius:20px;padding:2px 9px;white-space:nowrap;flex:none}'+
+    '.cp-nq{display:flex;flex-direction:column;gap:5px}'+
+    '.cp-nq-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid var(--bdr);border-left:3px solid '+PURPLE+';border-radius:9px;padding:7px 11px;font-size:11.5px;color:var(--navy);line-height:1.45}'+
+    '.cp-nq-land{font-size:9.5px;font-weight:800;color:'+PURPLE+';white-space:nowrap}'+
+    '.cp-nq-land.open{color:var(--mu)}'+
+    '@media(max-width:560px){.cp-nq-row{grid-template-columns:1fr}.cp-nq-land{margin-top:3px}}'+
+    '.calls-st-age{font-size:8.5px;font-weight:700;opacity:.8;margin-left:4px}</style>';
+}
+function cpFmtC(o){ if(!o||o.v==null) return '<span class="cp-empty">—</span>';
+  var un=o.unit||'', v=o.v, s;
+  if(un==='$') s='$'+v; else if(un==='$M') s='$'+v+'M'; else if(un==='$B') s='$'+v+'B';
+  else if(un==='%') s=v+'%'; else s=String(v);
+  return s+(o.yoy!=null?'<span style="font-size:10px;color:#0a8f4c;font-weight:800;margin-left:5px">+'+o.yoy+'%</span>':''); }
+function cpEvCell(key, m, isCustom){
+  var name=m&&m.k?m.k:null;
+  var q=(m&&m.note)?cpQ('setnote-'+key, m.note.t, m.note.h):'';
+  var kHtml=name?esc(name):'<span class="cp-empty">Custom KPI — to define</span>';
+  return '<div class="cp-cell'+(isCustom?' cp-cell-custom':'')+'"><div class="cp-cell-k">'+kHtml+q+'</div>'+
+    '<div class="cp-cell-v">'+
+      '<div class="cp-val cp-val-cons"><span class="cp-val-lab">Street</span>'+cpFmtC(m&&m.cons)+'</div>'+
+      '<div class="cp-val cp-val-us"><span class="cp-val-lab">Summit</span>'+cpFmtC(m&&m.us)+'</div>'+
+    '</div></div>';
+}
+// The source buttons — every Call Prep opens with IR + EDGAR (docs/CALL_PREP_CONVENTIONS §6).
+var CP_IR_URL='https://ir.remitly.com/financial-information/quarterly-results';
+var CP_EDGAR_URL='https://www.sec.gov/edgar/browse/?CIK=1782170&owner=exclude';
+var CP_LOGO_URL='https://assets.parqet.com/logos/symbol/RELY';
+var CP_SEC_SEAL='img/sec-seal.png';
+function cpIRButton(){
+  return '<style>'+
+    '.cp-srcrow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:0 0 16px}@media(max-width:760px){.cp-srcrow{grid-template-columns:1fr}}'+
+    '.cp-ir{display:flex;align-items:center;gap:20px;text-decoration:none;border-radius:18px;padding:26px 26px;min-height:120px;position:relative;overflow:hidden;'+
+      'background:linear-gradient(115deg,#04060B 0%,#0A1024 60%,#04060B 100%);border:1px solid rgba(31,77,216,.4);box-shadow:0 10px 32px rgba(0,0,0,.4);transition:.18s}'+
+    '.cp-ir:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,'+BRAND+','+BLUE+','+YELLOW+','+BRAND2+');height:4px;top:0}'+
+    '.cp-ir:hover{transform:translateY(-2px);box-shadow:0 16px 42px rgba(31,77,216,.45);border-color:rgba(31,77,216,.85)}'+
+    '.cp-ir-wm{position:absolute;right:-40px;bottom:-60px;width:230px;height:230px;object-fit:contain;opacity:.09;pointer-events:none;transition:.25s}'+
+    '.cp-ir:hover .cp-ir-wm{opacity:.16;transform:scale(1.04) rotate(-2deg)}'+
+    '.cp-ir-ic{width:72px;height:72px;border-radius:18px;background:transparent;display:flex;align-items:center;justify-content:center;flex:none;position:relative;z-index:1;'+
+      'box-shadow:0 0 0 1px rgba(232,160,12,.35),0 0 32px rgba(31,77,216,.6)}'+
+    '.cp-ir-ic img{width:52px;height:52px;object-fit:contain;display:block}'+
+    '.cp-ir-body{flex:1;min-width:0;position:relative;z-index:1}'+
+    '.cp-ir-k{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:#E8A00C;display:flex;align-items:center;gap:7px}'+
+    '.cp-ir-dot{width:7px;height:7px;border-radius:50%;background:'+BRAND2+';box-shadow:0 0 0 0 rgba(22,163,74,.7);animation:cpirp 1.6s infinite}'+
+    '@keyframes cpirp{0%{box-shadow:0 0 0 0 rgba(22,163,74,.6)}70%{box-shadow:0 0 0 8px rgba(22,163,74,0)}100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}}'+
+    '.cp-ir-t{font-size:19px;font-weight:900;color:#fff;letter-spacing:.05em;text-transform:uppercase;margin-top:4px}'+
+    '.cp-ir-s{font-size:11.5px;color:#9FB0C8;font-weight:600;margin-top:3px;letter-spacing:.01em}'+
+    '.cp-ir-go{font-size:13px;font-weight:900;color:#fff;background:'+BRAND+';border-radius:999px;padding:12px 22px;white-space:nowrap;flex:none;display:flex;align-items:center;gap:8px;position:relative;z-index:1;letter-spacing:.04em;transition:.14s}'+
+    '.cp-ir:hover .cp-ir-go{gap:12px;box-shadow:0 4px 18px rgba(31,77,216,.6)}'+
+    '@media(max-width:560px){.cp-ir{flex-wrap:wrap}.cp-ir-go{width:100%;justify-content:center}}'+
+    '.cp-ir.edgar{background:linear-gradient(115deg,#070502 0%,#171106 60%,#070502 100%);border-color:rgba(197,164,90,.35)}'+
+    '.cp-ir.edgar:before{background:linear-gradient(90deg,#8C6D2F,#E3C878,#8C6D2F)}'+
+    '.cp-ir.edgar:hover{box-shadow:0 16px 42px rgba(197,164,90,.32);border-color:rgba(227,200,120,.75)}'+
+    '.cp-ir.edgar .cp-ir-ic{background:transparent;box-shadow:0 0 0 1px rgba(227,200,120,.28),0 0 32px rgba(197,164,90,.55)}'+
+    '.cp-ir.edgar .cp-ir-ic img{width:72px;height:72px}'+
+    '.cp-ir.edgar .cp-ir-k{color:#E3C878}'+
+    '.cp-ir.edgar .cp-ir-dot{background:#E3C878;animation:none;box-shadow:0 0 8px rgba(227,200,120,.8)}'+
+    '.cp-ir.edgar .cp-ir-go{background:linear-gradient(135deg,#E3C878,#B8933F);color:#1A1305}'+
+    '.cp-ir.edgar:hover .cp-ir-go{box-shadow:0 4px 18px rgba(197,164,90,.6)}'+
+    '.cp-ir.edgar .cp-ir-wm{opacity:.1}'+
+    '.cp-ir.edgar:hover .cp-ir-wm{opacity:.17}'+
+  '</style>'+
+  '<div class="cp-srcrow">'+
+  '<a class="cp-ir" href="'+CP_IR_URL+'" target="_blank" rel="noopener">'+
+    '<img class="cp-ir-wm" src="'+CP_LOGO_URL+'" alt="" aria-hidden="true">'+
+    '<span class="cp-ir-ic"><img src="'+CP_LOGO_URL+'" alt="Remitly logo" onerror="this.parentNode.style.display=\'none\'"></span>'+
+    '<span class="cp-ir-body">'+
+      '<span class="cp-ir-k"><span class="cp-ir-dot"></span>THE SOURCE · EARNINGS HQ</span>'+
+      '<span class="cp-ir-t" style="display:block">Remitly Investor Relations</span>'+
+      '<span class="cp-ir-s" style="display:block">Release · webcast · slides · transcripts — straight from ir.remitly.com. Skip the search, go direct.</span>'+
+    '</span>'+
+    '<span class="cp-ir-go">OPEN IR <span>↗</span></span>'+
+  '</a>'+
+  '<a class="cp-ir edgar" href="'+CP_EDGAR_URL+'" target="_blank" rel="noopener">'+
+    '<img class="cp-ir-wm" src="'+CP_SEC_SEAL+'" alt="" aria-hidden="true">'+
+    '<span class="cp-ir-ic"><img src="'+CP_SEC_SEAL+'" alt="SEC seal" onerror="this.parentNode.style.display=\'none\'"></span>'+
+    '<span class="cp-ir-body">'+
+      '<span class="cp-ir-k"><span class="cp-ir-dot"></span>THE RECORD · U.S. SECURITIES AND EXCHANGE COMMISSION</span>'+
+      '<span class="cp-ir-t" style="display:block">Remitly on EDGAR</span>'+
+      '<span class="cp-ir-s" style="display:block">10-K · 10-Q · 8-K · DEF 14A — the regulator\'s copy, as filed. What IR curates, EDGAR certifies.</span>'+
+    '</span>'+
+    '<span class="cp-ir-go">OPEN EDGAR <span>↗</span></span>'+
+  '</a>'+
+  '</div>';
+}
+function cpQkey(q){ return String(q||'').replace(/\s/g,''); }
+function cpQPills(){
+  return '<div class="cp-qpills">'+CALL_PREP.quarters.map(function(q,i){
+    return '<button type="button" class="cp-qpill'+(i===0?' active':'')+'" data-cpqsel="'+esc(cpQkey(q.q))+'">'+esc(q.q)+(q.status==='upcoming'?'<span class="cp-qtag">upcoming</span>':'')+'</button>';
+  }).join('')+'</div>';
+}
+function cpSetupBody(c){
+  var h=cpStyle();
+  h+=CALL_PREP.quarters.map(function(u,qi){
+    var qk=cpQkey(u.q), frozen=(u.status!=='upcoming');
+    var b='<div class="cp-qblock" data-cpq="'+esc(qk)+'"'+(qi===0?'':' hidden')+'>';
+    b+='<div class="cp-phase" style="background:'+BLUE+'">① Pre-Call'+(frozen?'<span class="cp-frozen">frozen</span>':'')+'</div>';
+    var st=u.setup||{};
+    if(st.headline){
+      b+='<p class="ov-lede"><b>'+esc(u.q)+' — the setup.</b> The numbers going in — what the <b>Street</b> expects, what <b>Summit</b> expects, and where the two disagree. '+(u.date?('Reports <b>'+esc(u.date)+'</b>.'):'')+'</p>';
+      var hl=st.headline||[], cu=st.custom||[];
+      b+='<div class="ov-diagram-cap" style="margin:6px 0 6px;display:flex;flex-wrap:wrap;align-items:center;gap:12px"><b>Estimates</b>'+
+        '<span class="mg-seg" style="display:inline-flex;background:#F2F5F8;border:1px solid var(--bdr);border-radius:999px;padding:2px">'+
+          '<button type="button" class="cp-ev-pill active" data-cpev="cons">Consensus</button>'+
+          '<button type="button" class="cp-ev-pill" data-cpev="us">Summit</button>'+
+          '<button type="button" class="cp-ev-pill" data-cpev="both">Both</button>'+
+        '</span>'+
+        (st.source?'<span style="color:var(--mu);font-weight:600;font-size:10px">'+esc(st.source)+(st.asOf?' · as of '+esc(st.asOf):'')+'</span>':'')+
+      '</div>';
+      b+='<div class="cp-evwrap" data-ev="cons">';
+      b+='<div class="cp-row-cap">Headline — every company, always</div>';
+      b+='<div class="cp-grid4">'+hl.map(function(m,i){ return cpEvCell('hl-'+qk+'-'+i, m, false); }).join('')+'</div>';
+      b+='<div class="cp-row-cap" style="margin-top:12px">Custom KPIs — Remitly</div>';
+      b+='<div class="cp-grid4">'+cu.map(function(m,i){ return cpEvCell('cu-'+qk+'-'+i, m, true); }).join('')+'</div>';
+      b+='</div>';
+      b+='<div class="ave-subh-note" style="margin-top:6px">Green = YoY. <b>Street</b> = Bloomberg (BST) consensus, hardcoded from the team\'s export only. <b>Summit</b> = our own expectation (Remitly is not in the Summit DCF universe → to fill). <b>?</b> = a number with a caveat worth knowing.</div>';
+      var md=st.marketDebate;
+      if(md){
+        b+='<div class="ov-diagram-cap" style="margin:16px 0 4px"><b>The setup, in one picture — what the print will settle</b></div>';
+        b+='<div class="cp-debate">'+
+          '<div class="cp-dc fear"><div class="cp-dc-h">What the tape fears</div><div class="cp-dc-b">'+md.fear+'</div></div>'+
+          '<div class="cp-dc real"><div class="cp-dc-h">What consensus actually models</div><div class="cp-dc-b">'+md.real+'</div></div>'+
+        '</div>';
+        if(md.mech&&md.mech.length){
+          b+='<div class="cp-mech">'+md.mech.map(function(m,i){ var ar=m.dir==='up'?'<span style="color:#0a8f4c">▲</span>':(m.dir==='down'?'<span style="color:'+RED+'">▼</span>':''); return (i>0?'<span class="cp-mech-ar">→</span>':'')+'<span class="cp-mech-chip">'+ar+' '+esc(m.k)+' <span style="color:var(--mu);font-weight:700">'+esc(m.v)+'</span></span>'; }).join('')+'</div>';
+        }
+        if(md.synth) b+='<div class="cp-synth">'+md.synth+'</div>';
+      }
+      var d=st.debate;
+      b+='<div class="ov-diagram-cap" style="margin:16px 0 4px"><b>The debate — where Summit differs from the Street, and why</b></div>';
+      if(d){
+        if(d.rows&&d.rows.length){
+          b+='<div class="cp-tc">'+d.rows.map(function(r){
+            return '<div class="cp-tc-row" style="border-left:3px solid '+BRAND+'"><span style="font-weight:800;color:var(--navy);white-space:nowrap">'+esc(r.k)+'</span><span><b>Street:</b> '+esc(r.street||'—')+' · <b>Summit:</b> '+esc(r.us||'—')+'<br><span style="color:var(--mu)">'+ (r.why||'') +'</span></span></div>';
+          }).join('')+'</div>';
+        }
+        if(d.synth) b+='<div class="cp-synth">'+d.synth+'</div>';
+      } else {
+        b+='<div class="cp-note">Fills once both estimate sets are in (Bloomberg export + Summit expectations): line-by-line disparities and the mechanism behind why we see it differently.</div>';
+      }
+      b+='<div class="ov-foot">Frozen at call time; Post-Results scores actuals against BOTH columns.</div>';
+    } else {
+      b+='<p class="ov-lede"><b>'+esc(u.q)+' — the setup, as it stood going in.</b> '+(u.date?('Reported <b>'+esc(u.date)+'</b>.'):'')+'</p>';
+      if(st.source) b+='<div class="ave-subh-note" style="margin:0 0 8px">'+esc(st.source)+'</div>';
+      if(st.pricedIn) b+='<div class="cp-banner"><b>What was priced in:</b> '+st.pricedIn+'</div>';
+      if(st.oneLiner) b+='<div class="cp-synth">'+st.oneLiner+'</div>';
+      b+='<div class="ov-foot">Frozen — scored in Post-Results / Post-Call for this quarter.</div>';
+    }
+    b+='</div>';
+    return b;
+  }).join('');
+  return h;
+}
+function cpWatchItem(w, qk, idSfx, qLabel){
+  var deep='';
+  if(w.seededBy) deep+='<p style="border-left:3px solid '+PURPLE+';padding-left:9px;margin-bottom:10px"><b>'+(w.seededBy.tripped?'Seeded by a TRIPPED red-line':'Seeded by')+' '+esc(w.seededBy.q)+':</b> "'+esc(w.seededBy.n)+'"</p>';
+  if(w.src) deep+='<p><b>Why it\'s on the list:</b> '+w.src+'</p>';
+  if(w.why) deep+='<p><b>Why it matters:</b> '+w.why+'</p>';
+  if(w.thread&&w.thread.length){
+    deep+='<p style="margin-bottom:4px"><b>The thread — how this theme has evolved:</b></p>'+
+      w.thread.map(function(t){ return '<div style="display:flex;gap:9px;padding:5px 0;border-bottom:1px solid var(--bdr);font-size:12px;line-height:1.5"><b style="white-space:nowrap;color:'+BRAND+'">'+esc(t.q)+'</b><span>'+t.n+'</span></div>'; }).join('');
+  }
+  var why=deep?cpReg('watchwhy-'+qk+'-'+(w.rank||0)+idSfx, esc(w.metric), deep):null;
+  var tagsAttr=(w.tags&&w.tags.length)?w.tags.join(' '):'';
+  var seed=w.seededBy?'<span class="cp-seed" title="'+esc(w.seededBy.n)+'">'+(w.seededBy.tripped?'⚑ red-line tripped in '+esc(w.seededBy.q):'left open by '+esc(w.seededBy.q))+'</span>':'';
+  return '<div class="cp-w" data-wltags="'+esc(tagsAttr)+'"><div class="cp-w-top"><div class="cp-w-rank">'+(w.rank||'•')+'</div><div class="cp-w-metric">'+esc(w.metric)+'</div>'+seed+
+    (qLabel?'<span class="ov-chip" style="font-size:9.5px;background:rgba(31,77,216,0.10);color:'+BRAND+';border-radius:20px;padding:2px 9px;font-weight:800;flex:none">'+esc(qLabel)+'</span>':'')+
+    (why?'<span class="cp-why-btn ov-clickable" data-detail="cp:'+why+'" style="margin:0">why'+(w.thread?' + the thread':'')+' ›</span>':'')+'</div>'+
+    '<div class="cp-w-q"><span class="mic">🔎</span><span>'+cpFill(w.pista||w.question)+'</span></div>'+
+    '<div class="cp-w-chips">'+
+      (w.tags&&w.tags.length?w.tags.map(function(t){ return '<span class="cp-w-chip" style="background:rgba(122,90,248,0.08);border:1px solid rgba(122,90,248,0.3);color:var(--navy)">#'+esc(t)+'</span>'; }).join(''):'')+
+      (w.since?'<span class="cp-w-chip" style="background:rgba(232,160,12,0.14);border:1px solid rgba(183,121,31,0.35);color:var(--navy)"><b>Tracking since:</b> '+esc(w.since)+'</span>':'')+
+      (w.bbg?'<span class="cp-w-chip cons"><b>Cons:</b> '+esc(w.bbg)+'</span>':'')+
+      (w.breaks?'<span class="cp-w-chip red"><b>Breaks if:</b> '+esc(w.breaks)+'</span>':'')+
+    '</div>'+
+  '</div>';
+}
+function cpWatchTags(){
+  var set=[], seen={};
+  CALL_PREP.quarters.forEach(function(u){ (u.watchList||[]).forEach(function(w){ (w.tags||[]).forEach(function(t){ if(!seen[t]){ seen[t]=1; set.push(t); } }); }); });
+  return set;
+}
+function cpWatchBody(c){
+  var h=cpStyle();
+  h+='<div class="cp-wl-tagbar"><span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--mu)">Filter by theme (across quarters):</span>'+
+    cpWatchTags().map(function(t){ return '<button type="button" class="cp-wl-tag" data-wltag="'+esc(t)+'">#'+esc(t)+'</button>'; }).join('')+
+    '<button type="button" class="cp-wl-tag cp-wl-clear" data-wltag="">clear</button>'+
+    '<button type="button" class="cp-wl-add-btn">+ Add theme</button>'+
+  '</div>';
+  h+='<div class="cp-wl-addform" hidden>'+
+    '<input class="cp-wl-in" data-wlf="metric" placeholder="Theme (e.g. Regulatory: CCCA routing mandate)">'+
+    '<input class="cp-wl-in" data-wlf="tags" placeholder="tags, comma-separated (e.g. regulatory, cross-border)">'+
+    '<input class="cp-wl-in" data-wlf="pista" placeholder="The tell 🔎 — a standing read, not a question">'+
+    '<input class="cp-wl-in" data-wlf="breaks" placeholder="Breaks if… (the falsifiable red-line)">'+
+    '<div><button type="button" class="cp-wl-add-go">Add to this quarter\'s list</button><span class="ave-subh-note" style="margin-left:8px">Lives for this session — to persist it, it gets committed into CALL_PREP.</span></div>'+
+  '</div>';
+  h+=CALL_PREP.quarters.map(function(u,qi){
+    var qk=cpQkey(u.q), frozen=(u.status!=='upcoming');
+    var b='<div class="cp-qblock" data-cpq="'+esc(qk)+'"'+(qi===0?'':' hidden')+'>';
+    b+='<div class="cp-phase" style="background:'+BLUE+'">① Pre-Call'+(frozen?'<span class="cp-frozen">frozen</span>':'')+'</div>';
+    b+='<p class="ov-lede"><b>Five things to hunt — '+esc(u.q)+'</b>'+(frozen?' <span style="color:var(--mu);font-weight:600">(the list as it was frozen before this call — scored afterwards in Post-Results)</span>':'')+', numbered 1–5 by <b>how much they move the stock × how debated they are</b>. Each card carries: the <b>tell</b> (🔎) — what to actually watch for; what the <b>Street expects</b>; and the <b>red-line</b> that would break the thesis. Tap <b>why ›</b> for the grounding and the quarter-by-quarter thread.</p>';
+    b+='<div class="cp-legend"><span class="cp-legend-i"><b>How to read the cards:</b></span>'+
+      '<span class="cp-legend-i"><span class="cp-seed">left open by Q1 FY2026</span> it is on the list because last quarter\'s call did not settle it</span>'+
+      '<span class="cp-legend-i"><span class="cp-seed">⚑ red-line tripped in Q1 FY2026</span> stronger — a thesis line actually broke last quarter</span>'+
+    '</div>';
+    var wl=u.watchList||[];
+    if(!wl.length){ b+='<div class="cp-note">Watch List builds from the earnings-call record + the Bloomberg export — 5 ranked, grounded, falsifiable items per the conventions.</div>'; }
+    else{ b+='<div class="cp-watch">'+wl.map(function(w){ return cpWatchItem(w, qk, '', null); }).join('')+'</div>'; }
+    b+='<div class="ov-foot">'+(frozen?'Frozen — this list was scored against '+esc(u.q)+'\'s Post-Results/Post-Call; its newQuestions seeded the next quarter.':'Frozen once the quarter opens; scored against Post-Results / Post-Call. Themes carry their quarter-by-quarter thread — promise-type items are tracked here and in the theme record below.')+'</div>';
+    b+='</div>';
+    return b;
+  }).join('');
+  h+='<div class="cp-wl-all" hidden>';
+  h+='<div class="cp-phase" style="background:'+PURPLE+'">Themes across quarters</div>';
+  h+='<p class="ov-lede">Every watch item matching the selected theme(s), <b>across all quarters</b> — how the same hunt evolved print to print. Clear the tags (or pick a quarter) to return to the per-quarter view.</p>';
+  h+='<div class="cp-watch">'+CALL_PREP.quarters.map(function(u){
+    var qk=cpQkey(u.q);
+    return (u.watchList||[]).map(function(w){ return cpWatchItem(w, qk, '-f', u.q); }).join('');
+  }).join('')+'</div>';
+  h+='</div>';
+  // ── FUSED (v2.3): the full multi-year theme record — the former standalone Earnings Calls tab. ──
+  h+='<div style="margin-top:26px;border-top:2px solid var(--bdr);padding-top:16px">';
+  h+='<div class="cp-band" style="--bc:'+BRAND+'"><span class="cp-band-i">▤</span><span class="cp-band-t">The theme record — every thread, across all calls</span><span class="cp-band-s">the multi-year backbone behind the hunt above (the former "Earnings Calls" tab, folded in)</span><span class="cp-band-l"></span></div>';
+  h+=ddCallsBody(c);
+  h+='</div>';
+  return h;
+}
+var CP_RES={ beat:{c:'#0a8f4c',l:'Beat'}, miss:{c:RED,l:'Miss'}, inline:{c:'#6b7684',l:'In line'},
+             nodisc:{c:AMBER,l:'Not disclosed'}, nocons:{c:PURPLE,l:'No consensus'} };
+var CP_HLTAG={ thesis:{c:'#0a8f4c',l:'Thesis'}, curious:{c:'#7A5AF8',l:'Curious'}, dots:{c:'#2E6BE6',l:'Connects dots'}, watch:{c:'#B7791F',l:'Watch'}, tone:{c:'#B7791F',l:'Tone'} };
+function cpResultsBody(c){
+  var h=cpStyle();
+  h+=CALL_PREP.quarters.map(function(q,qi){
+    var qk=cpQkey(q.q);
+    var b='<div class="cp-qblock" data-cpq="'+esc(qk)+'"'+(qi===0?'':' hidden')+'>';
+    b+='<div class="cp-phase" style="background:'+BRAND2+'">② Post-Results</div>';
+    b+='<p class="ov-lede"><b>'+esc(q.q)+' — the numbers vs. the frozen expectations.</b> Results land first (release ~4pm, call comes later) — the read on the <b>print itself</b>, before management says a word.</p>';
+    var r=q.results;
+    if(!r){ b+='<div class="cp-note">Empty until the print lands. Then the scorecard and thesis red-line check fill here.</div></div>'; return b; }
+    b+='<div style="border:1px solid var(--bdr);border-radius:12px;padding:14px 16px;margin-bottom:14px;background:var(--w)">';
+    b+='<div style="font-size:13.5px;font-weight:800;color:var(--navy);margin-bottom:8px">'+esc(q.q)+' <span style="font-weight:600;color:var(--mu);font-size:11px">· reported '+esc(q.date?q.date.replace(/ · .*/,''):'')+'</span></div>';
+    if(r.headline) b+='<div class="cp-take" style="border-left-color:'+BRAND2+'">🎯 '+r.headline+'</div>';
+    if(r.thesisCheck&&r.thesisCheck.length){
+      var tc=r.thesisCheck.slice().sort(function(a,z){ return (z.tripped?1:0)-(a.tripped?1:0); });
+      var nTrip=tc.filter(function(t){ return t.tripped; }).length;
+      b+='<div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--mu);margin:2px 0 6px">Thesis red-line check — vs this quarter\'s frozen Watch List'+
+        (nTrip?'<span style="color:'+RED+';margin-left:7px">⚑ '+nTrip+' tripped</span>':'<span style="color:#0a8f4c;margin-left:7px">✓ all held</span>')+'</div>';
+      b+='<div class="cp-tc">'+tc.map(function(t){ var col=t.tripped?RED:'#0a8f4c'; var ic=t.tripped?'⚑ TRIPPED':'✓ held';
+        return '<div class="cp-tc-row" style="border-left:3px solid '+col+'"><span style="font-weight:800;color:'+col+';white-space:nowrap">'+ic+'</span><span><b>'+esc(t.line)+'</b> — '+esc(t.note||'')+'</span></div>';
+      }).join('')+'</div>';
+    }
+    if(r.scorecard&&r.scorecard.length) b+='<div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--mu);margin:15px 0 6px">The print — ranked by surprise</div>';
+    if(r.scorecard&&r.scorecard.length){
+      var sc=r.scorecard.slice().sort(function(a,z){ return (z.surprise||0)-(a.surprise||0); });
+      b+='<div class="cp-legend">'+
+        '<span class="cp-legend-i"><b>How to read this table:</b></span>'+
+        '<span class="cp-legend-i"><span class="cp-sc-rk">WATCH #1</span> flagged before the call as one of the five most contested items (its rank on that list)</span>'+
+        '<span class="cp-legend-i">A blank here just means the line was not one of those five — every line below is covered.</span>'+
+        '<span class="cp-legend-i"><span class="cp-sc-surp hi">big surprise</span> the number landed far from expectations — our judgement, not a calculation</span>'+
+      '</div>';
+      b+='<div class="cp-sc">'+sc.map(function(d,i){ var rr=CP_RES[d.result]||CP_RES.inline;
+        var qb=d.note?cpQ('resnote-'+qk+'-'+i, d.note.t||'Context', d.note.h||d.note):'';
+        var rk=d.watchRank?'<div class="cp-sc-rk" title="This was item #'+esc(String(d.watchRank))+' on the Watch List we froze before the call">WATCH #'+esc(String(d.watchRank))+'</div>'
+                          :'<div class="cp-sc-rk blank"></div>';
+        var sv=d.surprise;
+        var sl=(sv==null)?'<div class="cp-sc-bw"></div>'
+          :'<div class="cp-sc-bw"><div class="cp-sc-surp '+(sv>=70?'hi':(sv>=30?'md':'lo'))+'">'+(sv>=70?'big surprise':(sv>=30?'some surprise':'as expected'))+'</div></div>';
+        return '<div class="cp-sc-row" style="--sc:'+rr.c+'">'+rk+'<div class="cp-sc-m">'+esc(d.metric)+qb+'</div><div class="cp-sc-c">expected: '+cpFill(d.cons,'—')+'</div><div class="cp-sc-a">'+esc(d.actual||'')+'</div>'+sl+'<div class="cp-sc-v">'+rr.l+'</div></div>';
+      }).join('')+'</div>';
+      b+='<div class="ave-subh-note" style="margin-top:6px">Rows are ordered biggest-surprise first, not in release order. <b>Not disclosed</b> = management stopped reporting a number it used to give. <b>No consensus</b> = nobody had an estimate for it. Neither is a miss.</div>';
+    }
+    if(r.intoCall&&r.intoCall.length){
+      b+='<div class="cp-dots" style="margin-top:14px">🎯 <b>What the numbers tee up for the call</b> — go in hunting these:'+
+        '<ul class="ov-bullets" style="margin-top:6px">'+r.intoCall.map(function(x){ return '<li>'+x+'</li>'; }).join('')+'</ul></div>';
+    }
+    b+='<div style="margin-top:10px;font-size:11.5px;color:var(--navy)"><b>Price reaction:</b> '+cpFill(r.priceReaction,'to fill from a trusted source')+'</div>';
+    b+='</div>';
+    b+='<div class="ov-foot">Scored against the frozen Watch List. Consensus = Bloomberg export; actuals = reported (Bloomberg / release).</div>';
+    b+='</div>';
+    return b;
+  }).join('');
+  return h;
+}
+function cpCallBody(c){
+  var h=cpStyle();
+  h+=CALL_PREP.quarters.map(function(q,qi){
+    var qk=cpQkey(q.q);
+    var b='<div class="cp-qblock" data-cpq="'+esc(qk)+'"'+(qi===0?'':' hidden')+'>';
+    b+='<div class="cp-phase" style="background:'+RED+'">③ Post-Call</div>';
+    b+='<p class="ov-lede"><b>'+esc(q.q)+' — not a restatement of the numbers; the story behind them.</b> What the call <i>implied</i> for the thesis, the curious one-mention details, and the dots that connect. Tap any highlight for the depth.</p>';
+    b+='<div class="cp-legend"><span class="cp-legend-i"><b>Highlights are grouped by what you DO with them in the meeting:</b></span>'+
+      '<span class="cp-legend-i"><span style="color:'+RED+';font-weight:800">▲ Lead with this</span> — open with it: it moves the thesis and something is still unanswered</span>'+
+      '<span class="cp-legend-i"><span style="color:'+BLUE+';font-weight:800">● Context</span> — worth saying, but settled; there is nothing to argue</span>'+
+      '<span class="cp-legend-i"><span style="color:'+GRAY+';font-weight:800">○ Logged</span> — recorded for later, not meeting material</span>'+
+      '<span class="cp-legend-i"><span class="cp-hl-open">open</span> flags the specific thing management left unanswered</span>'+
+    '</div>';
+    var cc=q.call;
+    if(!cc){ b+='<div class="cp-note">Empty until the call/transcript is in. Then the meeting take, theme-by-theme highlights and the connect-the-dots line fill here.</div></div>'; return b; }
+    b+='<div style="margin-bottom:18px">';
+    b+='<div style="font-size:13.5px;font-weight:800;color:var(--navy);margin-bottom:8px">'+esc(q.q)+' <span style="font-weight:600;color:var(--mu);font-size:11px">· call '+esc(q.date||'')+'</span></div>';
+    if(cc.take) b+='<div class="cp-take">🎯 '+cc.take+'</div>';
+    if(cc.highlights&&cc.highlights.length){
+      var bands=[
+        { k:'lead',    i:'▲', c:RED,     t:'Lead with this', s:'moves the thesis — and something is still unresolved' },
+        { k:'context', i:'●', c:BLUE,    t:'Context',        s:'matters, but it is settled — mention, don\'t debate' },
+        { k:'logged',  i:'○', c:GRAY,    t:'Logged',         s:'on the record for later; not meeting material' },
+      ];
+      var hi=0;
+      bands.forEach(function(bd){
+        var items=cc.highlights.filter(function(x){ return (x.band||'context')===bd.k; });
+        if(!items.length) return;
+        b+='<div class="cp-band" style="--bc:'+bd.c+'"><span class="cp-band-i">'+bd.i+'</span><span class="cp-band-t">'+bd.t+'</span><span class="cp-band-s">'+bd.s+'</span><span class="cp-band-l"></span></div>';
+        b+='<div class="cp-hl">'+items.map(function(x){ var tg=CP_HLTAG[x.tag]||{c:'#6b7684',l:x.tag||''};
+          var det=x.detail||'';
+          if(x.open) det+='<p style="border-left:3px solid '+AMBER+';padding-left:9px;margin-top:10px"><b>Still open:</b> '+x.open+'</p>';
+          var id=det?cpReg('hl-'+qk+'-'+(hi++), tg.l+' — '+String(x.head).replace(/<[^>]+>/g,''), det):null;
+          var op=x.open?' <span class="cp-hl-open" title="'+esc(x.open)+'">open</span>':'';
+          return '<div class="cp-hl-row" style="--hc:'+tg.c+'"'+(id?' data-detail="cp:'+id+'"':'')+'><span class="cp-hl-tag">'+esc(tg.l)+'</span><span class="cp-hl-head">'+x.head+op+'</span>'+(id?'<span class="cp-hl-more">＋</span>':'<span></span>')+'</div>';
+        }).join('')+'</div>';
+      });
+    }
+    if(cc.dots) b+='<div class="cp-dots">🧩 '+cc.dots+'</div>';
+    if(cc.threeMinutes&&cc.threeMinutes.length){
+      b+='<div class="cp-3m"><div class="cp-3m-h"><span class="cp-3m-t">🎤 Three minutes</span>'+
+        '<span class="cp-3m-sub">the spoken version — if you get one slot, this is it</span>'+
+        '<button type="button" class="cp-3m-copy" data-cp3m="'+esc(qk)+'">copy</button></div>';
+      b+='<div class="cp-3m-l" data-cp3mlist="'+esc(qk)+'">'+cc.threeMinutes.map(function(t){ return '<div class="cp-3m-i"><span>'+t+'</span></div>'; }).join('')+'</div>';
+      if(cc.notBringing&&cc.notBringing.length){
+        b+='<div class="cp-nb"><div class="cp-nb-h">✕ Deliberately not bringing — and why, if asked</div>'+
+          cc.notBringing.map(function(x){ return '<div class="cp-nb-r"><span class="cp-nb-x">✕</span><span><b>'+esc(x.item)+'</b> — '+esc(x.why)+'</span></div>'; }).join('')+'</div>';
+      }
+      b+='</div>';
+    }
+    if(cc.newQuestions&&cc.newQuestions.length){
+      b+='<div style="margin-top:12px"><div style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--mu);margin-bottom:5px">➡ What this call left unanswered — and where each question went next</div>';
+      b+='<div class="cp-nq">'+cc.newQuestions.map(function(x){
+        var n=(typeof x==='string')?x:x.n, land=(typeof x==='string')?null:x.landed;
+        var trip=(typeof x!=='string'&&x.tripped)?'<span style="color:'+RED+';font-weight:800;margin-right:5px" title="A thesis red-line actually broke on this one">⚑</span>':'';
+        var chip=land?'<span class="cp-nq-land">became '+esc(land.q)+' Watch item #'+esc(String(land.rank))+'</span>'
+                     :'<span class="cp-nq-land open">still open — not yet on a list</span>';
+        return '<div class="cp-nq-row"><span>'+trip+esc(n)+'</span>'+chip+'</div>';
+      }).join('')+'</div></div>';
+    }
+    b+='</div>';
+    b+='<div class="ov-foot">Insight-first, not fact-first. Append-only — prior quarters are never overwritten; newQuestions feeds the next Watch List.</div>';
+    b+='</div>';
+    return b;
+  }).join('');
+  return h;
+}
+var CP_THST={ trend:{c:'#0a8f4c',l:'Confirmed trend'}, promise:{c:'#2E6BE6',l:'Promise — reconcile'}, watch:{c:'#B7791F',l:'Watch'} };
+function cpQnum(q){ var m=String(q||'').match(/Q(\d)\s+(?:FY)?(\d{4})/); return m?((+m[2])*4+(+m[1])):null; }
+function cpStAge(st){
+  if(!st||typeof st!=='object'||!st.since) return '';
+  var newest=CALL_PREP.quarters.filter(function(q){ return q.status!=='upcoming'; })[0];
+  var a=cpQnum(st.since), b=cpQnum(newest?newest.q:null);
+  if(a==null||b==null) return '';
+  var n=Math.max(1, b-a+1), k=(st.k||'');
+  var lbl = (k==='promise') ? ('unreconciled '+n+' quarter'+(n>1?'s':''))
+          : (st.silent)     ? ('silent '+n+' quarter'+(n>1?'s':''))
+          : (k==='watch')   ? ('tracked '+n+' quarter'+(n>1?'s':''))
+          :                   ('running '+n+' quarter'+(n>1?'s':''));
+  return '<span class="calls-st-age"> · '+lbl+'</span>';
+}
+function wireCallPrep(root){
+  var pane=root.querySelector('.ovt-subpane[data-ovst="callprep"]'); if(!pane) return;
+  pane.querySelectorAll('.cp-phtab').forEach(function(btn){ btn.onclick=function(){
+    var key=btn.getAttribute('data-cpp');
+    pane.querySelectorAll('.cp-phtab').forEach(function(b){ b.classList.toggle('active', b===btn); });
+    pane.querySelectorAll('.cp-phpane').forEach(function(p){ p.hidden=(p.getAttribute('data-cpp')!==key); });
+  }; });
+  pane.querySelectorAll('.cp-ev-pill').forEach(function(btn){ btn.onclick=function(){
+    var v=btn.getAttribute('data-cpev');
+    pane.querySelectorAll('.cp-ev-pill').forEach(function(b){ b.classList.toggle('active', b===btn); });
+    pane.querySelectorAll('.cp-evwrap').forEach(function(w){ w.setAttribute('data-ev', v); });
+  }; });
+  pane.querySelectorAll('.cp-qpill').forEach(function(btn){ btn.onclick=function(){
+    var qk=btn.getAttribute('data-cpqsel');
+    pane.querySelectorAll('.cp-qpill').forEach(function(b){ b.classList.toggle('active', b===btn); });
+    pane.querySelectorAll('.cp-qblock').forEach(function(blk){ blk.hidden=(blk.getAttribute('data-cpq')!==qk); });
+    pane.querySelectorAll('.cp-wl-tag').forEach(function(b){ b.classList.remove('active'); });
+    var flat=pane.querySelector('.cp-wl-all'); if(flat) flat.hidden=true;
+  }; });
+  pane.querySelectorAll('.cp-3m-copy').forEach(function(btn){ btn.onclick=function(){
+    var qk=btn.getAttribute('data-cp3m');
+    var list=pane.querySelector('.cp-3m-l[data-cp3mlist="'+qk+'"]'); if(!list) return;
+    var txt=Array.prototype.map.call(list.querySelectorAll('.cp-3m-i'), function(el,i){
+      return (i+1)+'. '+el.textContent.trim();
+    }).join('\n\n');
+    var done=function(){ var o=btn.textContent; btn.textContent='copied ✓'; setTimeout(function(){ btn.textContent=o; }, 1400); };
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done, done); }
+    else { var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select();
+           try{ document.execCommand('copy'); }catch(e){} document.body.removeChild(ta); done(); }
+  }; });
+  var wpane=pane.querySelector('.cp-phpane[data-cpp="watch"]');
+  if(wpane){
+    var flat=wpane.querySelector('.cp-wl-all');
+    function activeTags(){ return Array.prototype.map.call(wpane.querySelectorAll('.cp-wl-tag.active'), function(b){ return b.getAttribute('data-wltag'); }).filter(Boolean); }
+    function applyTags(){
+      var tags=activeTags();
+      var on=tags.length>0;
+      wpane.querySelectorAll('.cp-qblock').forEach(function(blk){ if(on) blk.hidden=true; });
+      if(!on){
+        var act=pane.querySelector('.cp-qpill.active'); var qk=act?act.getAttribute('data-cpqsel'):null;
+        wpane.querySelectorAll('.cp-qblock').forEach(function(blk){ blk.hidden=(qk!=null && blk.getAttribute('data-cpq')!==qk); });
+      }
+      if(flat){ flat.hidden=!on;
+        if(on) flat.querySelectorAll('.cp-w').forEach(function(card){
+          var ct=(card.getAttribute('data-wltags')||'').split(/\s+/);
+          var hit=tags.some(function(t){ return ct.indexOf(t)>=0; });
+          if(hit) card.removeAttribute('data-wlhide'); else card.setAttribute('data-wlhide','1');
+        });
+      }
+    }
+    function wireTag(btn){ btn.onclick=function(){
+      if(btn.classList.contains('cp-wl-clear')){ wpane.querySelectorAll('.cp-wl-tag').forEach(function(b){ b.classList.remove('active'); }); }
+      else btn.classList.toggle('active');
+      applyTags();
+    }; }
+    wpane.querySelectorAll('.cp-wl-tag').forEach(wireTag);
+    var addBtn=wpane.querySelector('.cp-wl-add-btn'), form=wpane.querySelector('.cp-wl-addform');
+    if(addBtn&&form){ addBtn.onclick=function(){ form.hidden=!form.hidden; }; }
+    var go=wpane.querySelector('.cp-wl-add-go');
+    if(go&&form){ go.onclick=function(){
+      function val(k){ var el=form.querySelector('[data-wlf="'+k+'"]'); return el?el.value.trim():''; }
+      var metric=val('metric'); if(!metric) return;
+      var tags=val('tags').split(',').map(function(t){ return t.trim().toLowerCase().replace(/\s+/g,'-'); }).filter(Boolean);
+      var act=pane.querySelector('.cp-qpill.active'); var qk=act?act.getAttribute('data-cpqsel'):cpQkey(CALL_PREP.quarters[0].q);
+      var qLbl=act?act.textContent.replace(/upcoming/i,'').trim():CALL_PREP.quarters[0].q;
+      var w={ rank:'+', metric:metric, tags:tags, pista:val('pista')||null, breaks:val('breaks')||null, since:qLbl };
+      var target=wpane.querySelector('.cp-qblock[data-cpq="'+qk+'"] .cp-watch');
+      if(target) target.insertAdjacentHTML('beforeend', cpWatchItem(w, qk, '-add'+Date.now()%100000, null));
+      var flatList=flat?flat.querySelector('.cp-watch'):null;
+      if(flatList) flatList.insertAdjacentHTML('beforeend', cpWatchItem(w, qk, '-addf'+Date.now()%100000, qLbl));
+      tags.forEach(function(t){
+        if(!wpane.querySelector('.cp-wl-tag[data-wltag="'+t+'"]')){
+          var b=document.createElement('button'); b.type='button'; b.className='cp-wl-tag'; b.setAttribute('data-wltag',t); b.textContent='#'+t;
+          var clear=wpane.querySelector('.cp-wl-clear'); clear.parentNode.insertBefore(b, clear); wireTag(b);
+        }
+      });
+      form.querySelectorAll('.cp-wl-in').forEach(function(i){ i.value=''; }); form.hidden=true;
+      applyTags();
+    }; }
+  }
+}
+
 
 // ── Evolution ▸ Earnings Calls — narrative THREADS across the 10 calls Q4 2023 → Q1 2026
 //    (+ Dec 2025 Investor Day), same By theme ⇄ By quarter format as MA/UBER/LYFT/CART.
 //    Written contemporaneously from each transcript. ──
 var RELY_THEMES=[
-  { theme:'Growth accelerators — high-value senders, Business & Receivers',
+  { theme:'Growth accelerators — high-value senders, Business & Receivers', st:{ k:'trend', since:'Q1 2025', last:'Q1 2026' },
     why:'The expansion off the low-amount-remittance core: bigger transactions, small businesses, and (newest) the recipients themselves — management\'s "4×4" of customer categories, targeted at >10% of revenue by 2028.',
     updates:[
       { q:'Q1 2024', items:['<b>High-amount senders</b> (>$1,000) +45% YoY, +~200bps of mix; <b>largest transfer in company history</b> (Canada→US). Risk-based (ML) send limits cut friction; early <b>micro-business</b> traction.'] },
@@ -555,7 +1371,7 @@ var RELY_THEMES=[
       { q:'Q4 2025', items:['Remitly Business <b>>15,000 customers</b> (ATV ~2×). New products (Flex, Business, Wallet/Card, One) ~1% of revenue in 2025, expected to <b>>2× in 2026</b>.'] },
       { q:'Q1 2026', items:['New <b>4×4 framework</b> (core / high-value / business / receivers × send-borrow-spend-save). High-value redefined to <b>$5,000+ (+73% YoY)</b>; Business +30% QoQ, <b>>20,000 users</b>, RLTE ~2× core; <b>Receivers</b> launched (first receiver txn; ~30M+ receivers who aren\'t yet senders).'] },
     ]},
-  { theme:'New products — Flex, Wallet & Card, Remitly One',
+  { theme:'New products — Flex, Wallet & Card, Remitly One', st:{ k:'trend', since:'Q2 2025', last:'Q1 2026' },
     why:'Beyond move-money into borrow / spend / save: the Send Now Pay Later product (Flex), a multi-currency wallet + debit card, and the Remitly One membership that bundles them — higher, stickier take rates.',
     updates:[
       { q:'Q2 2025', items:['Announced <b>Remitly One</b> membership (launches Sept), anchored by <b>Wallet</b> (fiat + stablecoin store of value) and <b>Flex</b> (send now, pay later, no interest). First "Reimagine" launch event Sept 9.'] },
@@ -563,7 +1379,7 @@ var RELY_THEMES=[
       { q:'Q4 2025', items:['Flex ~<b>120,000 users</b>; <b>Remitly Credit</b> (recourse line of credit) launching spring 2026; Wallet/Card <b>>60,000 wallets</b>. Flex users spend more than non-Flex.'] },
       { q:'Q1 2026', items:['Expanding Send Now Pay Later into a <b>card-based</b> plan (global debit card + wallet + short-term bank-partner credit line + rewards, low monthly fee); borrow/spend/save revenue <b>>2× YoY</b>. Ambition: the Remitly Card for <b>300M migrants + 80M SMBs</b>.'] },
     ]},
-  { theme:'AI — cost, speed & trust',
+  { theme:'AI — cost, speed & trust', st:{ k:'trend', since:'Q3 2025', last:'Q1 2026' },
     why:'From an efficiency story (cheaper support, lower fraud) to a growth thesis: Gunningham\'s bet that a trusted incumbent with proprietary data and a regulatory moat is a prime AI beneficiary — "more revenue with roughly the same people."',
     updates:[
       { q:'Q2 2024', items:['AI virtual assistant handling ~2M interactions, resolving issues 4× faster; <b>Remitly on WhatsApp</b> (conversational AI on-ramp for offline senders); Meta Messenger next.'] },
@@ -572,7 +1388,7 @@ var RELY_THEMES=[
       { q:'Q4 2025', items:['New AI fraud model → record-low losses (~$10M incremental RLTE vs forecast); agent-automated workflows cut developer time; >65% of transfers dispersed <20 seconds.'] },
       { q:'Q1 2026', items:['Three AI benefits — <b>cost</b> (>250 headcount cut / 50+ roles redeployed YTD; corporate workforce −10%+), <b>speed</b> ("knowledge development engineers"), <b>trust</b> (localization at scale). Tech/dev +14% (well below revenue). Thesis: <b>~same headcount, materially more revenue in 3–4 years</b>.'] },
     ]},
-  { theme:'Stablecoins',
+  { theme:'Stablecoins', st:{ k:'watch', since:'Q1 2025', last:'Q1 2026' },
     why:'A targeted tool, not a universal one: lower FX/settlement cost in select corridors, USDC disbursement, and — the bigger prize — USD-stablecoin wallets as a store of value for recipients in volatile-currency markets.',
     updates:[
       { q:'Q2 2025', items:['Three initiatives: hold stablecoins in the <b>Wallet</b> (with Circle), <b>disburse</b> to stablecoin wallets (with Bridge, a Stripe co.), and tokenized-USD <b>treasury</b> settlement. Beta; launch Sept.'] },
@@ -580,7 +1396,7 @@ var RELY_THEMES=[
       { q:'Q4 2025', items:['Broadening USDC access; stablecoins + AI treasury models improving FX costs — a "secular trend favoring our business."'] },
       { q:'Q1 2026', items:['Stablecoins a <b>targeted</b> cost/speed tool per corridor; new receiver <b>wallet holds USD/USDC</b>; Coins.ph (Philippines) enables stablecoin-wallet payouts.'] },
     ]},
-  { theme:'Take rate, RLTE & unit economics',
+  { theme:'Take rate, RLTE & unit economics', st:{ k:'trend', since:'Q1 2024', last:'Q1 2026' },
     why:'The number management keeps re-anchoring: take rate drifts down with mix (2.28% → 2.05%), but <b>RLTE dollars</b> (revenue less transaction expense) — the true LTV proxy — compound faster than revenue as scale lowers cost-to-serve.',
     updates:[
       { q:'Q1 2024', items:['Take rate 2.24% (mix-driven); transaction expense −290bps YoY on pay-in/payout scale + fraud precision. "RLTE is the North Star."'] },
@@ -590,7 +1406,7 @@ var RELY_THEMES=[
       { q:'Q4 2025', items:['RLTE +30% to $305M — <b>69% of revenue, a record</b>; take rate 2.13%; digital-receive mix +300bps.'] },
       { q:'Q1 2026', items:['RLTE +28% to $308M (68%, +156bps); take rate <b>2.05%</b>; digital-payout mix +250bps. Reiterated: take rate is "not a great metric" — <b>RLTE dollar growth</b> is.'] },
     ]},
-  { theme:'Growth, margins & capital allocation',
+  { theme:'Growth, margins & capital allocation', st:{ k:'trend', since:'Q1 2024', last:'Q1 2026' },
     why:'The Rule-of-50-then-40 story: durable ~25%+ growth turning into real profit and free cash flow — first full-year GAAP profit in 2025, the first-ever buybacks, and 2028 targets of ~$3B revenue / ~$600M EBITDA.',
     updates:[
       { q:'Q4 2023', items:['Q4 Adj EBITDA $8.2M / FY23 $44M — well ahead of plan; revenue at a <b>>$1B annualized</b> run-rate.'] },
@@ -601,7 +1417,7 @@ var RELY_THEMES=[
       { q:'Q4 2025', items:['Q4 Adj EBITDA $89M (20% margin, record); FY25 $272M / ~17% and <b>first full year of GAAP profit ($68M)</b>; FCF $283M (3×). Reaffirmed <b>Investor Day 2028</b> targets: ~$2.6–3.0B revenue, ~$575–600M Adj EBITDA (Rule of 40); SBC toward 7–10%.'] },
       { q:'Q1 2026', items:['Adj EBITDA <b>$102M — first >$100M</b>; GAAP net income $49M (+300%); FCF $70M; buyback <b>~4×\'d to $44M / 2.8M shares</b>; shares <b>fell sequentially for the first time ever</b> (~210M); ~$650M cash.'] },
     ]},
-  { theme:'Macro, regulation & FX',
+  { theme:'Macro, regulation & FX', st:{ k:'watch', since:'Q1 2024', last:'Q1 2026' },
     why:'The debate management keeps rebutting: remittances are resilient across cycles, and the 2026 US 1% cash-remittance tax — which exempts digitally-funded transfers — is a structural tailwind that accelerates offline→online share gains.',
     updates:[
       { q:'Q1 2025', items:['Framed remittances as resilient through macro/immigration cycles; FX/treasury a competitive advantage at ~$60B annual volume.'] },
@@ -609,7 +1425,7 @@ var RELY_THEMES=[
       { q:'Q3 2025', items:['Remittance tax effective Jan 1, 2026 confirmed as a tailwind; flagged possible <b>immigration headwinds</b> (US/Canada) on new-customer acquisition.'] },
       { q:'Q1 2026', items:['Remittance tax a net positive — <b>record new-customer acquisition</b> from offline→online; higher US tax refunds; <b>UAE send volume +150%</b> on Middle-East geopolitics; "Skip the Line" campaign converting cash senders.'] },
     ]},
-  { theme:'CEO transition — Oppenheimer → Gunningham',
+  { theme:'CEO transition — Oppenheimer → Gunningham', st:{ k:'watch', since:'Q4 2025', last:'Q1 2026' },
     why:'A founder-to-operator handoff (Feb 2026): co-founder Matt Oppenheimer to Chairman, Sebastian Gunningham (ex-Amazon S-team, ex-WeWork) to CEO — "same vision and strategy, faster pace."',
     updates:[
       { q:'Q4 2025', items:['Announced <b>Sebastian Gunningham</b> as CEO (effective Feb 19, 2026); Oppenheimer becomes <b>Chairman</b> (largest individual holder, no sale plans). A deliberate, board-run succession.'] },
@@ -627,14 +1443,16 @@ function relyCallsByQuarter(){
 function ddCallsBody(c){
   var h='<style>.calls-tog{display:inline-flex;gap:4px;background:#F2F5F8;border:1px solid var(--bdr);border-radius:999px;padding:3px;margin-bottom:14px}'+
     '.calls-pill{border:none;background:transparent;font:inherit;font-size:12px;font-weight:700;color:var(--mu);padding:5px 15px;border-radius:999px;cursor:pointer;transition:.12s}'+
-    '.calls-pill:hover{color:var(--navy)}.calls-pill.active{background:var(--navy);color:#fff}'+
-    '.calls-tl{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--navy);margin:0 0 4px}</style>';
-  h+='<p class="ov-lede">The key narrative threads from the <b>10 earnings calls</b> (Q4 2023 → Q1 2026) plus the <b>Dec 2025 Investor Day</b>. Switch lens: <b>By theme</b> traces how each story evolved; <b>By quarter</b> shows what mattered on a given call. Tap any row to expand. (Quarterly guided-vs-delivered lives in the <b>Guidance</b> view.)</p>';
+    '.calls-pill:hover{color:var(--navy)}.calls-pill.active{background:'+BRAND+';color:#fff}'+
+    '.calls-tl{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--navy);margin:0 0 4px}'+
+    '.calls-st{font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;border-radius:20px;padding:2px 8px;white-space:nowrap;border:1px solid;flex:none}</style>';
+  h+='<p class="ov-lede">The key narrative threads from the <b>10 earnings calls</b> (Q4 2023 → Q1 2026) plus the <b>Dec 2025 Investor Day</b>. Switch lens: <b>By theme</b> traces how each story evolved; <b>By quarter</b> shows what mattered on a given call. Each theme carries a status — <b>trend</b> (confirmed), <b>promise</b> (a commitment to reconcile next call) or <b>watch</b> — <b>with its age</b>: a watch running two quarters is louder than a fresh one. Tap any row to expand. (Quarterly guided-vs-delivered lives in the <b>Guidance</b> view.)</p>';
   h+='<div class="calls-tog" role="tablist"><button type="button" class="calls-pill active" data-relycallsv="theme">By theme</button><button type="button" class="calls-pill" data-relycallsv="quarter">By quarter</button></div>';
   // By theme (default)
   h+='<div class="lpb-acc" id="relyCallsTheme">';
   RELY_THEMES.forEach(function(ct){
-    h+='<div class="lpb-acc-item"><button type="button" class="lpb-acc-h"><span>'+esc(ct.theme)+'</span><span class="lpb-acc-ic">+</span></button>';
+    var sk=(ct.st&&ct.st.k)?ct.st.k:'watch'; var st=CP_THST[sk]||CP_THST.watch;
+    h+='<div class="lpb-acc-item"><button type="button" class="lpb-acc-h"><span style="display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap">'+esc(ct.theme)+' <span class="calls-st" style="color:'+st.c+';border-color:'+st.c+'">'+st.l+cpStAge(ct.st)+'</span></span><span class="lpb-acc-ic">+</span></button>';
     h+='<div class="lpb-acc-body"><p style="font-size:12px;color:var(--mu);margin:0 0 10px;font-style:italic">'+ct.why+'</p>';
     ct.updates.forEach(function(u){ h+='<div style="margin-bottom:10px"><span class="ov-chip" style="margin-right:6px">'+esc(u.q)+'</span><ul class="ov-bullets" style="margin-top:4px">'+u.items.map(function(it){ return '<li>'+it+'</li>'; }).join('')+'</ul></div>'; });
     h+='</div></div>';
@@ -914,12 +1732,26 @@ function deepDiveHtml(c){
   // Evolution
   h+='<div class="dd-pane" data-dd="evolution" hidden>'+
     '<div class="ovt-subtabs">'+
-      '<button type="button" class="ovt-subtab active" data-ovst="earnings">Earnings Calls</button>'+
+      '<button type="button" class="ovt-subtab active" data-ovst="callprep">Call Prep</button>'+
       '<button type="button" class="ovt-subtab" data-ovst="strategy">Strategy</button>'+
       '<button type="button" class="ovt-subtab" data-ovst="timeline">Timeline</button>'+
       '<button type="button" class="ovt-subtab" data-ovst="mna">M&A</button>'+
     '</div>'+
-    '<div class="ovt-subpane" data-ovst="earnings">'+ddCallsBody(c)+'</div>'+
+    '<div class="ovt-subpane" data-ovst="callprep">'+
+      cpIRButton()+
+      '<div class="cp-note" style="margin-bottom:12px">🎯 <b>Call Prep</b> — the decision layer, in three phases: <b>① Pre-Call</b> (go in ready — Setup · Watch List, with themes tracked across quarters) → <b>② Post-Results</b> (react to the numbers, which land before the call) → <b>③ Post-Call</b> (what management said + the meeting take). Append-only per quarter — pick a quarter below; each quarter keeps its frozen pre-call blocks next to its post-mortem, so the tab is a record of how well we read Remitly. The <b>Watch List</b> is the single home for theme-tracking — the old standalone <i>Earnings Calls</i> tab was folded into it (no two tabs on the same call highlights). <b>Consensus (Bloomberg) + Summit + the 4 custom KPIs render "to fill / to define" until the export lands.</b></div>'+
+      cpQPills()+
+      '<div class="cp-phtabs">'+
+        '<button type="button" class="cp-phtab active" data-cpp="setup">Setup</button>'+
+        '<button type="button" class="cp-phtab" data-cpp="watch">Watch List</button>'+
+        '<button type="button" class="cp-phtab" data-cpp="results">Post-Results</button>'+
+        '<button type="button" class="cp-phtab" data-cpp="postcall">Post-Call</button>'+
+      '</div>'+
+      '<div class="cp-phpane" data-cpp="setup">'+cpSetupBody(c)+'</div>'+
+      '<div class="cp-phpane" data-cpp="watch" hidden>'+cpWatchBody(c)+'</div>'+
+      '<div class="cp-phpane" data-cpp="results" hidden>'+cpResultsBody(c)+'</div>'+
+      '<div class="cp-phpane" data-cpp="postcall" hidden>'+cpCallBody(c)+'</div>'+
+    '</div>'+
     '<div class="ovt-subpane" data-ovst="strategy" hidden>'+ddStrategyBody(c)+'</div>'+
     '<div class="ovt-subpane" data-ovst="timeline" hidden>'+ddTimelineBody(c)+'</div>'+
     '<div class="ovt-subpane" data-ovst="mna" hidden>'+ddMnaBody(c)+'</div>'+
@@ -1117,6 +1949,7 @@ function init(c){
   // Deep Dive tab wiring (root spans both panes)
   wireDD(root);
   wireSubtabs(root,'topline'); wireSubtabs(root,'bottomline'); wireSubtabs(root,'evolution'); wireSubtabs(root,'valuation'); wireSubtabs(root,'mgmt');
+  wireCallPrep(root);
 
   // Evolution ▸ Earnings Calls — By theme ⇄ By quarter lens toggle
   root.querySelectorAll('.calls-pill[data-relycallsv]').forEach(function(btn){ btn.onclick=function(){ var v=btn.getAttribute('data-relycallsv');
@@ -1156,6 +1989,7 @@ function init(c){
   if(back){ root.querySelector('#ovModalX').onclick = closeModal; back.onclick = function(e){ if (e.target===back) closeModal(); }; }
   function resolve(key){
     var parts=key.split(':'), kind=parts[0], id=parts.slice(1).join(':');
+    if (kind==='cp'){ return CP_POP[id]||null; }
     if (kind==='seg'){ var s=SEGMENTS[parseInt(id,10)]; return s && { t:esc(s[0]), h:'<div style="font-size:12.5px;line-height:1.65;color:var(--navy)">'+esc(s[1])+'</div>' }; }
     if (kind==='sup'){ var su=SPLC_SUPPLIERS[parseInt(id,10)]; if(!su) return null; return { t:esc(su.n)+' <span class="ov-modal-sub">'+esc(su.tk)+' · '+esc(su.dom)+'</span>', h:'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"><span class="mgt-chip"><b>'+esc(su.mc)+'</b> mkt cap</span><span class="mgt-chip"><b>'+esc(su.grade)+'</b> risk grade</span><span class="mgt-chip"><b>'+esc(su.risk)+'</b> default risk</span><span class="mgt-chip"><b>'+esc(su.chg)+'</b> 3M price</span></div><div style="font-size:12.5px;line-height:1.65;color:var(--navy)">'+su.detail+'</div>' }; }
     if (kind==='drv'){ var d=DRIVERS[parseInt(id,10)]; return d && { t:esc(d[0]), h:'<div style="font-size:12.5px;line-height:1.65;color:var(--navy)">'+esc(d[1])+'</div>' }; }

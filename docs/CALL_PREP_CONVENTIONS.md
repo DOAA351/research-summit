@@ -134,6 +134,19 @@ Two files per company in `docs/calls/`:
 compendium; (2) put the new transcript in `-latest.md` and analyze it there; (3) refresh the Call
 Prep (roll the quarter — §8 step 9).
 
+**Multi-session quarters — earnings call + same-day follow-up (e.g. META).** Some companies hold a
+main earnings call AND a separate **same-day Follow-Up Q&A call** for the SAME quarter. **Treat both
+as ONE call:** store them together in the same quarter block (the follow-up appended under a
+`— Follow-Up Q&A` subheading), analyze them as a single event (Pass 1–3 span both), roll them
+together, and show **one** quarter pill (`Qx`), never two. New-question/red-line detection reads the
+prepared remarks + the main Q&A + the follow-up Q&A as one corpus.
+
+**Transcript hygiene (IR-PDF sourced).** Transcripts copied out of IR PDFs arrive with hard-wrapped
+lines (≈60–70 chars), embedded page numbers, and special characters (non-breaking hyphens `‑`, smart
+quotes `’ “ ”`). When converting to `.md`: **reflow** the hard wraps into paragraphs, **strip** the
+standalone page numbers, **normalize** the hyphens/quotes, and label speaker turns — so the stored
+transcript reads as clean prose, not one fragment per line.
+
 ## 4. Regression tests — any fresh analysis must catch these
 
 **Test #1 — the buried recurring dato (IBKR overnight trading).** Q4'25: "+76% QoQ," one line, no
