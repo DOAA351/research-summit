@@ -12,7 +12,7 @@ import { metaOverview } from './meta.js';
 import { mastercardOverview } from './mastercard.js';
 import { lyftOverview } from './lyft.js';
 import { uberOverview } from './uber.js';
-import { nvidiaOverview } from './nvidia.js';
+import { nvdaOverview } from './nvda.js';
 import { instacartOverview } from './instacart.js';
 import { spotOverview } from './spot.js';
 import { avgoOverview } from './avgo.js';
@@ -34,7 +34,7 @@ var OVERVIEWS = {
   MA: mastercardOverview,
   LYFT: lyftOverview,
   UBER: uberOverview,
-  NVDA: nvidiaOverview,
+  NVDA: nvdaOverview,
   CART: instacartOverview,
   SPOT: spotOverview,
   AVGO: avgoOverview,

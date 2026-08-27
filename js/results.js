@@ -34,6 +34,8 @@ import { lyftResults } from './results-data/lyft.js';
 import { lyftSetup } from './results-data/lyft-setup.js';
 import { tbbbResults } from './results-data/tbbb.js';
 import { tbbbSetup } from './results-data/tbbb-setup.js';
+import { nvdaResults } from './results-data/nvda.js';
+import { nvdaSetup } from './results-data/nvda-setup.js';
 
 var RESULTS_DATA = {
   AMZN: amznResults,
@@ -51,7 +53,9 @@ var RESULTS_DATA = {
   LYFT: lyftResults,
   LYFT_SETUP: lyftSetup,
   TBBB: tbbbResults,
-  TBBB_SETUP: tbbbSetup
+  TBBB_SETUP: tbbbSetup,
+  NVDA: nvdaResults,
+  NVDA_SETUP: nvdaSetup
 };
 
 // Register a dataset at runtime, so a caller can compose one and get the whole engine — every

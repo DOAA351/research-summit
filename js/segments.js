@@ -35,13 +35,18 @@ import { amznSegments } from './segments-data/amzn.js';
 import { amznResults } from './results-data/amzn.js';
 import { registerResultsData, resultsHtml, initResults } from './results.js';
 import { AMZN_THEMES } from './themes-data/amzn.js';
+import { nvdaSegments } from './segments-data/nvda.js';
+import { nvdaResults } from './results-data/nvda.js';
+import { NVDA_THEMES } from './themes-data/nvda.js';
 
 // The Notes taxonomy names segments in prose; the datasets key them. One map, stated once.
-var THEME_SEG = { AMZN: { 'Amazon US': 'na', 'Amazon International': 'intl', 'AWS': 'aws' } };
-var THEME_SRC = { AMZN: AMZN_THEMES };
+var THEME_SEG = { AMZN: { 'Amazon US': 'na', 'Amazon International': 'intl', 'AWS': 'aws' },
+                  NVDA: { 'Data Center': 'dc', 'Edge Computing': 'edge', 'Company': 'company' } };
+var THEME_SRC = { AMZN: AMZN_THEMES, NVDA: NVDA_THEMES };
 
 var SEGMENTS_DATA = {
-  AMZN: { seg: amznSegments, res: amznResults }
+  AMZN: { seg: amznSegments, res: amznResults },
+  NVDA: { seg: nvdaSegments, res: nvdaResults }
 };
 
 export function getSegmentsData(ticker){ return SEGMENTS_DATA[ticker] || null; }
@@ -252,6 +257,8 @@ function sgResetDetail(){
 }
 
 function sgData(){ return SEGMENTS_DATA[_sg.ticker] || null; }
+// Display name for the active company (the Customers tab used to hardcode "Amazon").
+function sgCoName(){ return ({ AMZN: 'Amazon', NVDA: 'NVIDIA' })[_sg.ticker] || _sg.ticker || 'the company'; }
 function sgSeg(){
   var d = sgData(); if (!d) return null;
   return d.seg.segments.filter(function(s){ return s.key === _sg.seg; })[0] || d.seg.segments[0];
@@ -270,6 +277,10 @@ function sgResolveRef(ref, view){
     m.periods.forEach(function(p, i){
       if (m.act && m.act[i] != null) act[p] = m.act[i];
       else if (m.summit && m.summit[i] != null) est[p] = m.summit[i];
+      // Fall back to the Street (cons) forward when the model carries no per-segment projection —
+      // e.g. NVDA holds its forward-by-segment in `cons`. Reached only where act+summit are both
+      // null, so tickers with a full `summit` forward (AMZN) are unaffected.
+      else if (m.cons && m.cons[i] != null) est[p] = m.cons[i];
     });
     return { unit: m.unit === 'eps' ? 'eps' : 'usdM', label: m.label, short: m.short || m.label,
              act: act, est: est, src: 'Results dataset' };
@@ -1377,16 +1388,16 @@ function custNamed(d){
 function custSplcSection(c, n){
   var sp = c.splc;
   if (!sp || !sp.customers || !sp.customers.length){
-    return sec(n, 'Who has said they buy from Amazon', 'Bloomberg SPLC · not loaded yet',
+    return sec(n, 'Who has said they buy from ' + esc(sgCoName()), 'Bloomberg SPLC · not loaded yet',
       '<p class="sg-lede">' + tierTag('COUNTERPARTY') +
-      'The other side of the transaction: not what Amazon says about its customers, but what its ' +
-      'customers filed about Amazon.</p>' +
+      'The other side of the transaction: not what ' + esc(sgCoName()) + ' says about its customers, but what its ' +
+      'customers filed about ' + esc(sgCoName()) + '.</p>' +
       drill('splc', 'Why this is empty, and what fills it',
         '<p>Bloomberg\'s Supply Chain Analysis assembles counterparty disclosures into a customer ' +
-        'census — the only customer list here that does not depend on Amazon choosing to speak. ' +
+        'census — the only customer list here that does not depend on ' + esc(sgCoName()) + ' choosing to speak. ' +
         'SPLC is a terminal screen, not a BQL function on our tier, so it has to come in as an ' +
         'export:</p>' +
-        '<code class="sg-empty-c">py scripts/segments/load_splc.py AMZN &lt;export.csv&gt;</code>' +
+        '<code class="sg-empty-c">py scripts/segments/load_splc.py ' + esc(_sg.ticker) + ' &lt;export.csv&gt;</code>' +
         '<p class="sg-cite">The loader normalises the columns, prints the mapping so it can be ' +
         'checked, and computes the one number that decides how this may be drawn: what share of ' +
         'revenue the named customers account for between them. Under ~10% it renders as a list of ' +
@@ -1397,9 +1408,9 @@ function custSplcSection(c, n){
     ? 'They account for <b>' + pctStr(sp.sumPct / 100) + '</b> of revenue between them; the other ' +
       pctStr(1 - sp.sumPct / 100) + ' is not attributed to anyone here.'
     : 'None of them carries a size, so they can be listed but not ranked.';
-  return sec(n, 'Who has said they buy from Amazon', sp.named + ' named · ' + sp.sized + ' sized',
+  return sec(n, 'Who has said they buy from ' + esc(sgCoName()), sp.named + ' named · ' + sp.sized + ' sized',
     '<p class="sg-lede">' + tierTag('COUNTERPARTY') +
-      'Assembled by Bloomberg from what these companies filed about Amazon, not from what Amazon ' +
+      'Assembled by Bloomberg from what these companies filed about ' + esc(sgCoName()) + ', not from what ' + esc(sgCoName()) + ' ' +
       'filed about them. ' + cov + '</p>' +
     '<div class="rs-ft-scroll"><table class="rs-ft"><thead><tr>' +
       '<th class="rs-ft-h">Customer</th><th>Ticker</th><th>Relationship</th>' +
@@ -1465,13 +1476,13 @@ export function segmentsCustomersHtml(ticker){
       (c.classes || []).length + ' classes · verbatim', mdHtml('cclass', null)) +
     sec(3, 'Named on the record', named.length + ' named',
       (named.length
-        ? '<p class="sg-lede">' + tierTag('CALL') + 'Every customer Amazon has named out loud. A ' +
+        ? '<p class="sg-lede">' + tierTag('CALL') + 'Every customer ' + esc(sgCoName()) + ' has named out loud. A ' +
           'short and self-selected list — read it as what management is proud of, not as a ranking.</p>' +
           mdHtml('cname', null)
         : '<div class="sg-needs">⚑ No customer has been named on a call for this company yet.</div>')) +
     custSplcSection(c, 4) +
     '<div class="ov-fynote sg-src">Three registers, kept apart on purpose: what the filing says, ' +
-    'what management said on a call, and what somebody else disclosed about Amazon. None of them ' +
+    'what management said on a call, and what somebody else disclosed about ' + esc(sgCoName()) + '. None of them ' +
     'is a revenue ranking, and the tab never presents one.</div></div>';
 }
 export function initSegmentsCustomers(root, ticker){

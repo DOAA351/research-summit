@@ -1,0 +1,19 @@
+{
+  "_note": "NVDA consensus map for emit_matrix.py. Metric keys match js/results-data/nvda.js. Addressed by Bloomberg CODE (schema v2). NVDA is fiscal-year labelled by Bloomberg (fq0='2027 Q1' = Q1 FY2027), so canon() period keys align with the dataset's fiscal labels. capex arrives negative -> sign -1 to store positive spend.",
+  "q": {
+    "rev":         { "code": "SALES_REV_TURN", "unit": "usdM" },
+    "grossProfit": { "code": "IS_ADJ_GROSS_PROFIT_AS_REPORTED", "unit": "usdM" },
+    "opinc":       { "code": "IS_COMPARABLE_EBIT", "unit": "usdM" },
+    "ebitda":      { "code": "IS_COMPARABLE_EBITDA", "unit": "usdM" },
+    "eps":         { "code": "IS_COMP_EPS_GAAP", "unit": "eps" }
+  },
+  "y": {
+    "rev":         { "code": "SALES_REV_TURN", "unit": "usdM" },
+    "opinc":       { "code": "IS_COMPARABLE_EBIT", "unit": "usdM" },
+    "grossProfit": { "code": "IS_ADJ_GROSS_PROFIT_AS_REPORTED", "unit": "usdM" },
+    "ebitda":      { "code": "IS_COMPARABLE_EBITDA", "unit": "usdM" },
+    "eps":         { "code": "IS_COMP_EPS_GAAP", "unit": "eps" },
+    "fcf":         { "code": "HEADLINE_FCF", "unit": "usdM" },
+    "capex":       { "code": "HEADLINE_CAPEX", "unit": "usdM", "sign": -1 }
+  }
+}

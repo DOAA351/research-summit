@@ -23,7 +23,14 @@ Usage:  python scripts/bbg_extract.py AMZN
 """
 import csv, re, json, sys, os
 
-SRC = r"G:\Mi unidad\Summit\Docs\0\BBG_CONSENSUS.txt"
+# Google Drive mounts as "Mi unidad" (es) or "My Drive" (en) depending on the machine's
+# locale; env BBG_CONSENSUS_PATH overrides both. Pick the first candidate that exists.
+_SRC_CANDIDATES = [
+  os.environ.get("BBG_CONSENSUS_PATH"),
+  r"G:\Mi unidad\Summit\Docs\0\BBG_CONSENSUS.txt",
+  r"G:\My Drive\Summit\Docs\0\BBG_CONSENSUS.txt",
+]
+SRC = next((p for p in _SRC_CANDIDATES if p and os.path.exists(p)), _SRC_CANDIDATES[1])
 OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "js", "overviews")
 
 # Per-ticker segment id -> friendly name (BBG SEG ids are company-specific). Extend per company.
@@ -53,6 +60,14 @@ CODE = {
  'HEADLINE_FCF':'fcf','BS_REMAINING_PERFORMANCE_OBLIG':'rpo','CF_PURCHSE_OF_COMMN_STOCK':'buyback',
  'TOTAL_SHIPPING_COST':'shipping','INVENT_TURN':'invTurn','ACCOUNTS_PAYABLE_TURNOVER_DAYS':'dpo',
  'CB_BS_PP_AND_E_NET':'ppe','IS_OPER_INC':'oi','IS_DEPR_EXP':'da',
+ # NVDA-style "as reported / adjusted" income-statement codes (Bloomberg uses different
+ # field ids than AMZN's GAAP set). Keys mirror AMZN where the concept matches; rnd/sga are
+ # NVDA-natural (its opex is R&D + SG&A, not fulfillment/tech-infra/marketing).
+ 'IS_ADJUSTED_COGS_AS_REPORTED':'cogs','IS_ADJ_GROSS_PROFIT_AS_REPORTED':'grossProfit',
+ 'CB_IS_ADJUSTED_OPEX':'totalOpex','IS_ADJ_R_AND_D_AS_REPORTED':'rnd',
+ 'IS_ADJ_SG_AND_A_AS_REPORTED':'sga','IS_OTHER_OPERATING_EXPN_ADJUST':'otherOpex',
+ 'CB_IS_ADJ_NONOP_INC_EXPN':'otherNonOp','IS_COMP_NET_INCOME_ADJUST_OLD':'netIncome',
+ 'IS_SBC_ATTRIB_TO_SG_AND_A_PRETX':'sbcSGA',
 }
 
 def slug(name):

@@ -1,0 +1,52 @@
+{
+  "_note": "Config for emit_summit_matrix.py + emit_evolution.py — the SUMMIT side of estMatrix for NVDA. ANNUAL only: the model's quarterly grid is sparse/misaligned, and the dataset's Quarterly view carries no summit series, so views.q is empty. Metric keys match js/results-data/nvda.js. lastActual established from the data: the 2025-12-12 file still projects FY2026 (not yet closed) so its y-lastActual is 2025; the Mar/May 2026 files carry FY2026 reported.",
+
+  "metrics": {
+    "rev":         "REV",
+    "opinc":       "GAAP_OP_INCOME",
+    "grossProfit": "GAAP_GROSS_PROFIT",
+    "ebitda":      "EBITDA",
+    "fcf":         "FCF",
+    "capex":       "CAPEX"
+  },
+
+  "_sign_note": "The model carries capex as negative cash flow; the dataset shows positive spend.",
+  "sign": { "capex": -1 },
+
+  "decimals": { "_default": 1 },
+
+  "vintages": [
+    { "id": "2025-12-12", "label": "Dec 12, 2025", "lastActual": { "q": "3Q26", "y": "2025" } },
+    { "id": "2026-03-04", "label": "Mar 4, 2026",  "lastActual": { "q": "4Q26", "y": "2026" } },
+    { "id": "2026-05-26", "label": "May 26, 2026", "lastActual": { "q": "1Q27", "y": "2026" } }
+  ],
+
+  "views": {
+    "q": [],
+    "y": ["rev", "opinc", "grossProfit", "ebitda", "fcf", "capex"]
+  },
+
+  "_evolution_note": "Feeds emit_evolution.py — the Estimates pane. Annual, every year (forward or reported) to show how the model's view of each year moved across the three snapshots. cons_metrics = the BBG figure the model stores inside its own snapshot (best provenance, same save date). prior = FY2025, the year before years[0], for the first year's implied growth on revenue.",
+  "evolution": {
+    "years": ["2026", "2027", "2028", "2029"],
+    "prior": "2025",
+    "keys": ["rev", "opinc", "grossProfit", "ebitda", "fcf", "capex"],
+    "cons_metrics": { "rev": "REV_BBG_EST", "ebitda": "EBITDA_BBG_EST" },
+    "cons_map": {},
+    "labels": {
+      "rev":         { "label": "Revenue (Total)", "unit": "usdM", "prior": true },
+      "opinc":       { "label": "Operating Income", "unit": "usdM", "marginOf": "rev", "marginLabel": "operating margin" },
+      "grossProfit": { "label": "Gross Profit", "unit": "usdM", "marginOf": "rev", "marginLabel": "gross margin" },
+      "ebitda":      { "label": "EBITDA", "unit": "usdM", "marginOf": "rev", "marginLabel": "EBITDA margin" },
+      "fcf":         { "label": "Free Cash Flow", "unit": "usdM", "marginOf": "rev", "marginLabel": "FCF margin" },
+      "capex":       { "label": "Capital Expenditure", "unit": "usdM", "marginOf": "rev", "marginLabel": "capex % of revenue" }
+    }
+  },
+
+  "prefer_source": ["SEGM", "DEFAULT"],
+
+  "axis": {
+    "q": ["1Q26","2Q26","3Q26","4Q26","1Q27","2Q27","3Q27","4Q27","1Q28"],
+    "y": ["2022","2023","2024","2025","2026","2027","2028","2029"]
+  }
+}
